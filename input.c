@@ -3,7 +3,9 @@
 #include <sys/select.h>
 #include <unistd.h>
 
-int readKey() {
+#include "terminal.h"
+
+int readKey(void) {
     char c;
     if (read(STDIN_FILENO, &c, 1) == 1) {
         if (c == '\x1b') {
@@ -37,4 +39,9 @@ int readKey() {
         return c;
     }
     return -1;
+}
+
+void handleResize(int sig) {
+    (void)sig;
+    updateWindowSize();
 }

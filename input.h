@@ -1,3 +1,4 @@
 #pragma once
 
-int readKey();
+int readKey(void);
+void handleResize(int sig);

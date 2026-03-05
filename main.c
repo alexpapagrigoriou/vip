@@ -4,6 +4,7 @@
 #include "draw.h"
 #include "init.h"
 #include "input.h"
+#include "terminal.h"
 
 int main() {
     initTerminal();
@@ -17,6 +18,8 @@ int main() {
         char command[128];
         snprintf(command, sizeof(command), BGREEN "Key code: %d" RESET "\t(testing... press 'q' to exit)", key);
         printLastLine(command);
+
+        moveCursor(cursor_row, cursor_col);
     }
 
     return 0;

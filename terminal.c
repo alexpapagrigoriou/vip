@@ -1,7 +1,6 @@
 #include "terminal.h"
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <sys/ioctl.h>
 #include <termios.h>
 #include <unistd.h>
@@ -25,11 +24,6 @@ void enableRawMode(void) {
     raw.c_lflag &= ~(ECHO | ICANON | ISIG);
     raw.c_iflag &= ~(IXON | ICRNL);
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
-}
-
-void autoCleanup(void) {
-    atexit(disableRawMode);
-    atexit(cleanScreen);
 }
 
 void updateWindowSize(void) {

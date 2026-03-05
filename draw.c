@@ -30,7 +30,7 @@ static void drawTildes(int start_row) {
     fflush(stdout);
 }
 
-static void drawStart() {
+static void drawStart(void) {
     const char* text[] = {
         "VIP - Vi rIPoff",
         "",
@@ -45,12 +45,12 @@ static void drawStart() {
     drawTildes(2);
 }
 
-static void drawBuffer() {
+static void drawBuffer(void) {
     // TODO: print text_buffer if you start editing
     // drawTildes(n_lines);
 }
 
-void drawWindow() {
+void drawWindow(void) {
     cleanScreen();
 
     if (in_start) {

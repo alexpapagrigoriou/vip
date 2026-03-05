@@ -1,8 +1,17 @@
+#include <signal.h>
+#include <stdlib.h>
+
+#include "input.h"
 #include "terminal.h"
 
 void initTerminal(void) {
     enableRawMode();
-    autoCleanup();
+
+    signal(SIGWINCH, handleResize);
     updateWindowSize();
+
+    atexit(disableRawMode);
+    atexit(cleanScreen);
+
     moveCursor(cursor_row, cursor_col);
 }
