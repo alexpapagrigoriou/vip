@@ -13,5 +13,5 @@ void initTerminal(void) {
     atexit(disableRawMode);
     atexit(cleanScreen);
 
-    moveCursor(cursor_row, cursor_col);
+    moveCursor(cursor);
 }

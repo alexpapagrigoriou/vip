@@ -1,12 +1,17 @@
 #pragma once
 
-extern int rows, cols;
-extern int cursor_row, cursor_col;
-extern int text_row, text_col;
+typedef struct {
+    int row;
+    int col;
+} Position;
+
+extern Position screen;
+extern Position cursor;
+extern Position text;
 
 void disableRawMode(void);
 void enableRawMode(void);
 void updateWindowSize(void);
-void moveCursor(int row, int col);
+void moveCursor(Position pos);
 void cleanScreen(void);
 void cleanLine(void);

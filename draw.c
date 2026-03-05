@@ -5,26 +5,27 @@
 
 #include "colors.h"
 #include "terminal.h"
-
-int in_start = 1;
+#include "vip.h"
 
 static void printCenteredLines(const char* text[], int n_text) {
-    int start_row = (rows - n_text) / 2;
+    int start_row = (screen.row - n_text) / 2;
     for (int i = 0; i < n_text; i++) {
-        int col = (cols - strlen(text[i])) / 2;
+        int col = (screen.col - strlen(text[i])) / 2;
         if (col < 0) {
             col = 0;
         }
 
-        moveCursor(start_row + i + 1, col + 1);
+        Position center = {start_row + i + 1, col + 1};
+        moveCursor(center);
         printf("%s", text[i]);
     }
     fflush(stdout);
 }
 
 static void drawTildes(int start_row) {
-    for (int r = start_row; r < rows; r++) {
-        moveCursor(r, 1);
+    for (int r = start_row; r < screen.row; r++) {
+        Position tilde = {r, 1};
+        moveCursor(tilde);
         printf(BLUE "~" RESET);
     }
     fflush(stdout);
@@ -63,7 +64,8 @@ void drawWindow(void) {
 }
 
 void printLastLine(const char* text) {
-    moveCursor(rows, 1);
+    Position last_line = {screen.row, 1};
+    moveCursor(last_line);
     cleanLine();
     printf("%s", text);
     fflush(stdout);

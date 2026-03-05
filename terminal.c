@@ -9,9 +9,9 @@
 
 struct termios original;
 
-int rows = 0, cols = 0;
-int cursor_row = 1, cursor_col = 1;
-int text_row = 0, text_col = 0;
+Position screen = {0, 0};
+Position cursor = {1, 1};
+Position text = {0, 0};
 
 void disableRawMode(void) {
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &original);
@@ -29,14 +29,14 @@ void enableRawMode(void) {
 void updateWindowSize(void) {
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-    rows = w.ws_row;
-    cols = w.ws_col;
+    screen.row = w.ws_row;
+    screen.col = w.ws_col;
 
     drawWindow();
 }
 
-void moveCursor(int row, int col) {
-    printf("\033[%d;%dH", row, col);
+void moveCursor(Position pos) {
+    printf("\033[%d;%dH", pos.row, pos.col);
     fflush(stdout);
 }
 
