@@ -1,12 +1,12 @@
 #include <stdio.h>
 
+#include "colors.h"
+#include "draw.h"
+#include "init.h"
 #include "input.h"
-#include "terminal.h"
 
 int main() {
-    enableRawMode();
-
-    printf("Welcome to VIP - Vi rIPoff!\n\nPress any key.\n");
+    initTerminal();
 
     while (1) {
         int key = readKey();
@@ -14,7 +14,10 @@ int main() {
             break;
         }
 
-        printf("Key code: %d\t(testing... press 'q' to exit)\n", key);
+        char command[128];
+        snprintf(command, sizeof(command), BGREEN "Key code: %d" RESET "\t(testing... press 'q' to exit)", key);
+        printLastLine(command);
     }
+
     return 0;
 }
