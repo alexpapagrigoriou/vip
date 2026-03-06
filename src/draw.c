@@ -51,7 +51,7 @@ static void drawBuffer(void) {
         }
 
         moveCursor((Position){r, 0});
-        printf("%s", getLine(draw_row)->chars);
+        printf("%.*s", (int)screen.col, getLine(draw_row)->chars + text.col);
     }
 
     drawTildes(line_count);
