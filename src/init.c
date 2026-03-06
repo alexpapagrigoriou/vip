@@ -9,12 +9,10 @@ void initTerminal(void) {
     enableRawMode();
     atexit(disableRawMode);
 
-    signal(SIGWINCH, handleResize);
-    updateWindowSize();
-    atexit(cleanScreen);
-
     initBuffer();
     atexit(freeBuffer);
 
-    moveCursor(cursor);
+    signal(SIGWINCH, handleResize);
+    updateWindowSize();
+    atexit(cleanScreen);
 }
