@@ -7,6 +7,7 @@
 #include "draw.h"
 #include "init.h"
 #include "input.h"
+#include "keys.h"
 #include "terminal.h"
 
 int in_start = 1;
@@ -20,12 +21,15 @@ void runVip(void) {
         if (key == 'q') {
             break;
         }
+        in_start = 0;
 
         if (isPrintable(key)) {
-            in_start = 0;
-
             insertChar(key);
-        } else if (isEnter(key)) {
+        } else if (key == TAB) {
+            for (int i = 0; i < 4; i++) {
+                insertChar(' ');
+            }
+        } else if (key == ENTER) {
             appendLine();
         }
 
