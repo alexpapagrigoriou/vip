@@ -1,5 +1,7 @@
 #pragma once
 
-extern int in_start;
+#include <stdbool.h>
+
+extern bool in_start;
 
 void runVip(void);

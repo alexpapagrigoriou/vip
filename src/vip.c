@@ -10,8 +10,8 @@
 #include "keys.h"
 #include "terminal.h"
 
-int in_start = 1;
-int in_command = 0;
+bool in_start = true;
+bool in_command = false;
 
 void runVip(void) {
     initTerminal();
@@ -21,7 +21,7 @@ void runVip(void) {
         if (key == 'q') {
             break;
         }
-        in_start = 0;
+        in_start = false;
 
         if (isPrintable(key)) {
             insertChar(key);
