@@ -1,8 +1,10 @@
 #pragma once
 
+#include <stddef.h>
+
 typedef struct {
-    int row;
-    int col;
+    size_t row;
+    size_t col;
 } Position;
 
 extern Position screen;

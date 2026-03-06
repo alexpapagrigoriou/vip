@@ -1,23 +1,25 @@
 #pragma once
 
+#include <stddef.h>
+
 #include "terminal.h"
 
 typedef struct {
     char* chars;
-    int length;
+    size_t length;
 } Line;
 
 typedef struct {
     Line* lines;
-    int line_count;
+    size_t line_count;
 } Buffer;
 
 extern Position cursor;
 extern Position text;
 
 void initBuffer(void);
-Line* getLine(int row);
-int getLineCount(void);
+Line* getLine(size_t row);
+size_t getLineCount(void);
 void insertChar(char c);
 void deleteChar(void);
 void appendLine(void);

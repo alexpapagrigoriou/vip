@@ -27,11 +27,11 @@ void initBuffer(void) {
     text = (Position){0, 0};
 }
 
-Line* getLine(int row) {
+Line* getLine(size_t row) {
     return &buffer->lines[row];
 }
 
-int getLineCount(void) {
+size_t getLineCount(void) {
     return buffer->line_count;
 }
 
@@ -97,7 +97,7 @@ void deleteLine(void) {
 }
 
 void freeBuffer(void) {
-    for (int i = 0; i < buffer->line_count; i++) {
+    for (size_t i = 0; i < buffer->line_count; i++) {
         free(buffer->lines[i].chars);
     }
     free(buffer->lines);

@@ -34,7 +34,7 @@ void updateWindowSize(void) {
 }
 
 void moveCursor(Position pos) {
-    printf("\033[%d;%dH", pos.row + 1, pos.col + 1);
+    printf("\033[%zu;%zuH", pos.row + 1, pos.col + 1);
     fflush(stdout);
 }
 
