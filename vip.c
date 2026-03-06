@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "buffer.h"
 #include "colors.h"
 #include "draw.h"
 #include "init.h"
@@ -19,6 +20,16 @@ void runVip(void) {
         if (key == 'q') {
             break;
         }
+
+        if (isPrintable(key)) {
+            in_start = 0;
+
+            insertChar(key);
+        } else if (isEnter(key)) {
+            appendLine();
+        }
+
+        drawWindow();
 
         char command[128];
         snprintf(command, sizeof(command), BGREEN "Key code: %d" RESET "\t(testing... press 'q' to exit)", key);

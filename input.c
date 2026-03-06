@@ -8,7 +8,7 @@
 int readKey(void) {
     char c;
     if (read(STDIN_FILENO, &c, 1) == 1) {
-        if (c == '\x1b') {
+        if (c == 27) {
             char seq[2];
             struct timeval tv = {0, 10000};
             fd_set fds;
@@ -16,9 +16,9 @@ int readKey(void) {
             FD_SET(STDIN_FILENO, &fds);
 
             if (select(STDIN_FILENO + 1, &fds, NULL, NULL, &tv) == 0)
-                return '\x1b';
+                return 27;
             if (read(STDIN_FILENO, &seq[0], 1) == 0)
-                return '\x1b';
+                return 27;
             if (read(STDIN_FILENO, &seq[1], 1) == 0)
                 return '\x1b';
 
@@ -34,11 +34,19 @@ int readKey(void) {
                         return 1003;
                 }
             }
-            return '\x1b';
+            return 27;
         }
         return c;
     }
     return -1;
+}
+
+int isEnter(int c) {
+    return c == 13;
+}
+
+int isPrintable(int c) {
+    return c >= 32 && c <= 126;
 }
 
 void handleResize(int sig) {

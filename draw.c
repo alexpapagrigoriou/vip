@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "buffer.h"
 #include "colors.h"
 #include "terminal.h"
 #include "vip.h"
@@ -15,17 +16,15 @@ static void printCenteredLines(const char* text[], int n_text) {
             col = 0;
         }
 
-        Position center = {start_row + i + 1, col + 1};
-        moveCursor(center);
+        moveCursor((Position){start_row + i, col});
         printf("%s", text[i]);
     }
     fflush(stdout);
 }
 
 static void drawTildes(int start_row) {
-    for (int r = start_row; r < screen.row; r++) {
-        Position tilde = {r, 1};
-        moveCursor(tilde);
+    for (int r = start_row; r < screen.row - 1; r++) {
+        moveCursor((Position){r, 0});
         printf(BLUE "~" RESET);
     }
     fflush(stdout);
@@ -43,12 +42,23 @@ static void drawStart(void) {
     int n_text = sizeof(text) / sizeof(text[0]);
 
     printCenteredLines(text, n_text);
-    drawTildes(2);
+    drawTildes(1);
 }
 
 static void drawBuffer(void) {
-    // TODO: print text_buffer if you start editing
-    // drawTildes(n_lines);
+    int line_count = getLineCount();
+
+    for (int r = 0; r < screen.row - 1; r++) {
+        int draw_row = r + text.row;
+        if (draw_row >= line_count) {
+            break;
+        }
+
+        moveCursor((Position){r, 0});
+        printf("%s", getLine(draw_row)->chars);
+    }
+
+    drawTildes(line_count);
 }
 
 void drawWindow(void) {
@@ -64,8 +74,7 @@ void drawWindow(void) {
 }
 
 void printLastLine(const char* text) {
-    Position last_line = {screen.row, 1};
-    moveCursor(last_line);
+    moveCursor((Position){screen.row - 1, 0});
     cleanLine();
     printf("%s", text);
     fflush(stdout);

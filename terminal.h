@@ -6,8 +6,6 @@ typedef struct {
 } Position;
 
 extern Position screen;
-extern Position cursor;
-extern Position text;
 
 void disableRawMode(void);
 void enableRawMode(void);

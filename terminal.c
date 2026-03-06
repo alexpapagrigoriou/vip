@@ -9,9 +9,7 @@
 
 struct termios original;
 
-Position screen = {0, 0};
-Position cursor = {1, 1};
-Position text = {0, 0};
+Position screen;
 
 void disableRawMode(void) {
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &original);
@@ -36,7 +34,7 @@ void updateWindowSize(void) {
 }
 
 void moveCursor(Position pos) {
-    printf("\033[%d;%dH", pos.row, pos.col);
+    printf("\033[%d;%dH", pos.row + 1, pos.col + 1);
     fflush(stdout);
 }
 
