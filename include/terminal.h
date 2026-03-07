@@ -11,7 +11,9 @@ extern Position screen;
 
 void disableRawMode(void);
 void enableRawMode(void);
-void updateWindowSize(void);
 void moveCursor(Position pos);
+void resetCursor(void);
+void updateWindowSize(void);
 void cleanScreen(void);
 void cleanLine(void);
+void refreshWindow(void);

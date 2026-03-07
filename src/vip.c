@@ -37,8 +37,9 @@ void runVip(void) {
 
         char command[128];
         snprintf(command, sizeof(command), BGREEN "Key code: %d" RESET "\t(testing... press 'q' to exit)", key);
-        printLastLine(command);
+        drawCommand(command);
 
-        moveCursor(cursor);
+        resetCursor();
+        refreshWindow();
     }
 }

@@ -15,7 +15,6 @@ static void printCenteredLines(const char* text[], size_t n_text) {
         moveCursor((Position){start_row + i, col});
         printf("%s", text[i]);
     }
-    fflush(stdout);
 }
 
 static void drawTildes(size_t start_row) {
@@ -23,7 +22,6 @@ static void drawTildes(size_t start_row) {
         moveCursor((Position){r, 0});
         printf(BLUE "~" RESET);
     }
-    fflush(stdout);
 }
 
 static void drawStart(void) {
@@ -65,15 +63,10 @@ void drawWindow(void) {
     } else {
         drawBuffer();
     }
-
-    moveCursor(cursor);
-
-    fflush(stdout);
 }
 
-void printLastLine(const char* text) {
+void drawCommand(const char* text) {
     moveCursor((Position){screen.row - 1, 0});
     cleanLine();
     printf("%s", text);
-    fflush(stdout);
 }

@@ -14,5 +14,8 @@ void initTerminal(void) {
 
     signal(SIGWINCH, handleResize);
     updateWindowSize();
+
+    refreshWindow();
+
     atexit(cleanScreen);
 }

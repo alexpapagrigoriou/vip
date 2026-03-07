@@ -1,4 +1,4 @@
 #pragma once
 
 void drawWindow(void);
-void printLastLine(const char* text);
+void drawCommand(const char* text);

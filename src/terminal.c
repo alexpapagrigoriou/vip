@@ -5,6 +5,7 @@
 #include <termios.h>
 #include <unistd.h>
 
+#include "buffer.h"
 #include "draw.h"
 
 struct termios original;
@@ -24,6 +25,14 @@ void enableRawMode(void) {
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
 
+void moveCursor(Position pos) {
+    printf("\033[%zu;%zuH", pos.row + 1, pos.col + 1);
+}
+
+void resetCursor(void) {
+    moveCursor(cursor);
+}
+
 void updateWindowSize(void) {
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
@@ -31,19 +40,17 @@ void updateWindowSize(void) {
     screen.col = w.ws_col;
 
     drawWindow();
-}
-
-void moveCursor(Position pos) {
-    printf("\033[%zu;%zuH", pos.row + 1, pos.col + 1);
-    fflush(stdout);
+    resetCursor();
 }
 
 void cleanScreen(void) {
     printf("\033[H\033[2J");
-    fflush(stdout);
 }
 
 void cleanLine(void) {
     printf("\r\033[2K");
+}
+
+void refreshWindow(void) {
     fflush(stdout);
 }
