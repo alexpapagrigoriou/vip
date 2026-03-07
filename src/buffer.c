@@ -51,13 +51,13 @@ void insertChar(char c) {
 void deleteChar(void) {
     Line* line = &buffer->lines[cursor.row];
 
-    if (line->length == 0) {
+    if (cursor.col == line->length) {
         return;
     }
 
-    line->chars = realloc(line->chars, line->length);
+    memmove(&line->chars[cursor.col], &line->chars[cursor.col + 1], line->length - cursor.col);
 
-    memmove(&line->chars[cursor.col], &line->chars[cursor.col + 1], line->length - cursor.col - 1);
+    line->chars = realloc(line->chars, line->length - 1);
 
     line->length--;
 }
@@ -86,6 +86,14 @@ void prependLine(void) {
 }
 
 void deleteLine(void) {
+    cursor.col = 0;
+
+    if (buffer->line_count == 1) {
+        buffer->lines[cursor.row].chars[0] = '\0';
+        buffer->lines[cursor.row].length = 0;
+        return;
+    }
+
     free(buffer->lines[cursor.row].chars);
 
     memmove(&buffer->lines[cursor.row], &buffer->lines[cursor.row + 1], sizeof(Line) * (buffer->line_count - cursor.row - 1));
@@ -93,7 +101,9 @@ void deleteLine(void) {
     buffer->lines = realloc(buffer->lines, sizeof(Line) * (buffer->line_count - 1));
     buffer->line_count--;
 
-    cursor.col = 0;
+    if (cursor.row == buffer->line_count) {
+        cursor.row--;
+    }
 }
 
 void freeBuffer(void) {

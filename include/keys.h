@@ -8,7 +8,7 @@
 #define ESC 27
 #define BACKSPACE 127
 
-#define UP_ARROW 1000
-#define DOWN_ARROW 1001
-#define RIGHT_ARROW 1002
-#define LEFT_ARROW 1003
+#define UP 1000
+#define DOWN 1001
+#define RIGHT 1002
+#define LEFT 1003
