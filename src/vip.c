@@ -28,9 +28,7 @@ void runVip(void) {
         if (key == 'q') {
             break;
         } else if (key == TAB) {
-            for (int i = 0; i < 4; i++) {
-                insertChar(' ');
-            }
+            insertString("    ");
         } else if (key == ENTER) {
             appendLine();
         } else if (key == '1') {

@@ -35,7 +35,7 @@ size_t getLineCount(void) {
     return buffer->line_count;
 }
 
-void insertChar(char c) {
+void insertChar(const char c) {
     Line* line = &buffer->lines[cursor.row];
 
     line->chars = realloc(line->chars, line->length + 2);
@@ -46,6 +46,21 @@ void insertChar(char c) {
     line->length++;
 
     cursor.col++;
+}
+
+void insertString(const char* text) {
+    size_t text_length = strlen(text);
+
+    Line* line = &buffer->lines[cursor.row];
+
+    line->chars = realloc(line->chars, line->length + text_length + 1);
+
+    memmove(&line->chars[cursor.col + text_length], &line->chars[cursor.col], line->length - cursor.col + 1);
+
+    memmove(&line->chars[cursor.col], text, text_length);
+    line->length += text_length;
+
+    cursor.col += text_length;
 }
 
 void deleteChar(void) {
