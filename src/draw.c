@@ -6,7 +6,8 @@
 #include "buffer.h"
 #include "colors.h"
 #include "terminal.h"
-#include "vip.h"
+
+bool in_start = true;
 
 static void printCenteredLines(const char* text[], size_t n_text) {
     size_t start_row = (screen.row - n_text) / 2;

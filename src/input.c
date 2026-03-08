@@ -26,13 +26,13 @@ int readKey(void) {
             if (seq[0] == '[') {
                 switch (seq[1]) {
                     case 'A':
-                        return UP_ARROW;
+                        return UP;
                     case 'B':
-                        return DOWN_ARROW;
+                        return DOWN;
                     case 'C':
-                        return RIGHT_ARROW;
+                        return RIGHT;
                     case 'D':
-                        return LEFT_ARROW;
+                        return LEFT;
                 }
             }
             return ESC;

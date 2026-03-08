@@ -1,5 +1,6 @@
 #include "vip.h"
 
+#include <stdbool.h>
 #include <stdio.h>
 
 #include "buffer.h"
@@ -10,7 +11,6 @@
 #include "keys.h"
 #include "terminal.h"
 
-bool in_start = true;
 bool in_command = false;
 
 bool save_curosr_col;

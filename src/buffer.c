@@ -3,17 +3,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct {
+    Line* lines;
+    size_t line_count;
+} Buffer;
+
 Buffer* buffer;
 
 Position cursor;
 Position text;
-
-static void initLine(Line* line) {
-    line->chars = malloc(1);
-    line->chars[0] = '\0';
-
-    line->length = 0;
-}
 
 void initBuffer(void) {
     buffer = malloc(sizeof(Buffer));
@@ -123,7 +121,7 @@ void deleteLine(void) {
 
 void freeBuffer(void) {
     for (size_t i = 0; i < buffer->line_count; i++) {
-        free(buffer->lines[i].chars);
+        freeLine(&buffer->lines[i]);
     }
     free(buffer->lines);
 }
