@@ -70,7 +70,7 @@ void deleteChar(void) {
 
     memmove(&line->chars[cursor.col], &line->chars[cursor.col + 1], line->length - cursor.col);
 
-    line->chars = realloc(line->chars, line->length - 1);
+    line->chars = realloc(line->chars, line->length);
 
     line->length--;
 }
