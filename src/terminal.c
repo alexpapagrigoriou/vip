@@ -33,16 +33,6 @@ void resetCursor(void) {
     moveCursor(cursor);
 }
 
-void updateWindowSize(void) {
-    struct winsize w;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-    screen.row = w.ws_row;
-    screen.col = w.ws_col;
-
-    drawWindow();
-    resetCursor();
-}
-
 void cleanScreen(void) {
     printf("\033[H\033[2J");
 }
@@ -53,4 +43,16 @@ void cleanLine(void) {
 
 void refreshWindow(void) {
     fflush(stdout);
+}
+
+void updateWindowSize(void) {
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    screen.row = w.ws_row;
+    screen.col = w.ws_col;
+
+    drawWindow();
+    resetCursor();
+
+    refreshWindow();
 }

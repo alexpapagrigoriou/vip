@@ -13,7 +13,7 @@ void disableRawMode(void);
 void enableRawMode(void);
 void moveCursor(Position pos);
 void resetCursor(void);
-void updateWindowSize(void);
 void cleanScreen(void);
 void cleanLine(void);
 void refreshWindow(void);
+void updateWindowSize(void);
