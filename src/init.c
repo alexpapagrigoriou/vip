@@ -2,8 +2,9 @@
 #include <stdlib.h>
 
 #include "buffer.h"
-#include "command.h"
+#include "draw.h"
 #include "input.h"
+#include "status.h"
 #include "terminal.h"
 
 void initTerminal(void) {
@@ -13,13 +14,11 @@ void initTerminal(void) {
     initBuffer();
     atexit(freeBuffer);
 
-    initCommandLine();
-    atexit(freeCommandLine);
+    initStatusLine();
+    atexit(freeStatusLine);
 
     signal(SIGWINCH, handleResize);
     updateWindowSize();
-
-    refreshWindow();
 
     atexit(cleanScreen);
 }

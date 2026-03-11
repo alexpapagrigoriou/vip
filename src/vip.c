@@ -85,11 +85,10 @@ void runVip(void) {
             prev_cursor_col = cursor.col;
         }
 
-        char command[128];
-        snprintf(command, sizeof(command), BGREEN "Key code: %d" RESET "\trow: %zu, col: %zu, prev_col: %zu", key, cursor.row, cursor.col, prev_cursor_col);
-        drawCommand(command);
+        char status_line[128];
+        snprintf(status_line, sizeof(status_line), BGREEN "Key code: %d" RESET "\trow: %zu, col: %zu, prev_col: %zu", key, cursor.row, cursor.col, prev_cursor_col);
+        drawStatusLine(status_line);
 
-        resetCursor();
         refreshWindow();
     }
 }
