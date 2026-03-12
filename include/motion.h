@@ -14,9 +14,6 @@ void moveDown(Editor* editor);
 void moveRight(Editor* editor);
 void moveLeft(Editor* editor);
 
-Range moveToTopOfScreen(Editor* editor);
-Range moveToMiddleOfScreen(Editor* editor);
-Range moveToBottomOfScreen(Editor* editor);
 Range jumpForwardsToStartOfWord(Editor* editor);
 Range jumpForwardsToStartOfBigWord(Editor* editor);
 Range jumpForwardToEndOfWord(Editor* editor);

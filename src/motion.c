@@ -59,21 +59,6 @@ void moveLeft(Editor* editor) {
     }
 }
 
-Range moveToTopOfScreen(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
-}
-
-Range moveToMiddleOfScreen(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
-}
-
-Range moveToBottomOfScreen(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
-}
-
 Range jumpForwardsToStartOfWord(Editor* editor) {
     (void)editor;
     return (Range){(Position){0, 0}, (Position){0, 0}};
