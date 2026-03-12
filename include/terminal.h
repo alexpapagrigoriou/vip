@@ -11,3 +11,4 @@ void disableRawMode(void);
 void enableRawMode(void);
 void updateWindowSize(void);
 Position getMaxScreen(void);
+Position getMaxBuffer(void);

@@ -51,15 +51,17 @@ void runVip(char* filename) {
 
         handleKey(&editor, key);
 
-        drawWindow();
+        fixTextPosition(&editor);
 
         if (editor.save_curosr_col) {
             editor.prev_cursor_col = editor.cursor.col;
         }
 
         char status_line[128];
-        snprintf(status_line, sizeof(status_line), BGREEN "Key code: %d" RESET "\trow: %zu, col: %zu, prev_col: %zu, Mode: %d", key, editor.cursor.row, editor.cursor.col, editor.prev_cursor_col, editor.mode);
-        drawStatusLine(status_line);
+        snprintf(status_line, sizeof(status_line), BGREEN "Key code: %d" RESET "\trow: %zu, col: %zu, prev_col: %zu, Mode: %d, max_row: %zu, max_col: %zu, t_row: %zu, t_col: %zu", key, editor.cursor.row, editor.cursor.col, editor.prev_cursor_col, editor.mode, getMaxScreen().row, getMaxScreen().col, editor.text.row, editor.text.col);
+        // editor.status_line->chars = status_line;
+
+        drawWindow();
 
         refreshWindow();
     }
@@ -69,6 +71,10 @@ void runVip(char* filename) {
 
 Line* getLine(size_t row) {
     return &editor.buffer->lines[row];
+}
+
+Line* getStatusLine(void) {
+    return editor.status_line;
 }
 
 size_t getLineCount(void) {

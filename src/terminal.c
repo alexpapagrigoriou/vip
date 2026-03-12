@@ -37,3 +37,7 @@ void updateWindowSize(void) {
 Position getMaxScreen(void) {
     return max_screen;
 }
+
+Position getMaxBuffer(void) {
+    return (Position){max_screen.row - 1, max_screen.col};
+}
