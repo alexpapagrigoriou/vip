@@ -1,4 +1,6 @@
 #pragma once
 
-void initStatusLine(void);
-void freeStatusLine(void);
+#include "line.h"
+
+Line* createStatusLine(void);
+void freeStatusLine(Line* status_line);

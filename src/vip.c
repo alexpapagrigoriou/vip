@@ -1,94 +1,88 @@
 #include "vip.h"
 
-#include <stdbool.h>
+#include <signal.h>
 #include <stdio.h>
 
-#include "buffer.h"
 #include "colors.h"
 #include "draw.h"
-#include "init.h"
 #include "input.h"
-#include "keys.h"
-#include "terminal.h"
+#include "keymap.h"
+#include "motion.h"
+#include "status.h"
 
-bool in_command = false;
+static Editor editor;
 
-bool save_curosr_col;
-size_t prev_cursor_col = 0;
+static void editorInit(Editor* editor, char* filename) {
+    editor->buffer = createBuffer();
+    editor->cursor = (Position){0, 0};
+    editor->save_curosr_col = true;
+    editor->prev_cursor_col = 0;
+    editor->text = (Position){0, 0};
+    editor->status_line = createStatusLine();
+    editor->status_cursor_col = 0;
+    editor->in_start = filename == NULL;
+    editor->pending_operator = '\0';
+    editor->mode = NORMAL;
+    editor->filename = filename;
+}
 
-void runVip(void) {
-    initTerminal();
+static void cleanup(Editor* editor) {
+    disableRawMode();
 
-    while (1) {
+    freeBuffer(editor->buffer);
+    freeStatusLine(editor->status_line);
+
+    cleanScreen();
+}
+
+void runVip(char* filename) {
+    enableRawMode();
+
+    editorInit(&editor, filename);
+
+    signal(SIGWINCH, handleResize);
+    updateWindowSize();
+
+    while (editor.mode != EXIT) {
         int key = readKey();
 
-        in_start = false;
-        save_curosr_col = true;
+        editor.in_start = false;
+        editor.save_curosr_col = true;
 
-        if (key == 'q') {
-            break;
-        } else if (key == TAB) {
-            insertString("    ");
-        } else if (key == ENTER) {
-            appendLine();
-        } else if (key == '1') {
-            deleteChar();
-        } else if (key == '2') {
-            prependLine();
-        } else if (key == '3') {
-            deleteLine();
-        } else if (isPrintable(key)) {
-            insertChar(key);
-        } else if (key == UP) {
-            save_curosr_col = false;
-
-            if (cursor.row > 0) {
-                cursor.row--;
-
-                size_t line_length = getLine(cursor.row)->length;
-                if (prev_cursor_col < line_length) {
-                    cursor.col = prev_cursor_col;
-                } else {
-                    cursor.col = line_length;
-                }
-            }
-        } else if (key == DOWN) {
-            save_curosr_col = false;
-
-            if (cursor.row < getLineCount() - 1) {
-                cursor.row++;
-
-                size_t line_length = getLine(cursor.row)->length;
-                if (prev_cursor_col < line_length) {
-                    cursor.col = prev_cursor_col;
-                } else {
-                    cursor.col = line_length;
-                }
-            }
-        } else if (key == RIGHT) {
-            if (cursor.col < getLine(cursor.row)->length) {
-                cursor.col++;
-            } else {
-                save_curosr_col = false;
-            }
-        } else if (key == LEFT) {
-            if (cursor.col > 0) {
-                cursor.col--;
-            } else {
-                save_curosr_col = false;
-            }
-        }
+        handleKey(&editor, key);
 
         drawWindow();
 
-        if (save_curosr_col) {
-            prev_cursor_col = cursor.col;
+        if (editor.save_curosr_col) {
+            editor.prev_cursor_col = editor.cursor.col;
         }
 
         char status_line[128];
-        snprintf(status_line, sizeof(status_line), BGREEN "Key code: %d" RESET "\trow: %zu, col: %zu, prev_col: %zu", key, cursor.row, cursor.col, prev_cursor_col);
+        snprintf(status_line, sizeof(status_line), BGREEN "Key code: %d" RESET "\trow: %zu, col: %zu, prev_col: %zu, Mode: %d", key, editor.cursor.row, editor.cursor.col, editor.prev_cursor_col, editor.mode);
         drawStatusLine(status_line);
 
         refreshWindow();
     }
+
+    cleanup(&editor);
+}
+
+Line* getLine(size_t row) {
+    return &editor.buffer->lines[row];
+}
+
+size_t getLineCount(void) {
+    return editor.buffer->line_count;
+}
+
+Position getCursorPosition(void) {
+    return editor.cursor;
+}
+
+Position getTextPosition(void) {
+    return editor.text;
+}
+
+bool isInStart(void) {
+    return editor.in_start;
 }

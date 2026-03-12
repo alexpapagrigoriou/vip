@@ -3,6 +3,7 @@
 #define FIRST_PRINTABLE 32
 #define LAST_PRINTABLE 126
 
+#define CTRL_F 6
 #define TAB 9
 #define ENTER 13
 #define ESC 27

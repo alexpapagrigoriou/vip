@@ -4,8 +4,6 @@
 
 #include "terminal.h"
 
-extern bool in_start;
-
 void moveCursor(Position pos);
 void cleanScreen(void);
 void cleanLine(void);

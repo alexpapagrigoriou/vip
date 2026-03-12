@@ -5,16 +5,17 @@
 #include "line.h"
 #include "terminal.h"
 
-extern Position cursor;
-extern Position text;
+typedef struct {
+    Line* lines;
+    size_t line_count;
+} Buffer;
 
-void initBuffer(void);
-Line* getLine(size_t row);
-size_t getLineCount(void);
-void insertChar(const char c);
-void insertString(const char* text);
-void deleteChar(void);
-void appendLine(void);
-void prependLine(void);
-void deleteLine(void);
-void freeBuffer(void);
+Buffer* createBuffer(void);
+void freeBuffer(Buffer* buffer);
+void insertChar(Buffer* buffer, Position* cursor, const char c);
+void insertString(Buffer* buffer, Position* cursor, const char* text);
+void clearLine(Buffer* buffer, Position* cursor);
+void deleteChar(Buffer* buffer, Position* cursor);
+void appendLine(Buffer* buffer, Position* cursor);
+void prependLine(Buffer* buffer, Position* cursor);
+void deleteLine(Buffer* buffer, Position* cursor);

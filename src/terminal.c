@@ -33,3 +33,7 @@ void updateWindowSize(void) {
 
     refreshWindow();
 }
+
+Position getMaxScreen(void) {
+    return max_screen;
+}

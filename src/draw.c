@@ -3,17 +3,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "buffer.h"
 #include "colors.h"
-
-bool in_start = true;
+#include "vip.h"
 
 void moveCursor(Position pos) {
     printf("\033[%zu;%zuH", pos.row + 1, pos.col + 1);
-}
-
-static void resetCursor(void) {
-    moveCursor(cursor);
 }
 
 void cleanScreen(void) {
@@ -25,16 +19,16 @@ void cleanLine(void) {
 }
 
 static void printCenteredLines(const char* text[], size_t n_text) {
-    size_t start_row = (max_screen.row - n_text) / 2;
+    size_t start_row = (getMaxScreen().row - n_text) / 2;
     for (size_t i = 0; i < n_text; i++) {
-        size_t col = (max_screen.col - strlen(text[i])) / 2;
+        size_t col = (getMaxScreen().col - strlen(text[i])) / 2;
         moveCursor((Position){start_row + i, col});
         printf("%s", text[i]);
     }
 }
 
 static void drawTildes(size_t start_row) {
-    for (size_t r = start_row; r < max_screen.row - 1; r++) {
+    for (size_t r = start_row; r < getMaxScreen().row - 1; r++) {
         moveCursor((Position){r, 0});
         printf(BLUE "~" RESET);
     }
@@ -58,14 +52,14 @@ static void drawStart(void) {
 static void drawBuffer(void) {
     size_t line_count = getLineCount();
 
-    for (size_t r = 0; r < max_screen.row - 1; r++) {
-        size_t draw_row = r + text.row;
+    for (size_t r = 0; r < getMaxScreen().row - 1; r++) {
+        size_t draw_row = r + getTextPosition().row;
         if (draw_row >= line_count) {
             break;
         }
 
         moveCursor((Position){r, 0});
-        printf("%.*s", (int)max_screen.col, getLine(draw_row)->chars + text.col);
+        printf("%.*s", (int)getMaxScreen().col, getLine(draw_row)->chars + getTextPosition().col);
     }
 
     drawTildes(line_count);
@@ -74,7 +68,7 @@ static void drawBuffer(void) {
 void drawWindow(void) {
     cleanScreen();
 
-    if (in_start) {
+    if (isInStart()) {
         drawStart();
     } else {
         drawBuffer();
@@ -82,13 +76,13 @@ void drawWindow(void) {
 }
 
 void drawStatusLine(const char* text) {
-    moveCursor((Position){max_screen.row - 1, 0});
+    moveCursor((Position){getMaxScreen().row - 1, 0});
     cleanLine();
     printf("%s", text);
 }
 
 void refreshWindow(void) {
-    resetCursor();
+    moveCursor(getCursorPosition());
 
     fflush(stdout);
 }

@@ -7,8 +7,7 @@ typedef struct {
     size_t col;
 } Position;
 
-extern Position max_screen;
-
 void disableRawMode(void);
 void enableRawMode(void);
 void updateWindowSize(void);
+Position getMaxScreen(void);
