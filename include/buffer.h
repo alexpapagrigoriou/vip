@@ -19,4 +19,4 @@ void deleteChar(Buffer* buffer, Position* cursor);
 void replaceChar(Buffer* buffer, Position* cursor, const int count, const char c);
 void appendLine(Buffer* buffer, Position* cursor);
 void prependLine(Buffer* buffer, Position* cursor);
-void deleteLine(Buffer* buffer, Position* cursor);
+void deleteLine(Buffer* buffer, Position* cursor, const int count);

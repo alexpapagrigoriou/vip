@@ -114,22 +114,24 @@ void clearLine(Buffer* buffer, Position* cursor) {
     buffer->lines[cursor->row].length = 0;
 }
 
-void deleteLine(Buffer* buffer, Position* cursor) {
+void deleteLine(Buffer* buffer, Position* cursor, const int count) {
     cursor->col = 0;
 
-    if (buffer->line_count == 1) {
-        clearLine(buffer, cursor);
-        return;
-    }
+    for (int i = 0; i < count; i++) {
+        if (buffer->line_count == 1) {
+            clearLine(buffer, cursor);
+            return;
+        }
 
-    free(buffer->lines[cursor->row].chars);
+        free(buffer->lines[cursor->row].chars);
 
-    memmove(&buffer->lines[cursor->row], &buffer->lines[cursor->row + 1], sizeof(Line) * (buffer->line_count - cursor->row - 1));
+        memmove(&buffer->lines[cursor->row], &buffer->lines[cursor->row + 1], sizeof(Line) * (buffer->line_count - cursor->row - 1));
 
-    buffer->lines = realloc(buffer->lines, sizeof(Line) * (buffer->line_count - 1));
-    buffer->line_count--;
+        buffer->lines = realloc(buffer->lines, sizeof(Line) * (buffer->line_count - 1));
+        buffer->line_count--;
 
-    if (cursor->row == buffer->line_count) {
-        cursor->row--;
+        if (cursor->row == buffer->line_count) {
+            cursor->row--;
+        }
     }
 }

@@ -3,6 +3,12 @@
 #include <stdbool.h>
 
 #include "command.h"
+#include "motion.h"
+
+static void executeAndInit(Parser* parser, Editor* editor) {
+    executeCommand(parser, editor);
+    parserInit(parser);
+}
 
 void parserInit(Parser* parser) {
     parser->state = STATE_NORMAL;
@@ -16,8 +22,7 @@ void parserInit(Parser* parser) {
 static void handleNormalMode(Parser* parser, Editor* editor, int key) {
     if (parser->cmd.operator == OP_REPLACE) {
         parser->cmd.argument = key;
-        executeCommand(parser, editor);
-        parserInit(parser);
+        executeAndInit(parser, editor);
         return;
     }
 
@@ -34,48 +39,52 @@ static void handleNormalMode(Parser* parser, Editor* editor, int key) {
 
     parser->cmd.keyCache[parser->cmd.keyCacheLength++] = key;
 
-    bool ready_to_execute = false;
     if (parser->cmd.motion != MOT_NONE) {
         switch (key) {
             case 'g':
                 if (parser->cmd.motion == MOT_FIRST_LINE_PENDING) {
                     parser->cmd.motion = MOT_FIRST_LINE;
-                    ready_to_execute = true;
+                    executeAndInit(parser, editor);
+                } else {
+                    parserInit(parser);
                 }
-                break;
+                return;
             case 'f':
                 if (parser->cmd.motion == MOT_NEXT_OCCURRENCE_OF_CHAR_PENDING) {
                     parser->cmd.motion = MOT_NEXT_OCCURRENCE_OF_CHAR;
-                    ready_to_execute = true;
+                    executeAndInit(parser, editor);
+                } else {
+                    parserInit(parser);
                 }
-                break;
+                return;
             case 't':
                 if (parser->cmd.motion == MOT_BEFORE_NEXT_OCCURRENCE_OF_CHAR_PENDING) {
                     parser->cmd.motion = MOT_BEFORE_NEXT_OCCURRENCE_OF_CHAR;
-                    ready_to_execute = true;
+                    executeAndInit(parser, editor);
+                } else {
+                    parserInit(parser);
                 }
-                break;
+                return;
             case 'F':
                 if (parser->cmd.motion == MOT_PREVIOUS_OCCURRENCE_OF_CHAR_PENDING) {
                     parser->cmd.motion = MOT_PREVIOUS_OCCURRENCE_OF_CHAR;
-                    ready_to_execute = true;
+                    executeAndInit(parser, editor);
+                } else {
+                    parserInit(parser);
                 }
-                break;
+                return;
             case 'T':
                 if (parser->cmd.motion == MOT_AFTER_PREVIOUS_OCCURRENCE_OF_CHAR_PENDING) {
                     parser->cmd.motion = MOT_AFTER_PREVIOUS_OCCURRENCE_OF_CHAR;
-                    ready_to_execute = true;
+                    executeAndInit(parser, editor);
+                } else {
+                    parserInit(parser);
                 }
-                break;
+                return;
         }
-        if (ready_to_execute) {
-            executeCommand(parser, editor);
-        }
-        parserInit(parser);
-        return;
     }
 
-    ready_to_execute = true;
+    bool ready_to_execute = true;
     switch (key) {
         case 'h':
             parser->cmd.motion = MOT_LEFT;
@@ -148,31 +157,30 @@ static void handleNormalMode(Parser* parser, Editor* editor, int key) {
     }
 
     if (ready_to_execute) {
-        executeCommand(parser, editor);
-        parserInit(parser);
+        executeAndInit(parser, editor);
         return;
     }
 
-    ready_to_execute = false;
+    Range range;
     switch (parser->state) {
         case STATE_NORMAL:
             switch (key) {
                 case 'd':
                     parser->state = STATE_OPERATOR_PENDING;
                     parser->cmd.operator = OP_DELETE;
-                    break;
+                    return;
                 case 'c':
                     parser->state = STATE_OPERATOR_PENDING;
                     parser->cmd.operator = OP_CHANGE;
-                    break;
+                    return;
                 case 'y':
                     parser->state = STATE_OPERATOR_PENDING;
                     parser->cmd.operator = OP_YANK;
-                    break;
+                    return;
                 case 'r':
                     parser->state = STATE_OPERATOR_PENDING;
                     parser->cmd.operator = OP_REPLACE;
-                    break;
+                    return;
             }
             break;
         case STATE_OPERATOR_PENDING:
@@ -180,30 +188,73 @@ static void handleNormalMode(Parser* parser, Editor* editor, int key) {
                 case 'd':
                     if (parser->cmd.operator == OP_DELETE) {
                         parser->cmd.motion = MOT_LINE;
-                        ready_to_execute = true;
+                        executeAndInit(parser, editor);
+                    } else {
+                        parserInit(parser);
                     }
-                    break;
+                    return;
                 case 'c':
                     if (parser->cmd.operator == OP_CHANGE) {
                         parser->cmd.motion = MOT_LINE;
-                        ready_to_execute = true;
+                        executeAndInit(parser, editor);
+                    } else {
+                        parserInit(parser);
                     }
-                    break;
+                    return;
                 case 'y':
                     if (parser->cmd.operator == OP_YANK) {
                         parser->cmd.motion = MOT_LINE;
-                        ready_to_execute = true;
+                        executeAndInit(parser, editor);
+                    } else {
+                        parserInit(parser);
                     }
-                    break;
+                    return;
+                default:
+                    parserInit(parser);
+                    return;
             }
             break;
     }
 
-    if (ready_to_execute) {
-        executeCommand(parser, editor);
-        parserInit(parser);
-        return;
+    switch (key) {
+        case 'i':
+            editor->mode = INSERT;
+            return;
+        case 'a':
+            moveRight(editor);
+            editor->mode = INSERT;
+            return;
+        case 'I':
+            range = jumpToFirstNonBlankCharOfLine(editor);
+            editor->cursor = range.start;
+            editor->mode = INSERT;
+            return;
+        case 'A':
+            range = jumpToEndOfLine(editor);
+            editor->cursor = range.end;
+            editor->mode = INSERT;
+            return;
+        case 'o':
+            appendLine(editor->buffer, &editor->cursor);
+            editor->mode = INSERT;
+            return;
+        case 'O':
+            prependLine(editor->buffer, &editor->cursor);
+            editor->mode = INSERT;
+            return;
+        case 'x':
+            parser->cmd.operator = OP_DELETE;
+            parser->cmd.motion = MOT_RIGHT;
+            executeAndInit(parser, editor);
+            return;
+        case 'X':
+            parser->cmd.operator = OP_DELETE;
+            parser->cmd.motion = MOT_LEFT;
+            executeAndInit(parser, editor);
+            return;
     }
+
+    parserInit(parser);
 }
 
 void handleKey(Parser* parser, Editor* editor, int key) {

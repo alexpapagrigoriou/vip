@@ -92,6 +92,11 @@ Range jumpBackwardsToStartOfBigWord(Editor* editor) {
     return (Range){(Position){0, 0}, (Position){0, 0}};
 }
 
+Range jumpToMatchingChar(Editor* editor) {
+    (void)editor;
+    return (Range){(Position){0, 0}, (Position){0, 0}};
+}
+
 Range jumpToStartOfLine(Editor* editor) {
     (void)editor;
     return (Range){(Position){0, 0}, (Position){0, 0}};

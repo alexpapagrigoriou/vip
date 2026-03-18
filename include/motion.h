@@ -55,6 +55,7 @@ Range jumpForwardToEndOfWord(Editor* editor);
 Range jumpForwardsToEndOfBigWord(Editor* editor);
 Range jumpBackwardsToStartOfWord(Editor* editor);
 Range jumpBackwardsToStartOfBigWord(Editor* editor);
+Range jumpToMatchingChar(Editor* editor);
 Range jumpToStartOfLine(Editor* editor);
 Range jumpToFirstNonBlankCharOfLine(Editor* editor);
 Range jumpToEndOfLine(Editor* editor);
