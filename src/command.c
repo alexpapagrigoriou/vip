@@ -1,5 +1,7 @@
 #include "command.h"
 
+#include "buffer.h"
+
 static void handleOperatorNone(Parser* parser, Editor* editor) {
     switch (parser->cmd.motion) {
         case MOT_LEFT:
@@ -60,6 +62,10 @@ static void handleOperatorChange(Parser* parser, Editor* editor) {
 static void handleOperatorYank(Parser* parser, Editor* editor) {
 }
 
+static void handleOperatorReplace(Parser* parser, Editor* editor) {
+    replaceChar(editor->buffer, &editor->cursor, parser->cmd.count, parser->cmd.argument);
+}
+
 void executeCommand(Parser* parser, Editor* editor) {
     switch (parser->cmd.operator) {
         case OP_NONE:
@@ -73,6 +79,9 @@ void executeCommand(Parser* parser, Editor* editor) {
             break;
         case OP_YANK:
             handleOperatorYank(parser, editor);
+            break;
+        case OP_REPLACE:
+            handleOperatorReplace(parser, editor);
             break;
     }
 }

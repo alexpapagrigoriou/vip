@@ -9,11 +9,18 @@ void parserInit(Parser* parser) {
     parser->cmd.count = 0;
     parser->cmd.operator = OP_NONE;
     parser->cmd.motion = MOT_NONE;
-    parser->cmd.search = '\0';
+    parser->cmd.argument = '\0';
     parser->cmd.keyCacheLength = 0;
 }
 
 static void handleNormalMode(Parser* parser, Editor* editor, int key) {
+    if (parser->cmd.operator == OP_REPLACE) {
+        parser->cmd.argument = key;
+        executeCommand(parser, editor);
+        parserInit(parser);
+        return;
+    }
+
     if (key >= '0' && key <= '9') {
         if (!(key == '0' && parser->cmd.count == 0)) {
             if (parser->cmd.operator == OP_NONE && parser->cmd.motion == MOT_NONE) {
@@ -161,6 +168,10 @@ static void handleNormalMode(Parser* parser, Editor* editor, int key) {
                 case 'y':
                     parser->state = STATE_OPERATOR_PENDING;
                     parser->cmd.operator = OP_YANK;
+                    break;
+                case 'r':
+                    parser->state = STATE_OPERATOR_PENDING;
+                    parser->cmd.operator = OP_REPLACE;
                     break;
             }
             break;

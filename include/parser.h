@@ -8,7 +8,7 @@ typedef struct {
     int count;
     Operator operator;
     Motion motion;
-    char search;
+    char argument;
     char keyCache[3];
     int keyCacheLength;
 } Command;

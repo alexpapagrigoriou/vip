@@ -67,6 +67,21 @@ void deleteChar(Buffer* buffer, Position* cursor) {
     }
 }
 
+void replaceChar(Buffer* buffer, Position* cursor, const int count, const char c) {
+    Line* line = &buffer->lines[cursor->row];
+
+    for (int i = 0; i < count; i++) {
+        if (cursor->col == line->length) {
+            return;
+        }
+
+        deleteChar(buffer, cursor);
+        insertChar(buffer, cursor, c);
+    }
+
+    cursor->col--;
+}
+
 void appendLine(Buffer* buffer, Position* cursor) {
     buffer->lines = realloc(buffer->lines, sizeof(Line) * (buffer->line_count + 1));
 
