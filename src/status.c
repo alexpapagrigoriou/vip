@@ -6,7 +6,7 @@
 
 Line* createStatusLine(void) {
     Line* status_line = malloc(sizeof(Line));
-    initLine(status_line);
+    lineInit(status_line);
 
     return status_line;
 }

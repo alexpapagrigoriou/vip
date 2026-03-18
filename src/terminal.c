@@ -6,9 +6,9 @@
 
 #include "draw.h"
 
-struct termios original;
+static struct termios original;
 
-Position max_screen;
+static Position max_screen;
 
 void disableRawMode(void) {
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &original);

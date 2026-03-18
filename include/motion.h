@@ -1,18 +1,18 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "editor.h"
 #include "terminal.h"
-#include "vip.h"
 
 typedef struct {
     Position start;
     Position end;
 } Range;
 
+void moveLeft(Editor* editor);
 void moveUp(Editor* editor);
 void moveDown(Editor* editor);
 void moveRight(Editor* editor);
-void moveLeft(Editor* editor);
 
 Range jumpForwardsToStartOfWord(Editor* editor);
 Range jumpForwardsToStartOfBigWord(Editor* editor);

@@ -2,8 +2,8 @@
 
 #include <stdbool.h>
 
+#include "editor.h"
 #include "terminal.h"
-#include "vip.h"
 
 void moveCursor(Position pos);
 void fixTextPosition(Editor* editor);

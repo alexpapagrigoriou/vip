@@ -1,5 +1,16 @@
 #include "motion.h"
 
+#include "editor.h"
+#include "vip.h"
+
+void moveLeft(Editor* editor) {
+    if (editor->cursor.col > 0) {
+        editor->cursor.col--;
+    } else {
+        editor->save_curosr_col = false;
+    }
+}
+
 void moveUp(Editor* editor) {
     editor->save_curosr_col = false;
 
@@ -46,14 +57,6 @@ void moveRight(Editor* editor) {
 
     if (editor->cursor.col < line_length) {
         editor->cursor.col++;
-    } else {
-        editor->save_curosr_col = false;
-    }
-}
-
-void moveLeft(Editor* editor) {
-    if (editor->cursor.col > 0) {
-        editor->cursor.col--;
     } else {
         editor->save_curosr_col = false;
     }

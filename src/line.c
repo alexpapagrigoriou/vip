@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-void initLine(Line* line) {
+void lineInit(Line* line) {
     line->chars = malloc(1);
     line->chars[0] = '\0';
 

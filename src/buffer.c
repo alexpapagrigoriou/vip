@@ -7,7 +7,7 @@ Buffer* createBuffer(void) {
     Buffer* buffer = malloc(sizeof(Buffer));
 
     buffer->lines = malloc(sizeof(Line));
-    initLine(&buffer->lines[0]);
+    lineInit(&buffer->lines[0]);
 
     buffer->line_count = 1;
 
@@ -72,7 +72,7 @@ void appendLine(Buffer* buffer, Position* cursor) {
 
     memmove(&buffer->lines[cursor->row + 2], &buffer->lines[cursor->row + 1], sizeof(Line) * (buffer->line_count - cursor->row - 1));
 
-    initLine(&buffer->lines[cursor->row + 1]);
+    lineInit(&buffer->lines[cursor->row + 1]);
     buffer->line_count++;
 
     cursor->row++;
@@ -84,7 +84,7 @@ void prependLine(Buffer* buffer, Position* cursor) {
 
     memmove(&buffer->lines[cursor->row + 1], &buffer->lines[cursor->row], sizeof(Line) * (buffer->line_count - cursor->row));
 
-    initLine(&buffer->lines[cursor->row]);
+    lineInit(&buffer->lines[cursor->row]);
     buffer->line_count++;
 
     cursor->col = 0;

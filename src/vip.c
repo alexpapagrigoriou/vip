@@ -5,32 +5,18 @@
 
 #include "colors.h"
 #include "draw.h"
+#include "editor.h"
 #include "input.h"
-#include "keymap.h"
 #include "motion.h"
-#include "status.h"
+#include "parser.h"
 
 static Editor editor;
-
-static void editorInit(Editor* editor, char* filename) {
-    editor->buffer = createBuffer();
-    editor->cursor = (Position){0, 0};
-    editor->save_curosr_col = true;
-    editor->prev_cursor_col = 0;
-    editor->text = (Position){0, 0};
-    editor->status_line = createStatusLine();
-    editor->status_cursor_col = 0;
-    editor->in_start = filename == NULL;
-    editor->pending_operator = '\0';
-    editor->mode = NORMAL;
-    editor->filename = filename;
-}
+static Parser parser;
 
 static void cleanup(Editor* editor) {
     disableRawMode();
 
-    freeBuffer(editor->buffer);
-    freeStatusLine(editor->status_line);
+    freeEditor(editor);
 
     cleanScreen();
 }
@@ -49,7 +35,7 @@ void runVip(char* filename) {
         editor.in_start = false;
         editor.save_curosr_col = true;
 
-        handleKey(&editor, key);
+        handleKey(&parser, &editor, key);
 
         fixTextPosition(&editor);
 
@@ -57,6 +43,7 @@ void runVip(char* filename) {
             editor.prev_cursor_col = editor.cursor.col;
         }
 
+        // TODO: take parser's key cache and output it to the status line
         char status_line[128];
         snprintf(status_line, sizeof(status_line), BGREEN "Key code: %d" RESET "\trow: %zu, col: %zu, prev_col: %zu, Mode: %d, max_row: %zu, max_col: %zu, t_row: %zu, t_col: %zu", key, editor.cursor.row, editor.cursor.col, editor.prev_cursor_col, editor.mode, getMaxScreen().row, getMaxScreen().col, editor.text.row, editor.text.col);
         // editor.status_line->chars = status_line;

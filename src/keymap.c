@@ -1,3 +1,4 @@
+/* KEEP FOR TESTING
 #include "keymap.h"
 
 #include "input.h"
@@ -139,3 +140,4 @@ void handleKey(Editor* editor, int key) {
             break;
     }
 }
+*/

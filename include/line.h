@@ -7,5 +7,5 @@ typedef struct {
     size_t length;
 } Line;
 
-void initLine(Line* line);
+void lineInit(Line* line);
 void freeLine(Line* line);
