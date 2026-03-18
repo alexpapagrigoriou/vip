@@ -70,13 +70,17 @@ void deleteChar(Buffer* buffer, Position* cursor) {
 void replaceChar(Buffer* buffer, Position* cursor, const int count, const char c) {
     Line* line = &buffer->lines[cursor->row];
 
-    for (int i = 0; i < count; i++) {
-        if (cursor->col == line->length) {
-            return;
-        }
+    if (cursor->col == line->length) {
+        return;
+    }
 
-        deleteChar(buffer, cursor);
-        insertChar(buffer, cursor, c);
+    for (int i = 0; i < count; i++) {
+        line->chars[cursor->col] = c;
+        cursor->col++;
+
+        if (cursor->col == line->length) {
+            break;
+        }
     }
 
     cursor->col--;
