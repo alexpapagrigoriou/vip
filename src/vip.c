@@ -7,7 +7,6 @@
 #include "draw.h"
 #include "editor.h"
 #include "input.h"
-#include "motion.h"
 #include "parser.h"
 
 static Editor editor;

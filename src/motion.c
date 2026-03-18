@@ -92,21 +92,6 @@ Range jumpBackwardsToStartOfBigWord(Editor* editor) {
     return (Range){(Position){0, 0}, (Position){0, 0}};
 }
 
-Range jumpBackwardToEndOfWord(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
-}
-
-Range jumpBackwardsToEndOfBigWord(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
-}
-
-Range moveToMatchingChar(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
-}
-
 Range jumpToStartOfLine(Editor* editor) {
     (void)editor;
     return (Range){(Position){0, 0}, (Position){0, 0}};
@@ -127,11 +112,6 @@ Range jumpToLastNonBlankCharOfLine(Editor* editor) {
     return (Range){(Position){0, 0}, (Position){0, 0}};
 }
 
-Range goToFirstLine(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
-}
-
 Range goToLastLine(Editor* editor) {
     (void)editor;
     return (Range){(Position){0, 0}, (Position){0, 0}};
@@ -140,6 +120,21 @@ Range goToLastLine(Editor* editor) {
 Range goToLine(Editor* editor, size_t row) {
     (void)editor;
     (void)row;
+    return (Range){(Position){0, 0}, (Position){0, 0}};
+}
+
+Range jumpToNextParagraph(Editor* editor) {
+    (void)editor;
+    return (Range){(Position){0, 0}, (Position){0, 0}};
+}
+
+Range jumpToPreviousParagraph(Editor* editor) {
+    (void)editor;
+    return (Range){(Position){0, 0}, (Position){0, 0}};
+}
+
+Range goToFirstLine(Editor* editor) {
+    (void)editor;
     return (Range){(Position){0, 0}, (Position){0, 0}};
 }
 
@@ -165,52 +160,4 @@ Range jumpAfterPreviousOccurrenceOfChar(Editor* editor, const char c) {
     (void)editor;
     (void)c;
     return (Range){(Position){0, 0}, (Position){0, 0}};
-}
-
-Range repeatPreviousSearchMovement(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
-}
-
-Range repeatPreviousSearchMovementBackwards(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
-}
-
-Range jumpToNextParagraph(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
-}
-
-Range jumpToPreviousParagraph(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
-}
-
-Range insideWord(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
-}
-
-Range insideBigWord(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
-}
-
-Range outsideWord(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
-}
-
-Range outsideBigWord(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
-}
-
-void moveDownHalfPage(Editor* editor) {
-    (void)editor;
-}
-
-void moveUpHalfPage(Editor* editor) {
-    (void)editor;
 }
