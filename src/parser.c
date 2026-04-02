@@ -10,6 +10,14 @@ static void executeAndInit(Parser* parser, Editor* editor) {
     parserInit(parser);
 }
 
+void moveCursorToStartOfRange(Editor* editor, Range range) {
+    editor->cursor = range.start;
+}
+
+void moveCursorToEndOfRange(Editor* editor, Range range) {
+    editor->cursor = range.end;
+}
+
 void parserInit(Parser* parser) {
     parser->state = STATE_NORMAL;
     parser->cmd.count = 0;
@@ -161,7 +169,6 @@ static void handleNormalMode(Parser* parser, Editor* editor, int key) {
         return;
     }
 
-    Range range;
     switch (parser->state) {
         case STATE_NORMAL:
             switch (key) {
@@ -225,13 +232,11 @@ static void handleNormalMode(Parser* parser, Editor* editor, int key) {
             editor->mode = INSERT;
             return;
         case 'I':
-            range = jumpToFirstNonBlankCharOfLine(editor);
-            editor->cursor = range.start;
+            moveCursorToStartOfRange(editor, jumpToFirstNonBlankCharOfLine(editor));
             editor->mode = INSERT;
             return;
         case 'A':
-            range = jumpToEndOfLine(editor);
-            editor->cursor = range.end;
+            moveCursorToEndOfRange(editor, jumpToEndOfLine(editor));
             editor->mode = INSERT;
             return;
         case 'o':
