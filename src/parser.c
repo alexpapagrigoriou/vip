@@ -3,6 +3,8 @@
 #include <stdbool.h>
 
 #include "command.h"
+#include "input.h"
+#include "keys.h"
 #include "motion.h"
 
 static void executeAndInit(Parser* parser, Editor* editor) {
@@ -262,19 +264,62 @@ static void handleNormalMode(Parser* parser, Editor* editor, int key) {
     parserInit(parser);
 }
 
+static void handleInsertMode(Editor* editor, int key) {
+    switch (key) {
+        case ESC:
+        case CTRL_F:
+            moveLeft(editor);
+            editor->mode = NORMAL;
+            break;
+        case TAB:
+            insertString(editor->buffer, &editor->cursor, "    ");
+            break;
+        case ENTER:
+            appendLine(editor->buffer, &editor->cursor);
+            break;
+        case UP:
+            moveUp(editor);
+            break;
+        case DOWN:
+            moveDown(editor);
+            break;
+        case RIGHT:
+            moveRight(editor);
+            break;
+        case LEFT:
+            moveLeft(editor);
+            break;
+        default:
+            if (isPrintable(key)) {
+                insertChar(editor->buffer, &editor->cursor, key);
+            }
+            break;
+    }
+}
+
+static void handleVisualMode(Editor* editor, int key) {
+    (void)editor;
+    (void)key;
+}
+
+static void handleCommandMode(Editor* editor, int key) {
+    (void)editor;
+    (void)key;
+}
+
 void handleKey(Parser* parser, Editor* editor, int key) {
     switch (editor->mode) {
         case NORMAL:
             handleNormalMode(parser, editor, key);
             break;
         case INSERT:
-            // handleInsertMode();
+            handleInsertMode(editor, key);
             break;
         case VISUAL:
-            // handleVisualMode();
+            handleVisualMode(editor, key);
             break;
         case COMMAND:
-            // handleCommandMode();
+            handleCommandMode(editor, key);
             break;
         case EXIT:
             break;
