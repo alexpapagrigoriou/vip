@@ -108,6 +108,10 @@ static void handleOperatorReplace(Parser* parser, Editor* editor) {
 }
 
 void executeCommand(Parser* parser, Editor* editor) {
+    if (parser->cmd.count == 0) {
+        parser->cmd.count = 1;
+    }
+
     switch (parser->cmd.operator) {
         case OP_NONE:
             handleOperatorNone(parser, editor);
