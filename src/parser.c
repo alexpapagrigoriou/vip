@@ -30,6 +30,12 @@ void parserInit(Parser* parser) {
 }
 
 static void handleNormalMode(Parser* parser, Editor* editor, int key) {
+    // TODO: remove exiting with 'q' after handling commmand mode
+    if (key == 'q' && parser->state == STATE_NORMAL) {
+        editor->mode = EXIT;
+        return;
+    }
+
     if (parser->cmd.operator == OP_REPLACE) {
         parser->cmd.argument = key;
         executeAndInit(parser, editor);
