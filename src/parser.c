@@ -20,6 +20,7 @@ static void parserInit(Parser* parser) {
     parser->cmd.operator = OP_NONE;
     parser->cmd.motion = MOT_NONE;
     parser->cmd.argument = '\0';
+    parser->cmd.key_cache.chars[0] = '\0';
     parser->cmd.key_cache.length = 0;
 }
 
@@ -53,6 +54,7 @@ static void handleNormalMode(Parser* parser, Editor* editor, int key) {
     }
 
     parser->cmd.key_cache.chars[parser->cmd.key_cache.length++] = key;
+    parser->cmd.key_cache.chars[parser->cmd.key_cache.length] = '\0';
 
     if (parser->cmd.motion != MOT_NONE) {
         switch (key) {

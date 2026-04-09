@@ -62,11 +62,11 @@ char* getStatusLine(void) {
 }
 
 char* getKeyCacheString(void) {
-    // TODO: return count + key cache
-
-    // parser.cmd.count;
-    // parser.cmd.key_cache.chars
-    // parser.cmd.key_cache.length
+    if (parser.cmd.count == 0) {
+        snprintf(editor.key_cache_string, sizeof(editor.key_cache_string), "%s", parser.cmd.key_cache.chars);
+    } else {
+        snprintf(editor.key_cache_string, sizeof(editor.key_cache_string), "%d%s", parser.cmd.count, parser.cmd.key_cache.chars);
+    }
 
     return editor.key_cache_string;
 }

@@ -4,8 +4,10 @@
 #include "motion.h"
 #include "operator.h"
 
+#define KEY_CACHE_SIZE 3
+
 typedef struct {
-    char chars[3];
+    char chars[KEY_CACHE_SIZE + 1];
     int length;
 } KeyCache;
 

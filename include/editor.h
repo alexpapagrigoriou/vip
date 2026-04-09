@@ -20,8 +20,8 @@ typedef struct {
     size_t prev_cursor_col;
     Position text;
     char status_line[256];
-    char key_cache_string[KEY_CACHE_SIZE + 1];
-    char cursor_position_string[CURSOR_POSITION_SIZE + 1];
+    char key_cache_string[KEY_CACHE_STRING_SIZE + 1];
+    char cursor_position_string[CURSOR_POSITION_STRING_SIZE + 1];
     size_t status_cursor_col;
     bool in_start;
     Mode mode;

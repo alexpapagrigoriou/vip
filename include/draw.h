@@ -2,8 +2,8 @@
 
 #include "terminal.h"
 
-#define KEY_CACHE_SIZE 10
-#define CURSOR_POSITION_SIZE 10
+#define KEY_CACHE_STRING_SIZE 10
+#define CURSOR_POSITION_STRING_SIZE 10
 
 void moveCursor(Position pos);
 void fixTextPosition(Position cursor, Position* text);
