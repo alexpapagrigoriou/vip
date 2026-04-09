@@ -7,6 +7,7 @@
 #include "draw.h"
 #include "editor.h"
 #include "input.h"
+#include "parser.h"
 
 static Editor editor;
 static Parser parser;
@@ -60,8 +61,22 @@ char* getStatusLine(void) {
     return editor.status_line;
 }
 
-KeyCache getKeyCache(void) {
-    return parser.cmd.key_cache;
+char* getKeyCacheString(void) {
+    // TODO: return count + key cache
+    // char key_cache[KEY_CACHE_SIZE + 1];
+
+    // parser.cmd.count;
+    // parser.cmd.key_cache.chars
+    // parser.cmd.key_cache.length
+
+    return "";
+}
+
+char* getCursorPositionString(void) {
+    // TODO: return row,col
+    // char cursor_position[CURSOR_POSITION_SIZE + 1];
+
+    return "";
 }
 
 size_t getLineCount(void) {

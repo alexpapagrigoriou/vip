@@ -96,8 +96,11 @@ static void drawStatusLine(void) {
 
     // TODO: print key cache and cursor position at end of status line
 
-    // getKeyCache();
-    // getCursorPosition();
+    // KEY_CACHE_SIZE
+    // CURSOR_POSITION_SIZE
+
+    // getKeyCacheString();
+    // getCursorPositionString();
 }
 
 void drawWindow(void) {
