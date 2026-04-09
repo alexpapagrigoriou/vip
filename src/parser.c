@@ -5,28 +5,27 @@
 #include "command.h"
 #include "input.h"
 #include "keys.h"
-#include "motion.h"
 
-static void executeAndInit(Parser* parser, Editor* editor) {
-    executeCommand(parser, editor);
-    parserInit(parser);
-}
-
-void moveCursorToStartOfRange(Editor* editor, Range range) {
+static void moveCursorToStartOfRange(Editor* editor, Range range) {
     editor->cursor = range.start;
 }
 
-void moveCursorToEndOfRange(Editor* editor, Range range) {
+static void moveCursorToEndOfRange(Editor* editor, Range range) {
     editor->cursor = range.end;
 }
 
-void parserInit(Parser* parser) {
+static void parserInit(Parser* parser) {
     parser->state = STATE_NORMAL;
     parser->cmd.count = 0;
     parser->cmd.operator = OP_NONE;
     parser->cmd.motion = MOT_NONE;
     parser->cmd.argument = '\0';
     parser->cmd.key_cache.length = 0;
+}
+
+static void executeAndInit(Parser* parser, Editor* editor) {
+    executeCommand(parser, editor);
+    parserInit(parser);
 }
 
 static void handleNormalMode(Parser* parser, Editor* editor, int key) {

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdbool.h>
-
 #include "editor.h"
 #include "terminal.h"
 
