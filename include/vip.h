@@ -3,12 +3,13 @@
 #include <stdbool.h>
 
 #include "line.h"
-#include "status.h"
+#include "parser.h"
 #include "terminal.h"
 
 void runVip(char* filename);
 Line* getLine(size_t row);
-StatusLine* getStatusLine();
+char* getStatusLine(void);
+KeyCache getKeyCache(void);
 size_t getLineCount(void);
 Position getCursorPosition(void);
 Position getTextPosition(void);

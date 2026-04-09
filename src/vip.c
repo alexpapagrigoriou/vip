@@ -7,7 +7,6 @@
 #include "draw.h"
 #include "editor.h"
 #include "input.h"
-#include "parser.h"
 
 static Editor editor;
 static Parser parser;
@@ -43,7 +42,7 @@ void runVip(char* filename) {
         }
 
         // TODO: take parser's key cache and output it to the status line
-        snprintf(editor.status_line->chars, sizeof(editor.status_line->chars), BGREEN "Key code: %d" RESET "\trow: %zu, col: %zu, prev_col: %zu, Mode: %d, max_row: %zu, max_col: %zu, t_row: %zu, t_col: %zu", key, editor.cursor.row, editor.cursor.col, editor.prev_cursor_col, editor.mode, getMaxScreen().row, getMaxScreen().col, editor.text.row, editor.text.col);
+        snprintf(editor.status_line, sizeof(editor.status_line), BGREEN "Key code: %d" RESET "\trow: %zu, col: %zu, prev_col: %zu, Mode: %d, max_row: %zu, max_col: %zu, t_row: %zu, t_col: %zu", key, editor.cursor.row, editor.cursor.col, editor.prev_cursor_col, editor.mode, getMaxScreen().row, getMaxScreen().col, editor.text.row, editor.text.col);
 
         drawWindow();
 
@@ -57,8 +56,12 @@ Line* getLine(size_t row) {
     return &editor.buffer->lines[row];
 }
 
-StatusLine* getStatusLine(void) {
+char* getStatusLine(void) {
     return editor.status_line;
+}
+
+KeyCache getKeyCache(void) {
+    return parser.cmd.key_cache;
 }
 
 size_t getLineCount(void) {

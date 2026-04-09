@@ -5,12 +5,16 @@
 #include "operator.h"
 
 typedef struct {
+    char chars[3];
+    int length;
+} KeyCache;
+
+typedef struct {
     int count;
     Operator operator;
     Motion motion;
     char argument;
-    char keyCache[3];
-    int keyCacheLength;
+    KeyCache key_cache;
 } Command;
 
 typedef enum {
