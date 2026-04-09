@@ -45,16 +45,33 @@ void insertString(Buffer* buffer, Position* cursor, const char* text) {
     cursor->col += text_length;
 }
 
-void deleteChar(Buffer* buffer, Position* cursor) {
+void deleteCharLeft(Buffer* buffer, Position* cursor, const size_t count) {
+    // TODO: implement deleteCharLeft
+    (void)buffer;
+    (void)cursor;
+    (void)count;
+}
+
+void deleteCharRight(Buffer* buffer, Position* cursor, const size_t count) {
     Line* line = &buffer->lines[cursor->row];
 
     if (cursor->col == line->length) {
         return;
     }
 
-    memmove(&line->chars[cursor->col], &line->chars[cursor->col + 1], line->length - cursor->col);
+    if (cursor->col + count >= line->length) {
+        line->chars[cursor->col] = '\0';
+        line->length = cursor->col;
 
-    line->chars = realloc(line->chars, line->length);
+        line->chars = realloc(line->chars, line->length + 1);
+
+        cursor->col--;
+        return;
+    }
+
+    memmove(&line->chars[cursor->col], &line->chars[cursor->col + count], line->length - cursor->col - count + 1);
+
+    line->chars = realloc(line->chars, line->length - count + 1);
 
     line->length--;
 

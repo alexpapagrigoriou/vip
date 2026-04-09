@@ -60,17 +60,14 @@ static void handleOperatorDelete(Parser* parser, Editor* editor) {
     // TODO: add count in commands
     switch (parser->cmd.motion) {
         case MOT_LEFT:
-            if (editor->cursor.col != 0) {
-                moveLeft(editor);
-                deleteChar(&editor->buffer, &editor->cursor);
-            }
+            deleteCharLeft(&editor->buffer, &editor->cursor, parser->cmd.count);
             break;
         case MOT_DOWN:
             break;
         case MOT_UP:
             break;
         case MOT_RIGHT:
-            deleteChar(&editor->buffer, &editor->cursor);
+            deleteCharRight(&editor->buffer, &editor->cursor, parser->cmd.count);
             break;
         case MOT_WORD:
             break;
