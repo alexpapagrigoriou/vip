@@ -63,20 +63,22 @@ char* getStatusLine(void) {
 
 char* getKeyCacheString(void) {
     // TODO: return count + key cache
-    // char key_cache[KEY_CACHE_SIZE + 1];
 
     // parser.cmd.count;
     // parser.cmd.key_cache.chars
     // parser.cmd.key_cache.length
 
-    return "";
+    return editor.key_cache_string;
 }
 
 char* getCursorPositionString(void) {
-    // TODO: return row,col
-    // char cursor_position[CURSOR_POSITION_SIZE + 1];
+    if (editor.cursor.col == 0 && getLine(editor.cursor.row)->chars[0] == '\0') {
+        snprintf(editor.cursor_position_string, sizeof(editor.cursor_position_string), "%zu,0-1", editor.cursor.row);
+    } else {
+        snprintf(editor.cursor_position_string, sizeof(editor.cursor_position_string), "%zu,%zu", editor.cursor.row, editor.cursor.col);
+    }
 
-    return "";
+    return editor.cursor_position_string;
 }
 
 size_t getLineCount(void) {
