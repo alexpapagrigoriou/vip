@@ -3,18 +3,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-Buffer* createBuffer(void) {
-    Buffer* buffer = malloc(sizeof(Buffer));
-
+void bufferInit(Buffer* buffer) {
     buffer->lines = malloc(sizeof(Line));
     lineInit(&buffer->lines[0]);
 
     buffer->line_count = 1;
-
-    return buffer;
 }
 
-void freeBuffer(Buffer* buffer) {
+void freeBufferLines(Buffer* buffer) {
     for (size_t i = 0; i < buffer->line_count; i++) {
         freeLine(&buffer->lines[i]);
     }

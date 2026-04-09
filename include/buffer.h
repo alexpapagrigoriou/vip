@@ -10,8 +10,8 @@ typedef struct {
     size_t line_count;
 } Buffer;
 
-Buffer* createBuffer(void);
-void freeBuffer(Buffer* buffer);
+void bufferInit(Buffer* buffer);
+void freeBufferLines(Buffer* buffer);
 void insertChar(Buffer* buffer, Position* cursor, const char c);
 void insertString(Buffer* buffer, Position* cursor, const char* text);
 void clearLine(Buffer* buffer, Position* cursor);

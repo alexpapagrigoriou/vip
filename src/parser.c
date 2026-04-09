@@ -247,11 +247,11 @@ static void handleNormalMode(Parser* parser, Editor* editor, int key) {
             editor->mode = INSERT;
             return;
         case 'o':
-            appendLine(editor->buffer, &editor->cursor);
+            appendLine(&editor->buffer, &editor->cursor);
             editor->mode = INSERT;
             return;
         case 'O':
-            prependLine(editor->buffer, &editor->cursor);
+            prependLine(&editor->buffer, &editor->cursor);
             editor->mode = INSERT;
             return;
         case 'x':
@@ -277,10 +277,10 @@ static void handleInsertMode(Editor* editor, int key) {
             editor->mode = NORMAL;
             break;
         case TAB:
-            insertString(editor->buffer, &editor->cursor, "    ");
+            insertString(&editor->buffer, &editor->cursor, "    ");
             break;
         case ENTER:
-            appendLine(editor->buffer, &editor->cursor);
+            appendLine(&editor->buffer, &editor->cursor);
             break;
         case UP:
             moveUp(editor);
@@ -296,7 +296,7 @@ static void handleInsertMode(Editor* editor, int key) {
             break;
         default:
             if (isPrintable(key)) {
-                insertChar(editor->buffer, &editor->cursor, key);
+                insertChar(&editor->buffer, &editor->cursor, key);
             }
             break;
     }

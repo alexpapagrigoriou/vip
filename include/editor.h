@@ -13,7 +13,7 @@ typedef enum {
 } Mode;
 
 typedef struct {
-    Buffer* buffer;
+    Buffer buffer;
     Position cursor;
     bool save_curosr_col;
     size_t prev_cursor_col;

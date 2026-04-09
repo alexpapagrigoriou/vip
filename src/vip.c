@@ -54,7 +54,7 @@ void runVip(char* filename) {
 }
 
 Line* getLine(size_t row) {
-    return &editor.buffer->lines[row];
+    return &editor.buffer.lines[row];
 }
 
 char* getStatusLine(void) {
@@ -80,7 +80,7 @@ char* getCursorPositionString(void) {
 }
 
 size_t getLineCount(void) {
-    return editor.buffer->line_count;
+    return editor.buffer.line_count;
 }
 
 Position getCursorPosition(void) {
