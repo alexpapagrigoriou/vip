@@ -18,7 +18,7 @@ typedef struct {
     bool save_curosr_col;
     size_t prev_cursor_col;
     Position text;
-    char status_line[128];
+    char status_line[256];
     size_t status_cursor_col;
     bool in_start;
     Mode mode;
