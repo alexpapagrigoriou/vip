@@ -63,14 +63,14 @@ void deleteChar(Buffer* buffer, Position* cursor) {
     }
 }
 
-void replaceChar(Buffer* buffer, Position* cursor, const int count, const char c) {
+void replaceChar(Buffer* buffer, Position* cursor, const size_t count, const char c) {
     Line* line = &buffer->lines[cursor->row];
 
     if (cursor->col == line->length) {
         return;
     }
 
-    for (int i = 0; i < count; i++) {
+    for (size_t i = 0; i < count; i++) {
         line->chars[cursor->col] = c;
         cursor->col++;
 
@@ -110,10 +110,10 @@ void clearLine(Buffer* buffer, Position* cursor) {
     buffer->lines[cursor->row].length = 0;
 }
 
-void deleteLine(Buffer* buffer, Position* cursor, const int count) {
+void deleteLine(Buffer* buffer, Position* cursor, const size_t count) {
     cursor->col = 0;
 
-    for (int i = 0; i < count; i++) {
+    for (size_t i = 0; i < count; i++) {
         if (buffer->line_count == 1) {
             clearLine(buffer, cursor);
             return;

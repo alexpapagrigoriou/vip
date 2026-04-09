@@ -83,7 +83,6 @@ static void handleOperatorDelete(Parser* parser, Editor* editor) {
 }
 
 static void handleOperatorChange(Parser* parser, Editor* editor) {
-    // TODO: add count in commands
     switch (parser->cmd.motion) {
         case MOT_LINE:
             deleteLine(&editor->buffer, &editor->cursor, parser->cmd.count);
