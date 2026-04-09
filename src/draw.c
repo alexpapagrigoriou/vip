@@ -10,19 +10,19 @@ void moveCursor(Position pos) {
     printf("\033[%zu;%zuH", pos.row + 1, pos.col + 1);
 }
 
-void fixTextPosition(Editor* editor) {
+void fixTextPosition(Position cursor, Position* text) {
     Position max_buffer = getMaxBuffer();
 
-    if (editor->cursor.row - editor->text.row >= max_buffer.row) {
-        editor->text.row = editor->cursor.row - max_buffer.row + 1;
-    } else if (editor->cursor.row < editor->text.row) {
-        editor->text.row = editor->cursor.row;
+    if (cursor.row - text->row >= max_buffer.row) {
+        text->row = cursor.row - max_buffer.row + 1;
+    } else if (cursor.row < text->row) {
+        text->row = cursor.row;
     }
 
-    if (editor->cursor.col - editor->text.col >= max_buffer.col) {
-        editor->text.col = editor->cursor.col - max_buffer.col + 1;
-    } else if (editor->cursor.col < editor->text.col) {
-        editor->text.col = editor->cursor.col;
+    if (cursor.col - text->col >= max_buffer.col) {
+        text->col = cursor.col - max_buffer.col + 1;
+    } else if (cursor.col < text->col) {
+        text->col = cursor.col;
     }
 }
 

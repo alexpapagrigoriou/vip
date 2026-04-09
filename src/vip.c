@@ -36,7 +36,7 @@ void runVip(char* filename) {
 
         handleKey(&parser, &editor, key);
 
-        fixTextPosition(&editor);
+        fixTextPosition(editor.cursor, &editor.text);
 
         if (editor.save_curosr_col) {
             editor.prev_cursor_col = editor.cursor.col;
