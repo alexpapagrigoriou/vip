@@ -3,6 +3,7 @@
 #include <stdbool.h>
 
 #include "buffer.h"
+#include "status.h"
 
 typedef enum {
     NORMAL,
@@ -18,7 +19,7 @@ typedef struct {
     bool save_curosr_col;
     size_t prev_cursor_col;
     Position text;
-    Line* status_line;
+    StatusLine* status_line;
     size_t status_cursor_col;
     bool in_start;
     Mode mode;

@@ -1,7 +1,5 @@
 #include "editor.h"
 
-#include "status.h"
-
 void editorInit(Editor* editor, char* filename) {
     editor->buffer = createBuffer();
     editor->cursor = (Position){0, 0};

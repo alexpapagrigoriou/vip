@@ -1,6 +1,8 @@
 #pragma once
 
-#include "line.h"
+typedef struct {
+    char chars[128];
+} StatusLine;
 
-Line* createStatusLine(void);
-void freeStatusLine(Line* status_line);
+StatusLine* createStatusLine(void);
+void freeStatusLine(StatusLine* status_line);
