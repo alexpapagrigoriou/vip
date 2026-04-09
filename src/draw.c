@@ -13,16 +13,16 @@ void moveCursor(Position pos) {
 void fixTextPosition(Position cursor, Position* text) {
     Position max_buffer = getMaxBuffer();
 
-    if (cursor.row - text->row >= max_buffer.row) {
-        text->row = cursor.row - max_buffer.row + 1;
-    } else if (cursor.row < text->row) {
+    if (cursor.row < text->row) {
         text->row = cursor.row;
+    } else if (cursor.row - text->row >= max_buffer.row) {
+        text->row = cursor.row - max_buffer.row + 1;
     }
 
-    if (cursor.col - text->col >= max_buffer.col) {
-        text->col = cursor.col - max_buffer.col + 1;
-    } else if (cursor.col < text->col) {
+    if (cursor.col < text->col) {
         text->col = cursor.col;
+    } else if (cursor.col - text->col >= max_buffer.col) {
+        text->col = cursor.col - max_buffer.col + 1;
     }
 }
 
