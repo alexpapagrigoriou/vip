@@ -65,7 +65,7 @@ char* getKeyCacheString(void) {
     if (parser.cmd.count == 0) {
         snprintf(editor.key_cache_string, sizeof(editor.key_cache_string), "%s", parser.cmd.key_cache.chars);
     } else {
-        snprintf(editor.key_cache_string, sizeof(editor.key_cache_string), "%d%s", parser.cmd.count, parser.cmd.key_cache.chars);
+        snprintf(editor.key_cache_string, sizeof(editor.key_cache_string), "%zu%s", parser.cmd.count, parser.cmd.key_cache.chars);
     }
 
     return editor.key_cache_string;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stddef.h>
+
 #include "editor.h"
 #include "motion.h"
 #include "operator.h"
@@ -12,7 +14,7 @@ typedef struct {
 } KeyCache;
 
 typedef struct {
-    int count;
+    size_t count;
     Operator operator;
     Motion motion;
     char argument;
