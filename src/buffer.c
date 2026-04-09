@@ -60,12 +60,7 @@ void deleteCharRight(Buffer* buffer, Position* cursor, const size_t count) {
     }
 
     if (cursor->col + count >= line->length) {
-        line->chars[cursor->col] = '\0';
-        line->length = cursor->col;
-
-        line->chars = realloc(line->chars, line->length + 1);
-
-        cursor->col--;
+        deleteEndOfLine(buffer, cursor);
         return;
     }
 
@@ -77,6 +72,26 @@ void deleteCharRight(Buffer* buffer, Position* cursor, const size_t count) {
 
     if (cursor->col == line->length && cursor->col > 0) {
         cursor->col--;
+    }
+}
+
+void deleteStartOfLine(Buffer* buffer, Position* cursor) {
+    (void)buffer;
+    (void)cursor;
+}
+
+void deleteEndOfLine(Buffer* buffer, Position* cursor) {
+    Line* line = &buffer->lines[cursor->row];
+
+    if (line->length > 0) {
+        line->chars[cursor->col] = '\0';
+        line->length = cursor->col;
+
+        line->chars = realloc(line->chars, line->length + 1);
+
+        if (cursor->col > 0) {
+            cursor->col--;
+        }
     }
 }
 

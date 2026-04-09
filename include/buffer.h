@@ -17,6 +17,8 @@ void insertString(Buffer* buffer, Position* cursor, const char* text);
 void clearLine(Buffer* buffer, Position* cursor);
 void deleteCharLeft(Buffer* buffer, Position* cursor, const size_t count);
 void deleteCharRight(Buffer* buffer, Position* cursor, const size_t count);
+void deleteStartOfLine(Buffer* buffer, Position* cursor);
+void deleteEndOfLine(Buffer* buffer, Position* cursor);
 void replaceChar(Buffer* buffer, Position* cursor, const size_t count, const char c);
 void appendLine(Buffer* buffer, Position* cursor);
 void prependLine(Buffer* buffer, Position* cursor);
