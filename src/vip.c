@@ -67,6 +67,22 @@ char* getKeyCacheString(void) {
         snprintf(editor.key_cache_string, sizeof(editor.key_cache_string), "%zu%s", parser.cmd.count, parser.cmd.key_cache.chars);
     }
 
+    if (parser.cmd.count == 0) {
+        if (parser.cmd.count_after_operator == 0) {
+            snprintf(editor.key_cache_string, sizeof(editor.key_cache_string), "%s", parser.cmd.key_cache.chars);
+        } else {
+            char* key_cache_after_operator = parser.cmd.key_cache.chars + 1;
+            snprintf(editor.key_cache_string, sizeof(editor.key_cache_string), "%c%zu%s", parser.cmd.key_cache.chars[0], parser.cmd.count_after_operator, key_cache_after_operator);
+        }
+    } else {
+        if (parser.cmd.count_after_operator == 0) {
+            snprintf(editor.key_cache_string, sizeof(editor.key_cache_string), "%zu%s", parser.cmd.count, parser.cmd.key_cache.chars);
+        } else {
+            char* key_cache_after_operator = parser.cmd.key_cache.chars + 1;
+            snprintf(editor.key_cache_string, sizeof(editor.key_cache_string), "%zu%c%zu%s", parser.cmd.count, parser.cmd.key_cache.chars[0], parser.cmd.count_after_operator, key_cache_after_operator);
+        }
+    }
+
     return editor.key_cache_string;
 }
 

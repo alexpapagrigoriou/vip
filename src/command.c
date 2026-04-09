@@ -107,10 +107,20 @@ static void handleOperatorReplace(Parser* parser, Editor* editor) {
     replaceChar(&editor->buffer, &editor->cursor, parser->cmd.count, parser->cmd.argument);
 }
 
-void executeCommand(Parser* parser, Editor* editor) {
+static void fixCount(Parser* parser) {
     if (parser->cmd.count == 0) {
         parser->cmd.count = 1;
     }
+
+    if (parser->cmd.count_after_operator == 0) {
+        parser->cmd.count_after_operator = 1;
+    }
+
+    parser->cmd.count = parser->cmd.count * parser->cmd.count_after_operator;
+}
+
+void executeCommand(Parser* parser, Editor* editor) {
+    fixCount(parser);
 
     switch (parser->cmd.operator) {
         case OP_NONE:

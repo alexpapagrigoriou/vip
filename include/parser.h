@@ -15,6 +15,7 @@ typedef struct {
 
 typedef struct {
     size_t count;
+    size_t count_after_operator;
     Operator operator;
     Motion motion;
     char argument;

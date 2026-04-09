@@ -17,6 +17,7 @@ static void moveCursorToEndOfRange(Editor* editor, Range range) {
 static void parserInit(Parser* parser) {
     parser->state = STATE_NORMAL;
     parser->cmd.count = 0;
+    parser->cmd.count_after_operator = 0;
     parser->cmd.operator = OP_NONE;
     parser->cmd.motion = MOT_NONE;
     parser->cmd.argument = '\0';
@@ -43,13 +44,24 @@ static void handleNormalMode(Parser* parser, Editor* editor, int key) {
     }
 
     if (key >= '0' && key <= '9') {
-        if (!(key == '0' && parser->cmd.count == 0)) {
-            if (parser->cmd.operator == OP_NONE && parser->cmd.motion == MOT_NONE) {
-                parser->cmd.count = parser->cmd.count * 10 + (key - '0');
-            } else {
-                parserInit(parser);
+        if (parser->state == STATE_NORMAL) {
+            if (!(key == '0' && parser->cmd.count == 0)) {
+                if (parser->cmd.motion == MOT_NONE) {
+                    parser->cmd.count = parser->cmd.count * 10 + (key - '0');
+                } else {
+                    parserInit(parser);
+                }
+                return;
             }
-            return;
+        } else {
+            if (!(key == '0' && parser->cmd.count_after_operator == 0)) {
+                if (parser->cmd.motion == MOT_NONE) {
+                    parser->cmd.count_after_operator = parser->cmd.count_after_operator * 10 + (key - '0');
+                } else {
+                    parserInit(parser);
+                }
+                return;
+            }
         }
     }
 
