@@ -42,7 +42,6 @@ void runVip(char* filename) {
             editor.prev_cursor_col = editor.cursor.col;
         }
 
-        // TODO: take parser's key cache and output it to the status line
         snprintf(editor.status_line, sizeof(editor.status_line), BGREEN "Key code: %d" RESET "\trow: %zu, col: %zu, prev_col: %zu, Mode: %d, max_row: %zu, max_col: %zu, t_row: %zu, t_col: %zu", key, editor.cursor.row, editor.cursor.col, editor.prev_cursor_col, editor.mode, getMaxScreen().row, getMaxScreen().col, editor.text.row, editor.text.col);
 
         drawWindow();
@@ -73,9 +72,9 @@ char* getKeyCacheString(void) {
 
 char* getCursorPositionString(void) {
     if (editor.cursor.col == 0 && getLine(editor.cursor.row)->chars[0] == '\0') {
-        snprintf(editor.cursor_position_string, sizeof(editor.cursor_position_string), "%zu,0-1", editor.cursor.row);
+        snprintf(editor.cursor_position_string, sizeof(editor.cursor_position_string), "%zu,0-1", editor.cursor.row + 1);
     } else {
-        snprintf(editor.cursor_position_string, sizeof(editor.cursor_position_string), "%zu,%zu", editor.cursor.row, editor.cursor.col);
+        snprintf(editor.cursor_position_string, sizeof(editor.cursor_position_string), "%zu,%zu", editor.cursor.row + 1, editor.cursor.col + 1);
     }
 
     return editor.cursor_position_string;

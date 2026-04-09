@@ -92,15 +92,19 @@ static void drawBuffer(void) {
 static void drawStatusLine(void) {
     moveCursor((Position){getMaxScreen().row - 1, 0});
     cleanLine();
-    printf("%.*s", (int)getMaxScreen().col, getStatusLine());
 
-    // TODO: print key cache and cursor position at end of status line
+    int max_col = (int)getMaxScreen().col - (KEY_CACHE_STRING_SIZE + CURSOR_POSITION_STRING_SIZE + 3);
+    printf("%.*s", max_col, getStatusLine());
 
-    // KEY_CACHE_SIZE
-    // CURSOR_POSITION_SIZE
+    max_col++;
 
-    // getKeyCacheString();
-    // getCursorPositionString();
+    moveCursor((Position){getMaxScreen().row - 1, max_col});
+    printf("%.*s", KEY_CACHE_STRING_SIZE, getKeyCacheString());
+
+    max_col += KEY_CACHE_STRING_SIZE + 1;
+
+    moveCursor((Position){getMaxScreen().row - 1, max_col});
+    printf("%.*s", CURSOR_POSITION_STRING_SIZE, getCursorPositionString());
 }
 
 void drawWindow(void) {

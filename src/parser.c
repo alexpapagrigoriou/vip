@@ -235,26 +235,32 @@ static void handleNormalMode(Parser* parser, Editor* editor, int key) {
     switch (key) {
         case 'i':
             editor->mode = INSERT;
+            parserInit(parser);
             return;
         case 'a':
             moveRight(editor);
             editor->mode = INSERT;
+            parserInit(parser);
             return;
         case 'I':
             moveCursorToStartOfRange(editor, jumpToFirstNonBlankCharOfLine(editor));
             editor->mode = INSERT;
+            parserInit(parser);
             return;
         case 'A':
             moveCursorToEndOfRange(editor, jumpToEndOfLine(editor));
             editor->mode = INSERT;
+            parserInit(parser);
             return;
         case 'o':
             appendLine(&editor->buffer, &editor->cursor);
             editor->mode = INSERT;
+            parserInit(parser);
             return;
         case 'O':
             prependLine(&editor->buffer, &editor->cursor);
             editor->mode = INSERT;
+            parserInit(parser);
             return;
         case 'x':
             parser->cmd.operator = OP_DELETE;
