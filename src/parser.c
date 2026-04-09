@@ -290,6 +290,9 @@ static void handleInsertMode(Editor* editor, int key) {
         case ENTER:
             appendLine(&editor->buffer, &editor->cursor);
             break;
+        case BACKSPACE:
+            // TODO: delete char and move text on this row in end of row - 1 if col == 0
+            break;
         case UP:
             moveUp(editor);
             break;

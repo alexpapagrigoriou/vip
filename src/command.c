@@ -57,16 +57,6 @@ static void handleOperatorNone(Parser* parser, Editor* editor) {
 }
 
 static void handleOperatorDelete(Parser* parser, Editor* editor) {
-    switch (parser->cmd.motion) {
-        case MOT_LINE:
-            deleteLine(&editor->buffer, &editor->cursor, parser->cmd.count);
-            break;
-        default:
-            break;
-    }
-}
-
-static void handleOperatorChange(Parser* parser, Editor* editor) {
     // TODO: add count in commands
     switch (parser->cmd.motion) {
         case MOT_LEFT:
@@ -84,6 +74,17 @@ static void handleOperatorChange(Parser* parser, Editor* editor) {
             break;
         case MOT_WORD:
             break;
+        case MOT_LINE:
+            deleteLine(&editor->buffer, &editor->cursor, parser->cmd.count);
+            break;
+        default:
+            break;
+    }
+}
+
+static void handleOperatorChange(Parser* parser, Editor* editor) {
+    // TODO: add count in commands
+    switch (parser->cmd.motion) {
         case MOT_LINE:
             deleteLine(&editor->buffer, &editor->cursor, parser->cmd.count);
             editor->mode = INSERT;
