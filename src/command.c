@@ -1,21 +1,21 @@
 #include "command.h"
 
 #include "buffer.h"
+#include "movement.h"
 
 static void handleOperatorNone(Parser* parser, Editor* editor) {
-    // TODO: add count in commands
     switch (parser->cmd.motion) {
         case MOT_LEFT:
-            moveLeft(editor);
-            break;
-        case MOT_DOWN:
-            moveDown(editor);
+            arrowLeft(editor, parser->cmd.count);
             break;
         case MOT_UP:
-            moveUp(editor);
+            arrowUp(editor, parser->cmd.count);
+            break;
+        case MOT_DOWN:
+            arrowDown(editor, parser->cmd.count);
             break;
         case MOT_RIGHT:
-            moveRight(editor);
+            arrowRight(editor, parser->cmd.count);
             break;
         case MOT_WORD:
             break;
@@ -61,9 +61,9 @@ static void handleOperatorDelete(Parser* parser, Editor* editor) {
         case MOT_LEFT:
             deleteCharLeft(&editor->buffer, &editor->cursor, parser->cmd.count);
             break;
-        case MOT_DOWN:
-            break;
         case MOT_UP:
+            break;
+        case MOT_DOWN:
             break;
         case MOT_RIGHT:
             deleteCharRight(&editor->buffer, &editor->cursor, parser->cmd.count);
@@ -141,7 +141,7 @@ static void fixCount(Parser* parser) {
     parser->cmd.count = parser->cmd.count * parser->cmd.count_after_operator;
 }
 
-void executeCommand(Parser* parser, Editor* editor) {
+static void executeNormalMode(Parser* parser, Editor* editor) {
     fixCount(parser);
 
     switch (parser->cmd.operator) {
@@ -159,6 +159,19 @@ void executeCommand(Parser* parser, Editor* editor) {
             break;
         case OP_REPLACE:
             handleOperatorReplace(parser, editor);
+            break;
+    }
+}
+
+void executeCommand(Parser* parser, Editor* editor) {
+    switch (editor->mode) {
+        case NORMAL:
+            executeNormalMode(parser, editor);
+            break;
+        case VISUAL:
+            // executeVisualMode(parser, editor);
+            break;
+        default:
             break;
     }
 }

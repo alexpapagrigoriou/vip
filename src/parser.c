@@ -5,14 +5,7 @@
 #include "command.h"
 #include "input.h"
 #include "keys.h"
-
-static void moveCursorToStartOfRange(Editor* editor, Range range) {
-    editor->cursor = range.start;
-}
-
-static void moveCursorToEndOfRange(Editor* editor, Range range) {
-    editor->cursor = range.end;
-}
+#include "movement.h"
 
 static void parserInit(Parser* parser) {
     parser->state = STATE_NORMAL;
@@ -250,28 +243,28 @@ static void handleNormalMode(Parser* parser, Editor* editor, int key) {
             parserInit(parser);
             return;
         case 'a':
-            moveRight(editor);
             editor->mode = INSERT;
+            insertArrowRight(editor);
             parserInit(parser);
             return;
         case 'I':
-            moveCursorToStartOfRange(editor, jumpToFirstNonBlankCharOfLine(editor));
             editor->mode = INSERT;
+            editor->cursor.col = jumpToFirstNonBlankCharOfLine(editor);
             parserInit(parser);
             return;
         case 'A':
-            moveCursorToEndOfRange(editor, jumpToEndOfLine(editor));
             editor->mode = INSERT;
+            editor->cursor.col = jumpToEndOfLine(editor);
             parserInit(parser);
             return;
         case 'o':
-            appendLine(&editor->buffer, &editor->cursor);
             editor->mode = INSERT;
+            appendLine(&editor->buffer, &editor->cursor);
             parserInit(parser);
             return;
         case 'O':
-            prependLine(&editor->buffer, &editor->cursor);
             editor->mode = INSERT;
+            prependLine(&editor->buffer, &editor->cursor);
             parserInit(parser);
             return;
         case 'x':
@@ -293,7 +286,7 @@ static void handleInsertMode(Editor* editor, int key) {
     switch (key) {
         case ESC:
         case CTRL_F:
-            moveLeft(editor);
+            insertArrowLeft(editor);
             editor->mode = NORMAL;
             break;
         case TAB:
@@ -306,17 +299,17 @@ static void handleInsertMode(Editor* editor, int key) {
         case BACKSPACE:
             // TODO: delete char and move text on this row in end of row - 1 if col == 0
             break;
+        case LEFT:
+            insertArrowLeft(editor);
+            break;
         case UP:
-            moveUp(editor);
+            insertArrowUp(editor);
             break;
         case DOWN:
-            moveDown(editor);
+            insertArrowDown(editor);
             break;
         case RIGHT:
-            moveRight(editor);
-            break;
-        case LEFT:
-            moveLeft(editor);
+            insertArrowRight(editor);
             break;
         default:
             if (isPrintable(key)) {

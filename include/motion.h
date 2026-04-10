@@ -8,11 +8,17 @@
 
 typedef enum {
     MOT_NONE,
-    MOT_LEFT,
-    MOT_DOWN,
+
     MOT_UP,
-    MOT_RIGHT,
+    MOT_DOWN,
     MOT_LINE,
+    MOT_FIRST_LINE,
+    MOT_LAST_LINE,
+    MOT_NEXT_PARAGRAPH,
+    MOT_PREVIOUS_PARAGRAPH,
+
+    MOT_LEFT,
+    MOT_RIGHT,
     MOT_WORD,
     MOT_BIG_WORD,
     MOT_END_WORD,
@@ -22,50 +28,51 @@ typedef enum {
     MOT_START_OF_LINE,
     MOT_FIRST_NON_BLANK_CHAR_OF_LINE,
     MOT_END_OF_LINE,
-    MOT_LAST_LINE,
-    MOT_NEXT_PARAGRAPH,
-    MOT_PREVIOUS_PARAGRAPH,
+    MOT_NEXT_OCCURRENCE_OF_CHAR,
+    MOT_BEFORE_NEXT_OCCURRENCE_OF_CHAR,
+    MOT_PREVIOUS_OCCURRENCE_OF_CHAR,
+    MOT_AFTER_PREVIOUS_OCCURRENCE_OF_CHAR,
+
+    MOT_MATCHING_CHAR,
 
     MOT_FIRST_LINE_PENDING,
     MOT_NEXT_OCCURRENCE_OF_CHAR_PENDING,
     MOT_BEFORE_NEXT_OCCURRENCE_OF_CHAR_PENDING,
     MOT_PREVIOUS_OCCURRENCE_OF_CHAR_PENDING,
-    MOT_AFTER_PREVIOUS_OCCURRENCE_OF_CHAR_PENDING,
-
-    MOT_FIRST_LINE,
-    MOT_NEXT_OCCURRENCE_OF_CHAR,
-    MOT_BEFORE_NEXT_OCCURRENCE_OF_CHAR,
-    MOT_PREVIOUS_OCCURRENCE_OF_CHAR,
-    MOT_AFTER_PREVIOUS_OCCURRENCE_OF_CHAR
+    MOT_AFTER_PREVIOUS_OCCURRENCE_OF_CHAR_PENDING
 } Motion;
 
-typedef struct {
-    Position start;
-    Position end;
-} Range;
+typedef enum {
+    MOT_TYPE_NONE,
+    MOT_TYPE_ROW,
+    MOT_TYPE_COL,
+    MOT_TYPE_POSITION
+} MotionType;
 
-void moveLeft(Editor* editor);
-void moveUp(Editor* editor);
-void moveDown(Editor* editor);
-void moveRight(Editor* editor);
+MotionType getMotionType(Motion motion);
 
-Range jumpForwardsToStartOfWord(Editor* editor);
-Range jumpForwardsToStartOfBigWord(Editor* editor);
-Range jumpForwardToEndOfWord(Editor* editor);
-Range jumpForwardsToEndOfBigWord(Editor* editor);
-Range jumpBackwardsToStartOfWord(Editor* editor);
-Range jumpBackwardsToStartOfBigWord(Editor* editor);
-Range jumpToMatchingChar(Editor* editor);
-Range jumpToStartOfLine(Editor* editor);
-Range jumpToFirstNonBlankCharOfLine(Editor* editor);
-Range jumpToEndOfLine(Editor* editor);
-Range jumpToLastNonBlankCharOfLine(Editor* editor);
-Range goToLastLine(Editor* editor);
-Range goToLine(Editor* editor, size_t row);
-Range jumpToNextParagraph(Editor* editor);
-Range jumpToPreviousParagraph(Editor* editor);
-Range goToFirstLine(Editor* editor);
-Range jumpToNextOccurrenceOfChar(Editor* editor, const char c);
-Range jumpBeforeNextOccurrenceOfChar(Editor* editor, const char c);
-Range jumpToPreviousOccurrenceOfChar(Editor* editor, const char c);
-Range jumpAfterPreviousOccurrenceOfChar(Editor* editor, const char c);
+size_t moveUp(Editor* editor, const size_t count);
+size_t moveDown(Editor* editor, const size_t count);
+size_t goToLine(size_t row);
+size_t goToFirstLine(const size_t count);
+size_t goToLastLine(const size_t count);
+size_t jumpToNextParagraph(Editor* editor, const size_t count);
+size_t jumpToPreviousParagraph(Editor* editor, const size_t count);
+
+size_t moveLeft(Editor* editor, const size_t count);
+size_t moveRight(Editor* editor, const size_t count);
+size_t jumpForwardsToStartOfWord(Editor* editor, const size_t count);
+size_t jumpForwardsToStartOfBigWord(Editor* editor, const size_t count);
+size_t jumpForwardToEndOfWord(Editor* editor, const size_t count);
+size_t jumpForwardsToEndOfBigWord(Editor* editor, const size_t count);
+size_t jumpBackwardsToStartOfWord(Editor* editor, const size_t count);
+size_t jumpBackwardsToStartOfBigWord(Editor* editor, const size_t count);
+size_t jumpToStartOfLine();
+size_t jumpToFirstNonBlankCharOfLine(Editor* editor);
+size_t jumpToEndOfLine(Editor* editor);
+size_t jumpToNextOccurrenceOfChar(Editor* editor, const size_t count, const char c);
+size_t jumpBeforeNextOccurrenceOfChar(Editor* editor, const size_t count, const char c);
+size_t jumpToPreviousOccurrenceOfChar(Editor* editor, const size_t count, const char c);
+size_t jumpAfterPreviousOccurrenceOfChar(Editor* editor, const size_t count, const char c);
+
+Position jumpToMatchingChar(Editor* editor);

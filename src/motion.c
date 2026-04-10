@@ -3,166 +3,215 @@
 #include "editor.h"
 #include "vip.h"
 
-void moveLeft(Editor* editor) {
-    if (editor->cursor.col > 0) {
-        editor->cursor.col--;
-    } else {
-        editor->save_curosr_col = false;
+MotionType getMotionType(Motion motion) {
+    switch (motion) {
+        case MOT_UP:
+        case MOT_DOWN:
+        case MOT_LINE:
+        case MOT_FIRST_LINE:
+        case MOT_LAST_LINE:
+        case MOT_NEXT_PARAGRAPH:
+        case MOT_PREVIOUS_PARAGRAPH:
+            return MOT_TYPE_ROW;
+        case MOT_LEFT:
+        case MOT_RIGHT:
+        case MOT_WORD:
+        case MOT_BIG_WORD:
+        case MOT_END_WORD:
+        case MOT_END_BIG_WORD:
+        case MOT_BACKWARD_WORD:
+        case MOT_BACKWARD_BIG_WORD:
+        case MOT_START_OF_LINE:
+        case MOT_FIRST_NON_BLANK_CHAR_OF_LINE:
+        case MOT_END_OF_LINE:
+        case MOT_NEXT_OCCURRENCE_OF_CHAR:
+        case MOT_BEFORE_NEXT_OCCURRENCE_OF_CHAR:
+        case MOT_PREVIOUS_OCCURRENCE_OF_CHAR:
+        case MOT_AFTER_PREVIOUS_OCCURRENCE_OF_CHAR:
+            return MOT_TYPE_COL;
+        case MOT_MATCHING_CHAR:
+            return MOT_TYPE_POSITION;
+        default:
+            return MOT_TYPE_NONE;
     }
 }
 
-void moveUp(Editor* editor) {
-    editor->save_curosr_col = false;
-
-    if (editor->cursor.row > 0) {
-        editor->cursor.row--;
-
-        size_t line_length = getLine(editor->cursor.row)->length;
-        if (editor->mode != INSERT && line_length > 0) {
-            line_length--;
-        }
-
-        if (editor->prev_cursor_col < line_length) {
-            editor->cursor.col = editor->prev_cursor_col;
-        } else {
-            editor->cursor.col = line_length;
-        }
-    }
-}
-
-void moveDown(Editor* editor) {
-    editor->save_curosr_col = false;
-
-    if (editor->cursor.row < getLineCount() - 1) {
-        editor->cursor.row++;
-
-        size_t line_length = getLine(editor->cursor.row)->length;
-        if (editor->mode != INSERT && line_length > 0) {
-            line_length--;
-        }
-
-        if (editor->prev_cursor_col < line_length) {
-            editor->cursor.col = editor->prev_cursor_col;
-        } else {
-            editor->cursor.col = line_length;
-        }
-    }
-}
-
-void moveRight(Editor* editor) {
-    size_t line_length = getLine(editor->cursor.row)->length;
-    if (editor->mode != INSERT && line_length > 0) {
-        line_length--;
+size_t moveUp(Editor* editor, const size_t count) {
+    if (count >= editor->cursor.row) {
+        return 0;
     }
 
-    if (editor->cursor.col < line_length) {
-        editor->cursor.col++;
-    } else {
-        editor->save_curosr_col = false;
+    return editor->cursor.row - count;
+}
+
+size_t moveDown(Editor* editor, const size_t count) {
+    if (editor->cursor.row + count >= getLineCount() - 1) {
+        return getLineCount() - 1;
     }
+
+    return editor->cursor.row + count;
 }
 
-Range jumpForwardsToStartOfWord(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+size_t goToLine(size_t row) {
+    row--;
+
+    if (row > getLineCount() - 1) {
+        return getLineCount() - 1;
+    }
+
+    return row;
 }
 
-Range jumpForwardsToStartOfBigWord(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+size_t goToFirstLine(const size_t count) {
+    if (count > 1) {
+        return goToLine(count);
+    }
+
+    return 0;
 }
 
-Range jumpForwardToEndOfWord(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+size_t goToLastLine(const size_t count) {
+    if (count > 1) {
+        return goToLine(count);
+    }
+
+    return getLineCount() - 1;
 }
 
-Range jumpForwardsToEndOfBigWord(Editor* editor) {
+size_t jumpToNextParagraph(Editor* editor, const size_t count) {
+    // TODO: implement
     (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+    (void)count;
+
+    return 0;
 }
 
-Range jumpBackwardsToStartOfWord(Editor* editor) {
+size_t jumpToPreviousParagraph(Editor* editor, const size_t count) {
+    // TODO: implement
     (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+    (void)count;
+
+    return 0;
 }
 
-Range jumpBackwardsToStartOfBigWord(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+size_t moveLeft(Editor* editor, const size_t count) {
+    if (count >= editor->cursor.col) {
+        return 0;
+    }
+
+    return editor->cursor.col - count;
 }
 
-Range jumpToMatchingChar(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+size_t moveRight(Editor* editor, const size_t count) {
+    if (editor->cursor.col + count >= getLine(editor->cursor.row)->length - 1) {
+        return getLine(editor->cursor.row)->length - 1;
+    }
+
+    return editor->cursor.col + count;
 }
 
-Range jumpToStartOfLine(Editor* editor) {
+size_t jumpForwardsToStartOfWord(Editor* editor, const size_t count) {
+    // TODO: implement
     (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+    (void)count;
+
+    return 0;
 }
 
-Range jumpToFirstNonBlankCharOfLine(Editor* editor) {
+size_t jumpForwardsToStartOfBigWord(Editor* editor, const size_t count) {
+    // TODO: implement
     (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+    (void)count;
+
+    return 0;
 }
 
-Range jumpToEndOfLine(Editor* editor) {
+size_t jumpForwardToEndOfWord(Editor* editor, const size_t count) {
+    // TODO: implement
     (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+    (void)count;
+
+    return 0;
 }
 
-Range jumpToLastNonBlankCharOfLine(Editor* editor) {
+size_t jumpForwardsToEndOfBigWord(Editor* editor, const size_t count) {
+    // TODO: implement
     (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+    (void)count;
+
+    return 0;
 }
 
-Range goToLastLine(Editor* editor) {
+size_t jumpBackwardsToStartOfWord(Editor* editor, const size_t count) {
+    // TODO: implement
     (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+    (void)count;
+
+    return 0;
 }
 
-Range goToLine(Editor* editor, size_t row) {
+size_t jumpBackwardsToStartOfBigWord(Editor* editor, const size_t count) {
+    // TODO: implement
     (void)editor;
-    (void)row;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+    (void)count;
+
+    return 0;
 }
 
-Range jumpToNextParagraph(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+size_t jumpToStartOfLine() {
+    return 0;
 }
 
-Range jumpToPreviousParagraph(Editor* editor) {
+size_t jumpToFirstNonBlankCharOfLine(Editor* editor) {
+    // TODO: implement
     (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+
+    return 0;
 }
 
-Range goToFirstLine(Editor* editor) {
-    (void)editor;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+size_t jumpToEndOfLine(Editor* editor) {
+    return getLine(editor->cursor.row)->length - 1;
 }
 
-Range jumpToNextOccurrenceOfChar(Editor* editor, const char c) {
+size_t jumpToNextOccurrenceOfChar(Editor* editor, const size_t count, const char c) {
+    // TODO: implement
     (void)editor;
+    (void)count;
     (void)c;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+
+    return 0;
 }
 
-Range jumpBeforeNextOccurrenceOfChar(Editor* editor, const char c) {
+size_t jumpBeforeNextOccurrenceOfChar(Editor* editor, const size_t count, const char c) {
+    // TODO: implement
     (void)editor;
+    (void)count;
     (void)c;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+
+    return 0;
 }
 
-Range jumpToPreviousOccurrenceOfChar(Editor* editor, const char c) {
+size_t jumpToPreviousOccurrenceOfChar(Editor* editor, const size_t count, const char c) {
+    // TODO: implement
     (void)editor;
+    (void)count;
     (void)c;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+
+    return 0;
 }
 
-Range jumpAfterPreviousOccurrenceOfChar(Editor* editor, const char c) {
+size_t jumpAfterPreviousOccurrenceOfChar(Editor* editor, const size_t count, const char c) {
+    // TODO: implement
     (void)editor;
+    (void)count;
     (void)c;
-    return (Range){(Position){0, 0}, (Position){0, 0}};
+
+    return 0;
+}
+
+Position jumpToMatchingChar(Editor* editor) {
+    // TODO: implement
+    (void)editor;
+
+    return (Position){0, 0};
 }
