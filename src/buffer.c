@@ -80,7 +80,7 @@ void deleteCharRight(Buffer* buffer, Position* cursor, const size_t count) {
     memmove(&line->chars[cursor->col], &line->chars[cursor->col + count], line->length - cursor->col - count + 1);
 
     line->chars = realloc(line->chars, line->length - count + 1);
-    line->length = line->length - count;
+    line->length -= count;
 
     if (cursor->col == line->length && cursor->col > 0) {
         cursor->col--;
@@ -88,8 +88,18 @@ void deleteCharRight(Buffer* buffer, Position* cursor, const size_t count) {
 }
 
 void deleteStartOfLine(Buffer* buffer, Position* cursor) {
-    (void)buffer;
-    (void)cursor;
+    if (cursor->col == 0) {
+        return;
+    }
+
+    Line* line = &buffer->lines[cursor->row];
+
+    memmove(&line->chars[0], &line->chars[cursor->col], line->length - cursor->col + 1);
+
+    line->chars = realloc(line->chars, line->length - cursor->col + 1);
+    line->length -= cursor->col;
+
+    cursor->col = 0;
 }
 
 void deleteEndOfLine(Buffer* buffer, Position* cursor) {
