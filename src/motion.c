@@ -36,6 +36,9 @@ MotionType getMotionType(Motion motion) {
     }
 }
 
+// TODO: set editor->successfu_motion to false when the motion can't be executed
+//       ex. find next a. (fa) -> there is not a in this line
+
 size_t moveUp(Editor* editor, const size_t count) {
     if (count >= editor->cursor.row) {
         return 0;

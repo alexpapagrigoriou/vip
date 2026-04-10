@@ -143,10 +143,40 @@ static void fixCount(Parser* parser) {
 static void executeNormalMode(Parser* parser, Editor* editor) {
     fixCount(parser);
 
-    // TODO: if op is OP_NONE and motion is movement, then execute movement
-    //       else find the size_t row or col and execute based on the MotionType
-    //
-    //       replace the buffer functions with deleteRow and deleteCol
+    editor->successfu_motion = true;
+
+    if (parser->cmd.operator == OP_NONE) {
+        switch (parser->cmd.motion) {
+            case MOT_LEFT:
+                movementLeft(editor, parser->cmd.count);
+                return;
+            case MOT_UP:
+                movementUp(editor, parser->cmd.count);
+                return;
+            case MOT_DOWN:
+                movementDown(editor, parser->cmd.count);
+                return;
+            case MOT_RIGHT:
+                movementRight(editor, parser->cmd.count);
+                return;
+            case MOT_FIRST_LINE:
+                movementFirstLine(editor, parser->cmd.count);
+                return;
+            case MOT_LAST_LINE:
+                movementLastLine(editor, parser->cmd.count);
+                return;
+            case MOT_END_OF_LINE:
+                movementEndOfLine(editor);
+                return;
+            default:
+                break;
+        }
+    }
+
+    // TODO: replace the buffer functions with deleteRow and deleteCol
+    //       find the size_t row or col and execute based on the MotionType
+    //       make the change operator to be the delete + insert
+
     switch (parser->cmd.operator) {
         case OP_NONE:
             handleOperatorNone(parser, editor);

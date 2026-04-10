@@ -9,6 +9,8 @@ static void fixCount(Parser* parser) {
 static void executeVisualLineMode(Parser* parser, Editor* editor) {
     fixCount(parser);
 
+    editor->successfu_motion = true;
+
     // TODO: implement visual line movements and execute them or update the visual selection
     (void)editor;
 }
