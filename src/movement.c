@@ -18,6 +18,11 @@ static void fixCursorCol(Editor* editor) {
 }
 
 void movementLeft(Editor* editor, const size_t count) {
+    if (editor->cursor.col == 0) {
+        editor->save_curosr_col = false;
+        return;
+    }
+
     editor->cursor.col = moveLeft(editor, count);
 }
 
@@ -48,9 +53,8 @@ void movementDown(Editor* editor, const size_t count) {
 }
 
 void movementRight(Editor* editor, const size_t count) {
-    size_t new_col = moveRight(editor, count);
     if (editor->mode == INSERT) {
-        if (new_col < editor->cursor.col) {
+        if (editor->cursor.col == getLine(editor->cursor.row)->length) {
             editor->save_curosr_col = false;
             return;
         }
@@ -59,6 +63,7 @@ void movementRight(Editor* editor, const size_t count) {
         return;
     }
 
+    size_t new_col = moveRight(editor, count);
     if (new_col == editor->cursor.col) {
         editor->save_curosr_col = false;
         return;

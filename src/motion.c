@@ -103,6 +103,10 @@ size_t moveLeft(Editor* editor, const size_t count) {
 }
 
 size_t moveRight(Editor* editor, const size_t count) {
+    if (getLine(editor->cursor.row)->length == 0) {
+        return 0;
+    }
+
     if (editor->cursor.col + count >= getLine(editor->cursor.row)->length - 1) {
         return getLine(editor->cursor.row)->length - 1;
     }
