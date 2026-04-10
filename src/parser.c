@@ -325,6 +325,7 @@ static void handleVisualMode(Editor* editor, int key) {
 }
 
 static void handleCommandMode(Editor* editor, int key) {
+    // TODO: use movementLine ex. (:4) -> movementLine(editor, 4);
     (void)editor;
     (void)key;
 }
