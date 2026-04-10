@@ -1,5 +1,7 @@
 #include "movement.h"
 
+#include <stdint.h>
+
 #include "motion.h"
 #include "vip.h"
 
@@ -86,4 +88,35 @@ void insertArrowDown(Editor* editor) {
 
 void insertArrowRight(Editor* editor) {
     movementRight(editor, 1);
+}
+
+void movementLine(Editor* editor, size_t row) {
+    editor->save_curosr_col = false;
+
+    editor->cursor.row = goToLine(row);
+
+    fixCursorCol(editor);
+}
+
+void movementFirstLine(Editor* editor, const size_t count) {
+    editor->save_curosr_col = false;
+
+    editor->cursor.row = goToFirstLine(count);
+
+    fixCursorCol(editor);
+}
+
+void movementLastLine(Editor* editor, const size_t count) {
+    editor->save_curosr_col = false;
+
+    editor->cursor.row = goToLastLine(count);
+
+    fixCursorCol(editor);
+}
+
+void movementEndOfLine(Editor* editor) {
+    editor->save_curosr_col = false;
+    editor->prev_cursor_col = SIZE_MAX;
+
+    editor->cursor.col = jumpToEndOfLine(editor);
 }
