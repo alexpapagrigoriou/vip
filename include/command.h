@@ -1,6 +1,5 @@
 #pragma once
 
 #include "editor.h"
-#include "parser.h"
 
-void executeCommand(Parser* parser, Editor* editor);
+void parseCommandMode(Editor* editor, int key);

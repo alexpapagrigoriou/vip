@@ -12,6 +12,7 @@ typedef enum {
     NORMAL,
     INSERT,
     VISUAL,
+    VISUAL_LINE,
     COMMAND,
     EXIT
 } Mode;
