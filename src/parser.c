@@ -300,6 +300,7 @@ static void handleInsertMode(Editor* editor, int key) {
             insertString(&editor->buffer, &editor->cursor, "    ");
             break;
         case ENTER:
+            // TODO: new buffer function that moves text after cursor to the new line
             appendLine(&editor->buffer, &editor->cursor);
             break;
         case BACKSPACE:
