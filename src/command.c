@@ -6,16 +6,16 @@
 static void handleOperatorNone(Parser* parser, Editor* editor) {
     switch (parser->cmd.motion) {
         case MOT_LEFT:
-            arrowLeft(editor, parser->cmd.count);
+            movementLeft(editor, parser->cmd.count);
             break;
         case MOT_UP:
-            arrowUp(editor, parser->cmd.count);
+            movementUp(editor, parser->cmd.count);
             break;
         case MOT_DOWN:
-            arrowDown(editor, parser->cmd.count);
+            movementDown(editor, parser->cmd.count);
             break;
         case MOT_RIGHT:
-            arrowRight(editor, parser->cmd.count);
+            movementRight(editor, parser->cmd.count);
             break;
         case MOT_WORD:
             break;

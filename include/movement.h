@@ -4,10 +4,10 @@
 
 #include "editor.h"
 
-void arrowLeft(Editor* editor, const size_t count);
-void arrowUp(Editor* editor, const size_t count);
-void arrowDown(Editor* editor, const size_t count);
-void arrowRight(Editor* editor, const size_t count);
+void movementLeft(Editor* editor, const size_t count);
+void movementUp(Editor* editor, const size_t count);
+void movementDown(Editor* editor, const size_t count);
+void movementRight(Editor* editor, const size_t count);
 
 void insertArrowLeft(Editor* editor);
 void insertArrowUp(Editor* editor);

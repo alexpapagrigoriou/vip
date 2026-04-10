@@ -17,11 +17,11 @@ static void fixCursorCol(Editor* editor) {
     editor->cursor.col = editor->prev_cursor_col;
 }
 
-void arrowLeft(Editor* editor, const size_t count) {
+void movementLeft(Editor* editor, const size_t count) {
     editor->cursor.col = moveLeft(editor, count);
 }
 
-void arrowUp(Editor* editor, const size_t count) {
+void movementUp(Editor* editor, const size_t count) {
     editor->save_curosr_col = false;
 
     size_t new_row = moveUp(editor, count);
@@ -34,7 +34,7 @@ void arrowUp(Editor* editor, const size_t count) {
     fixCursorCol(editor);
 }
 
-void arrowDown(Editor* editor, const size_t count) {
+void movementDown(Editor* editor, const size_t count) {
     editor->save_curosr_col = false;
 
     size_t new_row = moveDown(editor, count);
@@ -47,7 +47,7 @@ void arrowDown(Editor* editor, const size_t count) {
     fixCursorCol(editor);
 }
 
-void arrowRight(Editor* editor, const size_t count) {
+void movementRight(Editor* editor, const size_t count) {
     size_t new_col = moveRight(editor, count);
     if (editor->mode == INSERT) {
         if (new_col < editor->cursor.col) {
@@ -68,17 +68,17 @@ void arrowRight(Editor* editor, const size_t count) {
 }
 
 void insertArrowLeft(Editor* editor) {
-    arrowLeft(editor, 1);
+    movementLeft(editor, 1);
 }
 
 void insertArrowUp(Editor* editor) {
-    arrowUp(editor, 1);
+    movementUp(editor, 1);
 }
 
 void insertArrowDown(Editor* editor) {
-    arrowDown(editor, 1);
+    movementDown(editor, 1);
 }
 
 void insertArrowRight(Editor* editor) {
-    arrowRight(editor, 1);
+    movementRight(editor, 1);
 }
