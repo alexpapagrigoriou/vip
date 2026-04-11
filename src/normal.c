@@ -1,132 +1,8 @@
 #include "normal.h"
 
+#include <stdbool.h>
+
 #include "movement.h"
-
-static void handleOperatorNone(Parser* parser, Editor* editor) {
-    switch (parser->cmd.motion) {
-        case MOT_LEFT:
-            movementLeft(editor, parser->cmd.count);
-            break;
-        case MOT_UP:
-            movementUp(editor, parser->cmd.count);
-            break;
-        case MOT_DOWN:
-            movementDown(editor, parser->cmd.count);
-            break;
-        case MOT_RIGHT:
-            movementRight(editor, parser->cmd.count);
-            break;
-        case MOT_WORD:
-            break;
-        case MOT_BIG_WORD:
-            break;
-        case MOT_END_WORD:
-            break;
-        case MOT_END_BIG_WORD:
-            break;
-        case MOT_BACKWARD_WORD:
-            break;
-        case MOT_BACKWARD_BIG_WORD:
-            break;
-        case MOT_START_OF_LINE:
-            break;
-        case MOT_FIRST_NON_BLANK_CHAR_OF_LINE:
-            break;
-        case MOT_END_OF_LINE:
-            break;
-        case MOT_LAST_LINE:
-            break;
-        case MOT_NEXT_PARAGRAPH:
-            break;
-        case MOT_PREVIOUS_PARAGRAPH:
-            break;
-        case MOT_FIRST_LINE:
-            break;
-        case MOT_NEXT_OCCURRENCE_OF_CHAR:
-            break;
-        case MOT_BEFORE_NEXT_OCCURRENCE_OF_CHAR:
-            break;
-        case MOT_PREVIOUS_OCCURRENCE_OF_CHAR:
-            break;
-        case MOT_AFTER_PREVIOUS_OCCURRENCE_OF_CHAR:
-            break;
-        default:
-            break;
-    }
-}
-
-static void handleOperatorDelete(Parser* parser, Editor* editor) {
-    switch (parser->cmd.motion) {
-        case MOT_LEFT:
-            deleteCharLeft(&editor->buffer, &editor->cursor, parser->cmd.count);
-            break;
-        case MOT_UP:
-            break;
-        case MOT_DOWN:
-            break;
-        case MOT_RIGHT:
-            deleteCharRight(&editor->buffer, &editor->cursor, parser->cmd.count);
-            break;
-        case MOT_LINE:
-            deleteLine(&editor->buffer, &editor->cursor, parser->cmd.count);
-            break;
-        case MOT_WORD:
-            break;
-        case MOT_BIG_WORD:
-            break;
-        case MOT_END_WORD:
-            break;
-        case MOT_END_BIG_WORD:
-            break;
-        case MOT_BACKWARD_WORD:
-            break;
-        case MOT_BACKWARD_BIG_WORD:
-            break;
-        case MOT_START_OF_LINE:
-            break;
-        case MOT_FIRST_NON_BLANK_CHAR_OF_LINE:
-            break;
-        case MOT_END_OF_LINE:
-            break;
-        case MOT_FIRST_LINE:
-            break;
-        case MOT_LAST_LINE:
-            break;
-        case MOT_NEXT_PARAGRAPH:
-            break;
-        case MOT_PREVIOUS_PARAGRAPH:
-            break;
-        case MOT_NEXT_OCCURRENCE_OF_CHAR:
-            break;
-        case MOT_BEFORE_NEXT_OCCURRENCE_OF_CHAR:
-            break;
-        case MOT_PREVIOUS_OCCURRENCE_OF_CHAR:
-            break;
-        case MOT_AFTER_PREVIOUS_OCCURRENCE_OF_CHAR:
-            break;
-        default:
-            break;
-    }
-}
-
-static void handleOperatorChange(Parser* parser, Editor* editor) {
-    handleOperatorDelete(parser, editor);
-    editor->mode = INSERT;
-}
-
-static void handleOperatorYank(Parser* parser, Editor* editor) {
-    switch (parser->cmd.motion) {
-        case MOT_LINE:
-            (void)editor;
-            break;
-        default:
-            break;
-    }
-}
-
-static void handleOperatorReplace(Parser* parser, Editor* editor) {
-    replaceChar(&editor->buffer, &editor->cursor, parser->cmd.count, parser->cmd.argument);
-}
 
 static void fixCount(Parser* parser) {
     if (parser->cmd.count == 0) {
@@ -140,58 +16,138 @@ static void fixCount(Parser* parser) {
     parser->cmd.count = parser->cmd.count * parser->cmd.count_after_operator;
 }
 
-static void executeNormalMode(Parser* parser, Editor* editor) {
-    fixCount(parser);
+static void executeRowMotion(Parser* parser, Editor* editor) {
+    size_t row = getMotionRow(editor, parser->cmd.motion, parser->cmd.count);
 
-    editor->successfu_motion = true;
-
-    if (parser->cmd.operator == OP_NONE) {
-        switch (parser->cmd.motion) {
-            case MOT_LEFT:
-                movementLeft(editor, parser->cmd.count);
-                return;
-            case MOT_UP:
-                movementUp(editor, parser->cmd.count);
-                return;
-            case MOT_DOWN:
-                movementDown(editor, parser->cmd.count);
-                return;
-            case MOT_RIGHT:
-                movementRight(editor, parser->cmd.count);
-                return;
-            case MOT_FIRST_LINE:
-                movementFirstLine(editor, parser->cmd.count);
-                return;
-            case MOT_LAST_LINE:
-                movementLastLine(editor, parser->cmd.count);
-                return;
-            case MOT_END_OF_LINE:
-                movementEndOfLine(editor);
-                return;
-            default:
-                break;
-        }
+    if (!editor->successful_motion) {
+        editor->save_curosr_col = false;
+        return;
     }
 
-    // TODO: replace the buffer functions with deleteRow and deleteCol
-    //       find the size_t row or col and execute based on the MotionType
-    //       make the change operator to be the delete + insert
+    // TODO: handle the motion based on the operator
+    (void)row;
 
     switch (parser->cmd.operator) {
         case OP_NONE:
-            handleOperatorNone(parser, editor);
             break;
         case OP_DELETE:
-            handleOperatorDelete(parser, editor);
+            deleteRow(&editor->buffer, &editor->cursor, row);
             break;
         case OP_CHANGE:
-            handleOperatorChange(parser, editor);
             break;
         case OP_YANK:
-            handleOperatorYank(parser, editor);
             break;
-        case OP_REPLACE:
-            handleOperatorReplace(parser, editor);
+        default:
+            break;
+    }
+}
+
+static void executeColLeftMotion(Parser* parser, Editor* editor) {
+    size_t col = getMotionColLeft(editor, parser->cmd.motion, parser->cmd.count, parser->cmd.argument);
+
+    if (!editor->successful_motion) {
+        editor->save_curosr_col = false;
+        return;
+    }
+
+    // TODO: handle the motion based on the operator
+    (void)col;
+
+    switch (parser->cmd.operator) {
+        case OP_NONE:
+            break;
+        case OP_DELETE:
+            break;
+        case OP_CHANGE:
+            break;
+        case OP_YANK:
+            break;
+        default:
+            break;
+    }
+}
+
+static void executeColRightMotion(Parser* parser, Editor* editor) {
+    size_t col = getMotionColRight(editor, parser->cmd.motion, parser->cmd.count, parser->cmd.argument);
+
+    if (!editor->successful_motion) {
+        editor->save_curosr_col = false;
+        return;
+    }
+
+    // TODO: handle the motion based on the operator
+    // !!! IMPORTANT !!!: make the closed interval to half open with col++ if the motion needs it
+    (void)col;
+
+    switch (parser->cmd.operator) {
+        case OP_NONE:
+            break;
+        case OP_DELETE:
+            break;
+        case OP_CHANGE:
+            break;
+        case OP_YANK:
+            break;
+        default:
+            break;
+    }
+}
+
+static void executePositionMotion(Parser* parser, Editor* editor) {
+    Position position = getMotionPosition(editor, parser->cmd.motion, parser->cmd.count);
+
+    if (!editor->successful_motion) {
+        editor->save_curosr_col = false;
+        return;
+    }
+
+    // TODO: handle the motion based on the operator
+    (void)position;
+
+    switch (parser->cmd.operator) {
+        case OP_NONE:
+            break;
+        case OP_DELETE:
+            break;
+        case OP_CHANGE:
+            break;
+        case OP_YANK:
+            break;
+        default:
+            break;
+    }
+}
+
+static void executeNormalMode(Parser* parser, Editor* editor) {
+    fixCount(parser);
+
+    editor->successful_motion = true;
+
+    if (parser->cmd.operator == OP_REPLACE) {
+        replaceChar(&editor->buffer, &editor->cursor, parser->cmd.count, parser->cmd.argument);
+        return;
+    }
+
+    if (parser->cmd.operator == OP_NONE) {
+        if (isMovementToExecute(editor, parser->cmd.motion, parser->cmd.count)) {
+            return;
+        }
+    }
+
+    switch (getMotionType(parser->cmd.motion)) {
+        case MOT_TYPE_ROW:
+            executeRowMotion(parser, editor);
+            break;
+        case MOT_TYPE_COL_LEFT:
+            executeColLeftMotion(parser, editor);
+            break;
+        case MOT_TYPE_COL_RIGHT:
+            executeColRightMotion(parser, editor);
+            break;
+        case MOT_TYPE_POSITION:
+            executePositionMotion(parser, editor);
+            break;
+        default:
             break;
     }
 }
@@ -427,12 +383,12 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
             return;
         case 'I':
             editor->mode = INSERT;
-            editor->cursor.col = jumpToFirstNonBlankCharOfLine(editor);
+            editor->cursor.col = getMotionCol(editor, MOT_FIRST_NON_BLANK_CHAR_OF_LINE);
             parserInit(parser);
             return;
         case 'A':
             editor->mode = INSERT;
-            editor->cursor.col = jumpToEndOfLine(editor);
+            editor->cursor.col = getMotionCol(editor, MOT_END_OF_LINE);
             parserInit(parser);
             return;
         case 'o':

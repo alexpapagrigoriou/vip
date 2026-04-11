@@ -19,19 +19,19 @@ static void fixCursorCol(Editor* editor) {
     editor->cursor.col = editor->prev_cursor_col;
 }
 
-void movementLeft(Editor* editor, const size_t count) {
+static void movementLeft(Editor* editor, Motion motion, const size_t count) {
     if (editor->cursor.col == 0) {
         editor->save_curosr_col = false;
         return;
     }
 
-    editor->cursor.col = moveLeft(editor, count);
+    editor->cursor.col = getMotionColLeft(editor, motion, count, '\0');
 }
 
-void movementUp(Editor* editor, const size_t count) {
+static void movementUp(Editor* editor, Motion motion, const size_t count) {
     editor->save_curosr_col = false;
 
-    size_t new_row = moveUp(editor, count);
+    size_t new_row = getMotionRow(editor, motion, count);
     if (new_row == editor->cursor.row) {
         return;
     }
@@ -41,10 +41,10 @@ void movementUp(Editor* editor, const size_t count) {
     fixCursorCol(editor);
 }
 
-void movementDown(Editor* editor, const size_t count) {
+static void movementDown(Editor* editor, Motion motion, const size_t count) {
     editor->save_curosr_col = false;
 
-    size_t new_row = moveDown(editor, count);
+    size_t new_row = getMotionRow(editor, motion, count);
     if (new_row == editor->cursor.row) {
         return;
     }
@@ -54,7 +54,7 @@ void movementDown(Editor* editor, const size_t count) {
     fixCursorCol(editor);
 }
 
-void movementRight(Editor* editor, const size_t count) {
+static void movementRight(Editor* editor, Motion motion, const size_t count) {
     if (editor->mode == INSERT) {
         if (editor->cursor.col == getLine(editor->cursor.row)->length) {
             editor->save_curosr_col = false;
@@ -65,7 +65,7 @@ void movementRight(Editor* editor, const size_t count) {
         return;
     }
 
-    size_t new_col = moveRight(editor, count);
+    size_t new_col = getMotionColRight(editor, motion, count, '\0');
     if (new_col == editor->cursor.col) {
         editor->save_curosr_col = false;
         return;
@@ -74,49 +74,79 @@ void movementRight(Editor* editor, const size_t count) {
     editor->cursor.col = new_col;
 }
 
-void insertArrowLeft(Editor* editor) {
-    movementLeft(editor, 1);
+static void movementFirstLine(Editor* editor, Motion motion, const size_t count) {
+    editor->save_curosr_col = false;
+
+    editor->cursor.row = getMotionRow(editor, motion, count);
+
+    fixCursorCol(editor);
 }
 
-void insertArrowUp(Editor* editor) {
-    movementUp(editor, 1);
+static void movementLastLine(Editor* editor, Motion motion, const size_t count) {
+    editor->save_curosr_col = false;
+
+    editor->cursor.row = getMotionRow(editor, motion, count);
+
+    fixCursorCol(editor);
 }
 
-void insertArrowDown(Editor* editor) {
-    movementDown(editor, 1);
+static void movementEndOfLine(Editor* editor, Motion motion) {
+    editor->save_curosr_col = false;
+    editor->prev_cursor_col = SIZE_MAX;
+
+    editor->cursor.col = getMotionColRight(editor, motion, 1, '\0');
 }
 
-void insertArrowRight(Editor* editor) {
-    movementRight(editor, 1);
+bool isMovementToExecute(Editor* editor, Motion motion, const size_t count) {
+    switch (motion) {
+        case MOT_LEFT:
+            movementLeft(editor, motion, count);
+            break;
+        case MOT_UP:
+            movementUp(editor, motion, count);
+            break;
+        case MOT_DOWN:
+            movementDown(editor, motion, count);
+            break;
+        case MOT_RIGHT:
+            movementRight(editor, motion, count);
+            break;
+        case MOT_FIRST_LINE:
+            movementFirstLine(editor, motion, count);
+            break;
+        case MOT_LAST_LINE:
+            movementLastLine(editor, motion, count);
+            break;
+        case MOT_END_OF_LINE:
+            movementEndOfLine(editor, motion);
+            break;
+        default:
+            return false;
+    }
+
+    return true;
 }
 
 void movementLine(Editor* editor, size_t row) {
     editor->save_curosr_col = false;
 
-    editor->cursor.row = goToLine(row);
+    editor->cursor.row = getMotionRow(editor, MOT_LINE, row);
 
     fixCursorCol(editor);
 }
 
-void movementFirstLine(Editor* editor, const size_t count) {
-    editor->save_curosr_col = false;
-
-    editor->cursor.row = goToFirstLine(count);
-
-    fixCursorCol(editor);
+void insertArrowLeft(Editor* editor) {
+    movementLeft(editor, MOT_LEFT, 1);
 }
 
-void movementLastLine(Editor* editor, const size_t count) {
-    editor->save_curosr_col = false;
-
-    editor->cursor.row = goToLastLine(count);
-
-    fixCursorCol(editor);
+void insertArrowUp(Editor* editor) {
+    movementUp(editor, MOT_UP, 1);
 }
 
-void movementEndOfLine(Editor* editor) {
-    editor->save_curosr_col = false;
-    editor->prev_cursor_col = SIZE_MAX;
+void insertArrowDown(Editor* editor) {
+    movementDown(editor, MOT_DOWN, 1);
+}
 
-    editor->cursor.col = jumpToEndOfLine(editor);
+void insertArrowRight(Editor* editor) {
+    movementRight(editor, MOT_RIGHT, 1);
 }

@@ -185,3 +185,30 @@ void deleteLine(Buffer* buffer, Position* cursor, const size_t count) {
         }
     }
 }
+
+void deleteRow(Buffer* buffer, Position* cursor, const size_t row) {
+    // TODO: merge all buffer row based functions into this one
+    //       delete the current row going up or down based on the new row position
+    (void)buffer;
+    (void)cursor;
+    (void)row;
+}
+
+void deleteColLeft(Buffer* buffer, Position* cursor, const size_t col) {
+    // TODO: merge all buffer col based functions into this one
+    //       delete [col, cursor.col - 1]
+    //       move cursor.col to col
+    //       use existing deleteCharLeft
+    (void)buffer;
+    (void)cursor;
+    (void)col;
+}
+
+void deleteColRight(Buffer* buffer, Position* cursor, const size_t col) {
+    // TODO: merge all buffer row based functions into this one
+    //       delete [cursor.col, col]
+    //       use existing deleteCharRight
+    (void)buffer;
+    (void)cursor;
+    (void)col;
+}

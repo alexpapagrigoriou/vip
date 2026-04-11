@@ -20,7 +20,7 @@ typedef enum {
 typedef struct {
     Buffer buffer;
     Position cursor;
-    bool successfu_motion;
+    bool successful_motion;
     bool save_curosr_col;
     size_t prev_cursor_col;
     Position text;
