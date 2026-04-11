@@ -1,6 +1,7 @@
 #include "motion.h"
 
 #include "editor.h"
+#include "error.h"
 #include "vip.h"
 
 MotionType getMotionType(Motion motion) {
@@ -33,6 +34,7 @@ MotionType getMotionType(Motion motion) {
         case MOT_MATCHING_CHAR:
             return MOT_TYPE_POSITION;
         default:
+            ERROR("Wrong motion");
             return MOT_TYPE_NONE;
     }
 }
@@ -257,6 +259,7 @@ size_t getMotionRow(Editor* editor, Motion motion, const size_t count) {
         case MOT_PREVIOUS_PARAGRAPH:
             return jumpToPreviousParagraph(editor, count);
         default:
+            ERROR("Wrong motion");
             return 0;
     }
 }
@@ -270,6 +273,7 @@ size_t getMotionCol(Editor* editor, Motion motion) {
         case MOT_END_OF_LINE:
             return jumpToEndOfLine(editor);
         default:
+            ERROR("Wrong motion");
             return 0;
     }
 }
@@ -291,6 +295,7 @@ size_t getMotionColLeft(Editor* editor, Motion motion, const size_t count, const
         case MOT_AFTER_PREVIOUS_OCCURRENCE_OF_CHAR:
             return jumpAfterPreviousOccurrenceOfChar(editor, count, c);
         default:
+            ERROR("Wrong motion");
             return 0;
     }
 }
@@ -314,6 +319,7 @@ size_t getMotionColRight(Editor* editor, Motion motion, const size_t count, cons
         case MOT_BEFORE_NEXT_OCCURRENCE_OF_CHAR:
             return jumpBeforeNextOccurrenceOfChar(editor, count, c);
         default:
+            ERROR("Wrong motion");
             return 0;
     }
 }
@@ -325,6 +331,7 @@ Position getMotionPosition(Editor* editor, Motion motion, const size_t count) {
         case MOT_MATCHING_CHAR:
             return jumpToMatchingChar(editor);
         default:
+            ERROR("Wrong motion");
             return (Position){0, 0};
     }
 }

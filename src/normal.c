@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 
+#include "error.h"
 #include "movement.h"
 
 static void fixCount(Parser* parser) {
@@ -38,7 +39,7 @@ static void executeRowMotion(Parser* parser, Editor* editor) {
         case OP_YANK:
             break;
         default:
-            break;
+            ERROR("Wrong operator");
     }
 }
 
@@ -63,7 +64,7 @@ static void executeColLeftMotion(Parser* parser, Editor* editor) {
         case OP_YANK:
             break;
         default:
-            break;
+            ERROR("Wrong operator");
     }
 }
 
@@ -89,7 +90,7 @@ static void executeColRightMotion(Parser* parser, Editor* editor) {
         case OP_YANK:
             break;
         default:
-            break;
+            ERROR("Wrong operator");
     }
 }
 
@@ -114,7 +115,7 @@ static void executePositionMotion(Parser* parser, Editor* editor) {
         case OP_YANK:
             break;
         default:
-            break;
+            ERROR("Wrong operator");
     }
 }
 
@@ -148,7 +149,7 @@ static void executeNormalMode(Parser* parser, Editor* editor) {
             executePositionMotion(parser, editor);
             break;
         default:
-            break;
+            ERROR("Wrong motion type");
     }
 }
 
