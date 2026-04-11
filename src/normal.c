@@ -3,6 +3,7 @@
 #include <stdbool.h>
 
 #include "error.h"
+#include "input.h"
 #include "movement.h"
 
 static void fixCount(Parser* parser) {
@@ -158,6 +159,11 @@ static void executeAndInit(Parser* parser, Editor* editor) {
     parserInit(parser);
 }
 
+static void wrongInput(Parser* parser, Editor* editor) {
+    editor->save_curosr_col = false;
+    parserInit(parser);
+}
+
 void parseNormalMode(Parser* parser, Editor* editor, int key) {
     // TODO: remove exiting with 'q' after handling commmand mode
     if (key == 'q' && parser->state == STATE_NORMAL) {
@@ -166,6 +172,11 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
     }
 
     if (parser->cmd.operator == OP_REPLACE) {
+        if (!isPrintable(key)) {
+            wrongInput(parser, editor);
+            return;
+        }
+
         parser->cmd.argument = key;
         executeAndInit(parser, editor);
         return;
@@ -176,8 +187,9 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
             if (!(key == '0' && parser->cmd.count == 0)) {
                 if (parser->cmd.motion == MOT_NONE) {
                     parser->cmd.count = parser->cmd.count * 10 + (key - '0');
+                    editor->save_curosr_col = false;
                 } else {
-                    parserInit(parser);
+                    wrongInput(parser, editor);
                 }
                 return;
             }
@@ -185,8 +197,9 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
             if (!(key == '0' && parser->cmd.count_after_operator == 0)) {
                 if (parser->cmd.motion == MOT_NONE) {
                     parser->cmd.count_after_operator = parser->cmd.count_after_operator * 10 + (key - '0');
+                    editor->save_curosr_col = false;
                 } else {
-                    parserInit(parser);
+                    wrongInput(parser, editor);
                 }
                 return;
             }
@@ -203,7 +216,7 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
                     parser->cmd.motion = MOT_FIRST_LINE;
                     executeAndInit(parser, editor);
                 } else {
-                    parserInit(parser);
+                    wrongInput(parser, editor);
                 }
                 return;
             case 'f':
@@ -211,7 +224,7 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
                     parser->cmd.motion = MOT_NEXT_OCCURRENCE_OF_CHAR;
                     executeAndInit(parser, editor);
                 } else {
-                    parserInit(parser);
+                    wrongInput(parser, editor);
                 }
                 return;
             case 't':
@@ -219,7 +232,7 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
                     parser->cmd.motion = MOT_BEFORE_NEXT_OCCURRENCE_OF_CHAR;
                     executeAndInit(parser, editor);
                 } else {
-                    parserInit(parser);
+                    wrongInput(parser, editor);
                 }
                 return;
             case 'F':
@@ -227,7 +240,7 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
                     parser->cmd.motion = MOT_PREVIOUS_OCCURRENCE_OF_CHAR;
                     executeAndInit(parser, editor);
                 } else {
-                    parserInit(parser);
+                    wrongInput(parser, editor);
                 }
                 return;
             case 'T':
@@ -235,7 +248,7 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
                     parser->cmd.motion = MOT_AFTER_PREVIOUS_OCCURRENCE_OF_CHAR;
                     executeAndInit(parser, editor);
                 } else {
-                    parserInit(parser);
+                    wrongInput(parser, editor);
                 }
                 return;
         }
@@ -324,18 +337,22 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
                 case 'd':
                     parser->state = STATE_OPERATOR_PENDING;
                     parser->cmd.operator = OP_DELETE;
+                    editor->save_curosr_col = false;
                     return;
                 case 'c':
                     parser->state = STATE_OPERATOR_PENDING;
                     parser->cmd.operator = OP_CHANGE;
+                    editor->save_curosr_col = false;
                     return;
                 case 'y':
                     parser->state = STATE_OPERATOR_PENDING;
                     parser->cmd.operator = OP_YANK;
+                    editor->save_curosr_col = false;
                     return;
                 case 'r':
                     parser->state = STATE_OPERATOR_PENDING;
                     parser->cmd.operator = OP_REPLACE;
+                    editor->save_curosr_col = false;
                     return;
             }
             break;
@@ -346,7 +363,7 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
                         parser->cmd.motion = MOT_LINE;
                         executeAndInit(parser, editor);
                     } else {
-                        parserInit(parser);
+                        wrongInput(parser, editor);
                     }
                     return;
                 case 'c':
@@ -354,7 +371,7 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
                         parser->cmd.motion = MOT_LINE;
                         executeAndInit(parser, editor);
                     } else {
-                        parserInit(parser);
+                        wrongInput(parser, editor);
                     }
                     return;
                 case 'y':
@@ -362,11 +379,11 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
                         parser->cmd.motion = MOT_LINE;
                         executeAndInit(parser, editor);
                     } else {
-                        parserInit(parser);
+                        wrongInput(parser, editor);
                     }
                     return;
                 default:
-                    parserInit(parser);
+                    wrongInput(parser, editor);
                     return;
             }
             break;
@@ -414,5 +431,5 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
             return;
     }
 
-    parserInit(parser);
+    wrongInput(parser, editor);
 }
