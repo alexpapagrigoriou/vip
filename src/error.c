@@ -3,7 +3,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "draw.h"
+
 void error(const char* msg, const char* file, int line, const char* func) {
+    cleanScreen();
+    fflush(stdout);
+
     fprintf(stderr, "Error: %s (%s:%d, %s)\n", msg, file, line, func);
+    fflush(stderr);
+
     exit(EXIT_FAILURE);
 }
