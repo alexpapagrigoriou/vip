@@ -165,6 +165,7 @@ void clearLine(Buffer* buffer, Position* cursor) {
 }
 
 void deleteLine(Buffer* buffer, Position* cursor, const size_t count) {
+    // TODO: delete all lines at once with a single memmove and realloc
     cursor->col = 0;
 
     for (size_t i = 0; i < count; i++) {
@@ -173,7 +174,7 @@ void deleteLine(Buffer* buffer, Position* cursor, const size_t count) {
             return;
         }
 
-        free(buffer->lines[cursor->row].chars);
+        freeLine(&buffer->lines[cursor->row]);
 
         memmove(&buffer->lines[cursor->row], &buffer->lines[cursor->row + 1], sizeof(Line) * (buffer->line_count - cursor->row - 1));
 
