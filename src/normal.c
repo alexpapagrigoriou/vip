@@ -390,6 +390,7 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
         case 'A':
             editor->mode = INSERT;
             editor->cursor.col = getMotionCol(editor, MOT_END_OF_LINE);
+            insertArrowRight(editor);
             parserInit(parser);
             return;
         case 'o':
