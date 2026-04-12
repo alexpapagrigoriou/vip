@@ -20,7 +20,7 @@ void freeBufferLines(Buffer* buffer) {
 void insertChar(Buffer* buffer, Position* cursor, const char c) {
     Line* line = &buffer->lines[cursor->row];
 
-    line->chars = realloc(line->chars, line->length + 2);
+    lineEnsure(line, line->length + 2);
 
     memmove(&line->chars[cursor->col + 1], &line->chars[cursor->col], line->length - cursor->col + 1);
 
@@ -35,11 +35,11 @@ void insertString(Buffer* buffer, Position* cursor, const char* text) {
 
     Line* line = &buffer->lines[cursor->row];
 
-    line->chars = realloc(line->chars, line->length + text_length + 1);
+    lineEnsure(line, line->length + text_length + 1);
 
     memmove(&line->chars[cursor->col + text_length], &line->chars[cursor->col], line->length - cursor->col + 1);
-
     memmove(&line->chars[cursor->col], text, text_length);
+
     line->length += text_length;
 
     cursor->col += text_length;
@@ -59,7 +59,6 @@ void deleteCharLeft(Buffer* buffer, Position* cursor, const size_t count) {
 
     memmove(&line->chars[cursor->col - count], &line->chars[cursor->col], line->length - cursor->col + 1);
 
-    line->chars = realloc(line->chars, line->length - count + 1);
     line->length -= count;
 
     cursor->col -= count;
@@ -79,7 +78,6 @@ void deleteCharRight(Buffer* buffer, Position* cursor, const size_t count) {
 
     memmove(&line->chars[cursor->col], &line->chars[cursor->col + count], line->length - cursor->col - count + 1);
 
-    line->chars = realloc(line->chars, line->length - count + 1);
     line->length -= count;
 
     if (cursor->col == line->length && cursor->col > 0) {
@@ -160,8 +158,12 @@ void prependLine(Buffer* buffer, Position* cursor) {
 }
 
 void clearLine(Buffer* buffer, Position* cursor) {
-    buffer->lines[cursor->row].chars[0] = '\0';
-    buffer->lines[cursor->row].length = 0;
+    Line* line = &buffer->lines[cursor->row];
+
+    line->chars[0] = '\0';
+    line->length = 0;
+
+    lineCompact(line);
 }
 
 void deleteLine(Buffer* buffer, Position* cursor, const size_t count) {
