@@ -42,10 +42,14 @@ void lineCompact(Line* line) {
     }
 
     size_t needed = line->length + 1;
+    if (needed >= line->capacity / 2) {
+        return;
+    }
+
     size_t new_cap = needed < LINE_INITIAL_CAPACITY ? LINE_INITIAL_CAPACITY : needed;
     char* tmp = realloc(line->chars, new_cap);
     if (!tmp) {
-        ERROR("Out of memory");
+        return;
     }
 
     line->chars = tmp;

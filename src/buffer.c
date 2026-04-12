@@ -3,11 +3,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-void bufferInit(Buffer* buffer) {
-    buffer->lines = malloc(sizeof(Line));
-    lineInit(&buffer->lines[0]);
+#include "error.h"
 
+#define BUFFER_INITIAL_CAPACITY 8
+
+void bufferInit(Buffer* buffer) {
+    buffer->lines = malloc(sizeof(Line) * BUFFER_INITIAL_CAPACITY);
+    lineInit(&buffer->lines[0]);
     buffer->line_count = 1;
+    buffer->capacity = BUFFER_INITIAL_CAPACITY;
 }
 
 void freeBufferLines(Buffer* buffer) {
@@ -15,6 +19,44 @@ void freeBufferLines(Buffer* buffer) {
         freeLine(&buffer->lines[i]);
     }
     free(buffer->lines);
+}
+
+static void bufferEnsure(Buffer* buffer, size_t needed) {
+    if (needed <= buffer->capacity) {
+        return;
+    }
+
+    size_t cap = buffer->capacity ? buffer->capacity : BUFFER_INITIAL_CAPACITY;
+    while (cap < needed) {
+        cap += cap / 2;
+    }
+
+    Line* tmp = realloc(buffer->lines, sizeof(Line) * cap);
+    if (!tmp) {
+        ERROR("Out of memory");
+    }
+
+    buffer->lines = tmp;
+    buffer->capacity = cap;
+}
+
+static void bufferCompact(Buffer* buffer) {
+    if (buffer->capacity <= BUFFER_INITIAL_CAPACITY) {
+        return;
+    }
+
+    if (buffer->line_count >= buffer->capacity / 2) {
+        return;
+    }
+
+    size_t new_cap = buffer->line_count < BUFFER_INITIAL_CAPACITY ? BUFFER_INITIAL_CAPACITY : buffer->line_count;
+    Line* tmp = realloc(buffer->lines, sizeof(Line) * new_cap);
+    if (tmp) {
+        return;
+    }
+
+    buffer->lines = tmp;
+    buffer->capacity = new_cap;
 }
 
 void insertChar(Buffer* buffer, Position* cursor, const char c) {
@@ -135,7 +177,7 @@ void replaceChar(Buffer* buffer, Position* cursor, const size_t count, const cha
 }
 
 void appendLine(Buffer* buffer, Position* cursor) {
-    buffer->lines = realloc(buffer->lines, sizeof(Line) * (buffer->line_count + 1));
+    bufferEnsure(buffer, buffer->line_count + 1);
 
     memmove(&buffer->lines[cursor->row + 2], &buffer->lines[cursor->row + 1], sizeof(Line) * (buffer->line_count - cursor->row - 1));
 
@@ -147,7 +189,7 @@ void appendLine(Buffer* buffer, Position* cursor) {
 }
 
 void prependLine(Buffer* buffer, Position* cursor) {
-    buffer->lines = realloc(buffer->lines, sizeof(Line) * (buffer->line_count + 1));
+    bufferEnsure(buffer, buffer->line_count + 1);
 
     memmove(&buffer->lines[cursor->row + 1], &buffer->lines[cursor->row], sizeof(Line) * (buffer->line_count - cursor->row));
 
@@ -192,9 +234,10 @@ void deleteLine(Buffer* buffer, Position* cursor, const size_t count) {
 void deleteRow(Buffer* buffer, Position* cursor, const size_t row) {
     // TODO: merge all buffer row based functions into this one
     //       delete the current row going up or down based on the new row position
-    (void)buffer;
     (void)cursor;
     (void)row;
+
+    bufferCompact(buffer);
 }
 
 void deleteColLeft(Buffer* buffer, Position* cursor, const size_t col) {
@@ -202,18 +245,20 @@ void deleteColLeft(Buffer* buffer, Position* cursor, const size_t col) {
     //       delete [col, cursor.col - 1]
     //       move cursor.col to col
     //       use existing deleteCharLeft
-    (void)buffer;
-    (void)cursor;
+    Line* line = &buffer->lines[cursor->row];
     (void)col;
+
+    lineCompact(line);
 }
 
 void deleteColRight(Buffer* buffer, Position* cursor, const size_t col) {
     // TODO: merge all buffer row based functions into this one
     //       delete [cursor.col, col]
     //       use existing deleteCharRight
-    (void)buffer;
-    (void)cursor;
+    Line* line = &buffer->lines[cursor->row];
     (void)col;
+
+    lineCompact(line);
 }
 
 void joinLines(Buffer* buffer, Position* cursor, const size_t row) {

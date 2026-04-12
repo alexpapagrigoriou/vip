@@ -8,6 +8,7 @@
 typedef struct {
     Line* lines;
     size_t line_count;
+    size_t capacity;
 } Buffer;
 
 void bufferInit(Buffer* buffer);
