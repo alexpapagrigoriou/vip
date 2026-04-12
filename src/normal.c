@@ -284,6 +284,9 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
         case '{':
             parser->cmd.motion = MOT_PREVIOUS_PARAGRAPH;
             break;
+        case '%':
+            parser->cmd.motion = MOT_MATCHING_CHAR;
+            break;
 
         case 'g':
             parser->cmd.motion = MOT_FIRST_LINE;
