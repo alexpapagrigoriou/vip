@@ -185,22 +185,24 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
     if (key >= '0' && key <= '9') {
         if (parser->state == STATE_NORMAL) {
             if (!(key == '0' && parser->cmd.count == 0)) {
-                if (parser->cmd.motion == MOT_NONE) {
-                    parser->cmd.count = parser->cmd.count * 10 + (key - '0');
-                    editor->save_curosr_col = false;
-                } else {
+                if (parser->cmd.motion != MOT_NONE) {
                     wrongInput(parser, editor);
+                    return;
                 }
+
+                parser->cmd.count = parser->cmd.count * 10 + (key - '0');
+                editor->save_curosr_col = false;
                 return;
             }
         } else {
             if (!(key == '0' && parser->cmd.count_after_operator == 0)) {
-                if (parser->cmd.motion == MOT_NONE) {
-                    parser->cmd.count_after_operator = parser->cmd.count_after_operator * 10 + (key - '0');
-                    editor->save_curosr_col = false;
-                } else {
+                if (parser->cmd.motion != MOT_NONE) {
                     wrongInput(parser, editor);
+                    return;
                 }
+
+                parser->cmd.count_after_operator = parser->cmd.count_after_operator * 10 + (key - '0');
+                editor->save_curosr_col = false;
                 return;
             }
         }
@@ -212,44 +214,22 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
     if (parser->cmd.motion != MOT_NONE) {
         switch (key) {
             case 'g':
-                if (parser->cmd.motion == MOT_FIRST_LINE_PENDING) {
-                    parser->cmd.motion = MOT_FIRST_LINE;
-                    executeAndInit(parser, editor);
-                } else {
+                if (parser->cmd.motion != MOT_FIRST_LINE) {
                     wrongInput(parser, editor);
+                    return;
                 }
+
+                executeAndInit(parser, editor);
                 return;
-            case 'f':
-                if (parser->cmd.motion == MOT_NEXT_OCCURRENCE_OF_CHAR_PENDING) {
-                    parser->cmd.motion = MOT_NEXT_OCCURRENCE_OF_CHAR;
-                    executeAndInit(parser, editor);
-                } else {
+
+            default:
+                if (!isPrintable(key)) {
                     wrongInput(parser, editor);
+                    return;
                 }
-                return;
-            case 't':
-                if (parser->cmd.motion == MOT_BEFORE_NEXT_OCCURRENCE_OF_CHAR_PENDING) {
-                    parser->cmd.motion = MOT_BEFORE_NEXT_OCCURRENCE_OF_CHAR;
-                    executeAndInit(parser, editor);
-                } else {
-                    wrongInput(parser, editor);
-                }
-                return;
-            case 'F':
-                if (parser->cmd.motion == MOT_PREVIOUS_OCCURRENCE_OF_CHAR_PENDING) {
-                    parser->cmd.motion = MOT_PREVIOUS_OCCURRENCE_OF_CHAR;
-                    executeAndInit(parser, editor);
-                } else {
-                    wrongInput(parser, editor);
-                }
-                return;
-            case 'T':
-                if (parser->cmd.motion == MOT_AFTER_PREVIOUS_OCCURRENCE_OF_CHAR_PENDING) {
-                    parser->cmd.motion = MOT_AFTER_PREVIOUS_OCCURRENCE_OF_CHAR;
-                    executeAndInit(parser, editor);
-                } else {
-                    wrongInput(parser, editor);
-                }
+
+                parser->cmd.argument = key;
+                executeAndInit(parser, editor);
                 return;
         }
     }
@@ -306,19 +286,19 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
             break;
 
         case 'g':
-            parser->cmd.motion = MOT_FIRST_LINE_PENDING;
+            parser->cmd.motion = MOT_FIRST_LINE;
             return;
         case 'f':
-            parser->cmd.motion = MOT_NEXT_OCCURRENCE_OF_CHAR_PENDING;
+            parser->cmd.motion = MOT_NEXT_OCCURRENCE_OF_CHAR;
             return;
         case 't':
-            parser->cmd.motion = MOT_BEFORE_NEXT_OCCURRENCE_OF_CHAR_PENDING;
+            parser->cmd.motion = MOT_BEFORE_NEXT_OCCURRENCE_OF_CHAR;
             return;
         case 'F':
-            parser->cmd.motion = MOT_PREVIOUS_OCCURRENCE_OF_CHAR_PENDING;
+            parser->cmd.motion = MOT_PREVIOUS_OCCURRENCE_OF_CHAR;
             return;
         case 'T':
-            parser->cmd.motion = MOT_AFTER_PREVIOUS_OCCURRENCE_OF_CHAR_PENDING;
+            parser->cmd.motion = MOT_AFTER_PREVIOUS_OCCURRENCE_OF_CHAR;
             return;
 
         default:
