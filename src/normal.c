@@ -412,6 +412,9 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
             parser->cmd.motion = MOT_LEFT;
             executeAndInit(parser, editor);
             return;
+        case 'J':
+            joinLines(&editor->buffer, &editor->cursor, getMotionRow(editor, MOT_DOWN, parser->cmd.count));
+            return;
     }
 
     wrongInput(parser, editor);

@@ -29,3 +29,4 @@ void deleteLine(Buffer* buffer, Position* cursor, const size_t count);
 void deleteRow(Buffer* buffer, Position* cursor, const size_t row);
 void deleteColLeft(Buffer* buffer, Position* cursor, const size_t col);
 void deleteColRight(Buffer* buffer, Position* cursor, const size_t col);
+void joinLines(Buffer* buffer, Position* cursor, const size_t row);

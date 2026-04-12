@@ -213,3 +213,14 @@ void deleteColRight(Buffer* buffer, Position* cursor, const size_t col) {
     (void)cursor;
     (void)col;
 }
+
+void joinLines(Buffer* buffer, Position* cursor, const size_t row) {
+    if (cursor->row == row) {
+        return;
+    }
+
+    // TODO: join lines from cursor.row to row
+    //       set the cursor.col between the last joined line and the previous line
+
+    deleteRow(buffer, &(Position){cursor->row + 1, 0}, row);
+}
