@@ -14,5 +14,5 @@ void editorInit(Editor* editor, char* filename) {
 }
 
 void freeEditor(Editor* editor) {
-    freeBufferLines(&editor->buffer);
+    freeBuffer(&editor->buffer);
 }

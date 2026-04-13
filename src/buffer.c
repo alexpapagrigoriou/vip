@@ -14,7 +14,7 @@ void bufferInit(Buffer* buffer) {
     buffer->capacity = BUFFER_INITIAL_CAPACITY;
 }
 
-void freeBufferLines(Buffer* buffer) {
+void freeBuffer(Buffer* buffer) {
     for (size_t i = 0; i < buffer->line_count; i++) {
         freeLine(&buffer->lines[i]);
     }
@@ -231,16 +231,40 @@ void deleteLine(Buffer* buffer, Position* cursor, const size_t count) {
     }
 }
 
-void deleteRow(Buffer* buffer, Position* cursor, const size_t row) {
-    // TODO: merge all buffer row based functions into this one
-    //       delete the current row going up or down based on the new row position
-    (void)cursor;
-    (void)row;
+void deleteRow(Buffer* buffer, Position* cursor, size_t row) {
+    cursor->col = 0;
 
+    if (cursor->row > row) {
+        size_t tmp = cursor->row;
+        cursor->row = row;
+        row = tmp;
+    }
+
+    size_t count = row - cursor->row + 1;
+
+    if (count > buffer->line_count) {
+        ERROR("Row out of bounds");
+    }
+
+    if (count == buffer->line_count) {
+        cursor->row = 0;
+
+        freeBuffer(buffer);
+        bufferInit(buffer);
+        return;
+    }
+
+    if (row == buffer->line_count - 1) {
+        cursor->row--;
+    } else {
+        memmove(&buffer->lines[cursor->row], &buffer->lines[cursor->row + count], sizeof(Line) * (buffer->line_count - cursor->row - count));
+    }
+
+    buffer->line_count -= count;
     bufferCompact(buffer);
 }
 
-void deleteColLeft(Buffer* buffer, Position* cursor, const size_t col) {
+void deleteColLeft(Buffer* buffer, Position* cursor, size_t col) {
     // TODO: merge all buffer col based functions into this one
     //       delete [col, cursor.col - 1]
     //       move cursor.col to col
@@ -251,7 +275,7 @@ void deleteColLeft(Buffer* buffer, Position* cursor, const size_t col) {
     lineCompact(line);
 }
 
-void deleteColRight(Buffer* buffer, Position* cursor, const size_t col) {
+void deleteColRight(Buffer* buffer, Position* cursor, size_t col) {
     // TODO: merge all buffer row based functions into this one
     //       delete [cursor.col, col]
     //       use existing deleteCharRight
@@ -261,7 +285,7 @@ void deleteColRight(Buffer* buffer, Position* cursor, const size_t col) {
     lineCompact(line);
 }
 
-void joinLines(Buffer* buffer, Position* cursor, const size_t row) {
+void joinLines(Buffer* buffer, Position* cursor, size_t row) {
     if (cursor->row == row) {
         return;
     }
