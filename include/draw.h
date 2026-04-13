@@ -6,7 +6,7 @@
 #define CURSOR_POSITION_STRING_SIZE 10
 
 void moveCursor(Position pos);
-void fixTextPosition(Position cursor, Position* text);
+void fixTextPosition(Position cursor, Position* text, const size_t line_count);
 void cleanScreen(void);
 void cleanLine(void);
 void drawWindow(void);

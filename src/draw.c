@@ -6,24 +6,49 @@
 #include "colors.h"
 #include "vip.h"
 
+#define SCROLL_OFF 8
+
 void moveCursor(Position pos) {
     printf("\033[%zu;%zuH", pos.row + 1, pos.col + 1);
 }
 
-void fixTextPosition(Position cursor, Position* text) {
-    Position max_buffer = getMaxBuffer();
-
-    if (cursor.row < text->row) {
-        text->row = cursor.row;
-    } else if (cursor.row - text->row >= max_buffer.row) {
-        text->row = cursor.row - max_buffer.row + 1;
+static void fixTextRow(Position cursor, Position* text, const size_t line_count, const size_t max_row) {
+    if (cursor.row < text->row + SCROLL_OFF) {
+        if (cursor.row < SCROLL_OFF) {
+            text->row = 0;
+        } else {
+            text->row = cursor.row - SCROLL_OFF;
+        }
+        return;
     }
 
+    if (line_count - text->row <= max_row) {
+        return;
+    }
+
+    if (cursor.row - text->row + SCROLL_OFF > max_row - 1) {
+        if (cursor.row + SCROLL_OFF > line_count - 1) {
+            text->row = line_count - max_row;
+        } else {
+            text->row = cursor.row + SCROLL_OFF - max_row + 1;
+        }
+        return;
+    }
+}
+
+static void fixTextCol(Position cursor, Position* text, const size_t max_col) {
     if (cursor.col < text->col) {
         text->col = cursor.col;
-    } else if (cursor.col - text->col >= max_buffer.col) {
-        text->col = cursor.col - max_buffer.col + 1;
+    } else if (cursor.col - text->col >= max_col) {
+        text->col = cursor.col - max_col + 1;
     }
+}
+
+void fixTextPosition(Position cursor, Position* text, const size_t line_count) {
+    Position max_buffer = getMaxBuffer();
+
+    fixTextRow(cursor, text, line_count, max_buffer.row);
+    fixTextCol(cursor, text, max_buffer.col);
 }
 
 void cleanScreen(void) {
