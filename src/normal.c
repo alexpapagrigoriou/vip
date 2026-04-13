@@ -277,9 +277,6 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
         case '0':
             parser->cmd.motion = MOT_START_OF_LINE;
             break;
-        case '^':
-            parser->cmd.motion = MOT_FIRST_NON_BLANK_CHAR_OF_LINE;
-            break;
         case '$':
             parser->cmd.motion = MOT_END_OF_LINE;
             break;
@@ -410,6 +407,10 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
             editor->mode = INSERT;
             prependLine(&editor->buffer, &editor->cursor);
             parserInit(parser);
+            return;
+        case '^':
+            parser->cmd.motion = MOT_FIRST_NON_BLANK_CHAR_OF_LINE;
+            executeAndInit(parser, editor);
             return;
         case 'x':
             parser->cmd.operator = OP_DELETE;
