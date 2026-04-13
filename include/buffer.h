@@ -25,7 +25,6 @@ void deleteEndOfLine(Buffer* buffer, Position* cursor);
 void replaceChar(Buffer* buffer, Position* cursor, const size_t count, const char c);
 void appendLine(Buffer* buffer, Position* cursor);
 void prependLine(Buffer* buffer, Position* cursor);
-void deleteLine(Buffer* buffer, Position* cursor, const size_t count);
 
 void deleteRow(Buffer* buffer, Position* cursor, size_t row);
 void deleteColLeft(Buffer* buffer, Position* cursor, size_t col);
