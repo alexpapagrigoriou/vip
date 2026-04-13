@@ -37,6 +37,7 @@ static void executeRowMotion(Parser* parser, Editor* editor) {
             bool is_last_line = editor->cursor.row == editor->buffer.line_count - 1 || row == editor->buffer.line_count - 1;
             deleteRow(&editor->buffer, &editor->cursor, row);
 
+            editor->mode = INSERT;
             if (is_last_line) {
                 appendLine(&editor->buffer, &editor->cursor);
             } else {
