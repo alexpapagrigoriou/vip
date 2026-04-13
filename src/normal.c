@@ -26,18 +26,20 @@ static void executeRowMotion(Parser* parser, Editor* editor) {
         return;
     }
 
-    // TODO: handle the motion based on the operator
-    (void)row;
-
     switch (parser->cmd.operator) {
         case OP_NONE:
+            editor->cursor.row = row;
             break;
         case OP_DELETE:
             deleteRow(&editor->buffer, &editor->cursor, row);
             break;
         case OP_CHANGE:
+            deleteRow(&editor->buffer, &editor->cursor, row);
+            editor->mode = INSERT;
+            prependLine(&editor->buffer, &editor->cursor);
             break;
         case OP_YANK:
+            // TODO: implement yank row motion
             break;
         default:
             ERROR("Wrong operator");
