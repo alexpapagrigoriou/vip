@@ -90,7 +90,9 @@ static void drawBuffer(void) {
 }
 
 static void drawStatusLine(void) {
-    moveCursor((Position){getMaxScreen().row - 1, 0});
+    size_t max_row = getMaxScreen().row - 1;
+
+    moveCursor((Position){max_row, 0});
     cleanLine();
 
     int max_col = (int)getMaxScreen().col - (KEY_CACHE_STRING_SIZE + CURSOR_POSITION_STRING_SIZE + 3);
@@ -98,12 +100,12 @@ static void drawStatusLine(void) {
 
     max_col++;
 
-    moveCursor((Position){getMaxScreen().row - 1, max_col});
+    moveCursor((Position){max_row, max_col});
     printf("%.*s", KEY_CACHE_STRING_SIZE, getKeyCacheString());
 
     max_col += KEY_CACHE_STRING_SIZE + 1;
 
-    moveCursor((Position){getMaxScreen().row - 1, max_col});
+    moveCursor((Position){max_row, max_col});
     printf("%.*s", CURSOR_POSITION_STRING_SIZE, getCursorPositionString());
 }
 
