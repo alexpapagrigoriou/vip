@@ -253,7 +253,7 @@ void deleteColLeft(Buffer* buffer, Position* cursor, size_t col) {
 }
 
 void deleteColRight(Buffer* buffer, Position* cursor, size_t col) {
-    // TODO: merge all buffer row based functions into this one
+    // TODO: merge all buffer col based functions into this one
     //       delete [cursor.col, col]
     //       use existing deleteCharRight
     Line* line = &buffer->lines[cursor->row];
