@@ -414,7 +414,8 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
             executeAndInit(parser, editor);
             return;
         case 'J':
-            joinLines(&editor->buffer, &editor->cursor, getMotionRow(editor, MOT_DOWN, parser->cmd.count));
+            joinLines(&editor->buffer, &editor->cursor, getMotionRow(editor, MOT_DOWN, parser->cmd.count ? parser->cmd.count : 1));
+            parserInit(parser);
             return;
     }
 
