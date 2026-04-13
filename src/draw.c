@@ -86,7 +86,7 @@ static void drawBuffer(void) {
         printf("%.*s", (int)max_buffer.col, line->chars + getTextPosition().col);
     }
 
-    drawTildes(line_count);
+    drawTildes(line_count - getTextPosition().row);
 }
 
 static void drawStatusLine(void) {
