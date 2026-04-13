@@ -51,7 +51,7 @@ static void bufferCompact(Buffer* buffer) {
 
     size_t new_cap = buffer->line_count < BUFFER_INITIAL_CAPACITY ? BUFFER_INITIAL_CAPACITY : buffer->line_count;
     Line* tmp = realloc(buffer->lines, sizeof(Line) * new_cap);
-    if (tmp) {
+    if (!tmp) {
         return;
     }
 
