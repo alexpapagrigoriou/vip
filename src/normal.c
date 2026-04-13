@@ -34,9 +34,14 @@ static void executeRowMotion(Parser* parser, Editor* editor) {
             deleteRow(&editor->buffer, &editor->cursor, row);
             break;
         case OP_CHANGE:
+            bool is_last_line = editor->cursor.row == editor->buffer.line_count - 1 || row == editor->buffer.line_count - 1;
             deleteRow(&editor->buffer, &editor->cursor, row);
-            editor->mode = INSERT;
-            prependLine(&editor->buffer, &editor->cursor);
+
+            if (is_last_line) {
+                appendLine(&editor->buffer, &editor->cursor);
+            } else {
+                prependLine(&editor->buffer, &editor->cursor);
+            }
             break;
         case OP_YANK:
             // TODO: implement yank row motion
