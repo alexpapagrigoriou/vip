@@ -247,10 +247,19 @@ static size_t motionStartOfLine(Editor* editor) {
 }
 
 static size_t motionFirstNonBlankCharOfLine(Editor* editor) {
-    // TODO: implement
-    (void)editor;
+    Line* line = getLine(editor->cursor.row);
+    if (line->length == 0) {
+        editor->successful_motion = false;
+        return 0;
+    }
 
-    return 0;
+    for (size_t i = 0; i < line->length - 1; i++) {
+        if (line->chars[i] != SPACE) {
+            return i;
+        }
+    }
+
+    return line->length - 1;
 }
 
 static size_t motionPreviousOccurrenceOfChar(Editor* editor, const size_t count, const char c) {
