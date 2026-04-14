@@ -104,17 +104,49 @@ static size_t motionLastLine(const size_t count) {
 }
 
 static size_t motionNextParagraph(Editor* editor, const size_t count) {
-    // TODO: implement
-    (void)editor;
-    (void)count;
+    editor->cursor.col = 0;
 
-    return 0;
+    size_t line_count = editor->buffer.line_count;
+
+    if (editor->cursor.row == line_count - 1) {
+        editor->successful_motion = false;
+        return line_count - 1;
+    }
+
+    size_t found = 0;
+
+    for (size_t i = editor->cursor.row + 1; i < line_count - 1; i++) {
+        if (getLine(i)->length == 0) {
+            found++;
+
+            if (found == count) {
+                return i;
+            }
+        }
+    }
+
+    return line_count - 1;
 }
 
 static size_t motionPreviousParagraph(Editor* editor, const size_t count) {
-    // TODO: implement
-    (void)editor;
-    (void)count;
+    editor->cursor.col = 0;
+
+    if (editor->cursor.row == 0) {
+        editor->successful_motion = false;
+        return 0;
+    }
+
+    size_t found = 0;
+
+    for (size_t i = editor->cursor.row - 1; i > 0; i--) {
+        if (getLine(i)->length == 0) {
+            found++;
+
+            if (found == count) {
+                return i;
+            }
+        }
+    }
 
     return 0;
 }
