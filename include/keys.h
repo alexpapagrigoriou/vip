@@ -9,6 +9,7 @@
 #define TAB 9
 #define ENTER 13
 #define ESC 27
+#define SPACE 32
 #define BACKSPACE 127
 
 #define UP 1000

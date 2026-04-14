@@ -19,21 +19,33 @@ static void fixCount(Parser* parser) {
     parser->cmd.count = parser->cmd.count * parser->cmd.count_after_operator;
 }
 
-static void fixColRightMotionCursor(size_t cursor_col, size_t* col, Motion motion, size_t count) {
+static size_t fixColRightMotionCursor(size_t cursor_col, size_t col, Motion motion, size_t count, Line line) {
+    if (cursor_col == col) {
+        return col;
+    }
+
     switch (motion) {
         case MOT_RIGHT:
-            if (*col - cursor_col == count) {
-                (*col)--;
+            if (col - cursor_col == count) {
+                return col - 1;
             }
-            break;
+            return col;
         case MOT_WORD:
-            // TODO: check in end if the previous one is part of word or not
-            break;
+            if (col == line.length - 1) {
+                if (!isWordSplit(line.chars[col - 1])) {
+                    return col;
+                }
+            }
+            return col - 1;
         case MOT_BIG_WORD:
-            // TODO: check in end if the previous one is part of big word or not
-            break;
+            if (col == line.length - 1) {
+                if (!isBigWordSplit(line.chars[col - 1])) {
+                    return col;
+                }
+            }
+            return col - 1;
         default:
-            break;
+            return col;
     }
 }
 
@@ -114,7 +126,7 @@ static void executeColRightMotion(Parser* parser, Editor* editor) {
         return;
     }
 
-    fixColRightMotionCursor(editor->cursor.col, &col, parser->cmd.motion, parser->cmd.count);
+    col = fixColRightMotionCursor(editor->cursor.col, col, parser->cmd.motion, parser->cmd.count, editor->buffer.lines[editor->cursor.row]);
 
     switch (parser->cmd.operator) {
         case OP_DELETE:

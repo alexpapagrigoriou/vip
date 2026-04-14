@@ -2,6 +2,7 @@
 
 #include "editor.h"
 #include "error.h"
+#include "keys.h"
 #include "vip.h"
 
 MotionType getMotionType(Motion motion) {
@@ -37,6 +38,14 @@ MotionType getMotionType(Motion motion) {
             ERROR("Wrong motion");
             return MOT_TYPE_NONE;
     }
+}
+
+bool isWordSplit(char c) {
+    return !((IS_DIGIT(c)) || (IS_UPPER_CASE_CHAR(c)) || (IS_LOWER_CASE_CHAR(c)));
+}
+
+bool isBigWordSplit(char c) {
+    return c == SPACE;
 }
 
 // TODO: set editor->successful_motion to false when the motion can't be executed

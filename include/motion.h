@@ -47,6 +47,9 @@ typedef enum {
 
 MotionType getMotionType(Motion motion);
 
+bool isWordSplit(char c);
+bool isBigWordSplit(char c);
+
 size_t getMotionRow(Editor* editor, Motion motion, const size_t count);
 size_t getMotionCol(Editor* editor, Motion motion);
 size_t getMotionColLeft(Editor* editor, Motion motion, const size_t count, const char c);
