@@ -165,22 +165,84 @@ static size_t motionLeft(Editor* editor, const size_t count) {
 }
 
 static size_t motionBackwardWord(Editor* editor, const size_t count) {
-    // TODO: implement
-    (void)editor;
-    (void)count;
+    if (editor->cursor.col == 0) {
+        editor->successful_motion = false;
+        return 0;
+    }
 
-    return 0;
+    Line* line = getLine(editor->cursor.row);
+    size_t found = 0;
+
+    size_t prev_col = editor->cursor.col;
+    while (found < count) {
+        prev_col--;
+        if (prev_col == 0) {
+            return 0;
+        }
+
+        if (isWordSplit(line->chars[prev_col]) && line->chars[prev_col] != SPACE) {
+            found++;
+            continue;
+        }
+
+        bool foundWord = false;
+        for (size_t i = prev_col - 1; i > 0; i--) {
+            if (isWordSplit(line->chars[i])) {
+                foundWord = true;
+                prev_col = i + 1;
+                found++;
+                break;
+            }
+        }
+
+        if (!foundWord) {
+            return 0;
+        }
+    }
+
+    return prev_col;
 }
 
 static size_t motionBackwardBigWord(Editor* editor, const size_t count) {
-    // TODO: implement
-    (void)editor;
-    (void)count;
+    if (editor->cursor.col == 0) {
+        editor->successful_motion = false;
+        return 0;
+    }
 
-    return 0;
+    Line* line = getLine(editor->cursor.row);
+    size_t found = 0;
+
+    size_t prev_col = editor->cursor.col;
+    while (found < count) {
+        prev_col--;
+        if (prev_col == 0) {
+            return 0;
+        }
+
+        bool foundWord = false;
+        for (size_t i = prev_col - 1; i > 0; i--) {
+            if (isBigWordSplit(line->chars[i])) {
+                foundWord = true;
+                prev_col = i + 1;
+                found++;
+                break;
+            }
+        }
+
+        if (!foundWord) {
+            return 0;
+        }
+    }
+
+    return prev_col;
 }
 
-static size_t motionStartOfLine() {
+static size_t motionStartOfLine(Editor* editor) {
+    if (editor->cursor.col == 0) {
+        editor->successful_motion = false;
+        return 0;
+    }
+
     return 0;
 }
 
@@ -308,7 +370,7 @@ size_t getMotionRow(Editor* editor, Motion motion, const size_t count) {
 size_t getMotionCol(Editor* editor, Motion motion) {
     switch (motion) {
         case MOT_START_OF_LINE:
-            return motionStartOfLine();
+            return motionStartOfLine(editor);
         case MOT_FIRST_NON_BLANK_CHAR_OF_LINE:
             return motionFirstNonBlankCharOfLine(editor);
         case MOT_END_OF_LINE:
@@ -328,7 +390,7 @@ size_t getMotionColLeft(Editor* editor, Motion motion, const size_t count, const
         case MOT_BACKWARD_BIG_WORD:
             return motionBackwardBigWord(editor, count);
         case MOT_START_OF_LINE:
-            return motionStartOfLine();
+            return motionStartOfLine(editor);
         case MOT_FIRST_NON_BLANK_CHAR_OF_LINE:
             return motionFirstNonBlankCharOfLine(editor);
         case MOT_PREVIOUS_OCCURRENCE_OF_CHAR:
