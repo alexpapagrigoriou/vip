@@ -4,6 +4,7 @@
 
 #include "error.h"
 #include "input.h"
+#include "motion.h"
 #include "movement.h"
 
 static void fixCount(Parser* parser) {
@@ -18,6 +19,24 @@ static void fixCount(Parser* parser) {
     parser->cmd.count = parser->cmd.count * parser->cmd.count_after_operator;
 }
 
+static void fixColRightMotionCursor(size_t cursor_col, size_t* col, Motion motion, size_t count) {
+    switch (motion) {
+        case MOT_RIGHT:
+            if (*col - cursor_col == count) {
+                (*col)--;
+            }
+            break;
+        case MOT_WORD:
+            // TODO: check in end if the previous one is part of word or not
+            break;
+        case MOT_BIG_WORD:
+            // TODO: check in end if the previous one is part of big word or not
+            break;
+        default:
+            break;
+    }
+}
+
 static void executeRowMotion(Parser* parser, Editor* editor) {
     size_t row = getMotionRow(editor, parser->cmd.motion, parser->cmd.count);
 
@@ -26,10 +45,12 @@ static void executeRowMotion(Parser* parser, Editor* editor) {
         return;
     }
 
+    if (parser->cmd.operator == OP_NONE) {
+        editor->cursor.row = row;
+        return;
+    }
+
     switch (parser->cmd.operator) {
-        case OP_NONE:
-            editor->cursor.row = row;
-            break;
         case OP_DELETE:
             deleteRow(&editor->buffer, &editor->cursor, row);
             break;
@@ -60,12 +81,15 @@ static void executeColLeftMotion(Parser* parser, Editor* editor) {
         return;
     }
 
+    if (parser->cmd.operator == OP_NONE) {
+        editor->cursor.col = col;
+        return;
+    }
+
     // TODO: handle the motion based on the operator
     (void)col;
 
     switch (parser->cmd.operator) {
-        case OP_NONE:
-            break;
         case OP_DELETE:
             break;
         case OP_CHANGE:
@@ -85,13 +109,14 @@ static void executeColRightMotion(Parser* parser, Editor* editor) {
         return;
     }
 
-    // TODO: handle the motion based on the operator
-    // !!! IMPORTANT !!!: make the closed interval to half open with col++ if the motion needs it
-    (void)col;
+    if (parser->cmd.operator == OP_NONE) {
+        editor->cursor.col = col;
+        return;
+    }
+
+    fixColRightMotionCursor(editor->cursor.col, &col, parser->cmd.motion, parser->cmd.count);
 
     switch (parser->cmd.operator) {
-        case OP_NONE:
-            break;
         case OP_DELETE:
             break;
         case OP_CHANGE:
