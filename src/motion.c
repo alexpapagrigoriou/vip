@@ -248,10 +248,6 @@ static size_t motionStartOfLine(Editor* editor) {
 
 static size_t motionFirstNonBlankCharOfLine(Editor* editor) {
     Line* line = getLine(editor->cursor.row);
-    if (line->length == 0) {
-        editor->successful_motion = false;
-        return 0;
-    }
 
     for (size_t i = 0; i < line->length - 1; i++) {
         if (line->chars[i] != SPACE) {
@@ -281,11 +277,6 @@ static size_t motionAfterPreviousOccurrenceOfChar(Editor* editor, const size_t c
 }
 
 static size_t motionRight(Editor* editor, const size_t count) {
-    if (getLine(editor->cursor.row)->length == 0) {
-        editor->successful_motion = false;
-        return 0;
-    }
-
     if (editor->cursor.col + count >= getLine(editor->cursor.row)->length - 1) {
         return getLine(editor->cursor.row)->length - 1;
     }
