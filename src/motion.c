@@ -51,7 +51,7 @@ bool isBigWordSplit(char c) {
 // TODO: set editor->successful_motion to false when the motion can't be executed
 //       ex. find next a. (fa) -> there is not a in this line
 
-static size_t moveUp(Editor* editor, const size_t count) {
+static size_t motionUp(Editor* editor, const size_t count) {
     if (editor->cursor.row == 0) {
         editor->successful_motion = false;
         return 0;
@@ -64,7 +64,7 @@ static size_t moveUp(Editor* editor, const size_t count) {
     return editor->cursor.row - count;
 }
 
-static size_t moveDown(Editor* editor, const size_t count) {
+static size_t motionDown(Editor* editor, const size_t count) {
     if (editor->cursor.row == getLineCount() - 1) {
         editor->successful_motion = false;
         return getLineCount() - 1;
@@ -77,7 +77,7 @@ static size_t moveDown(Editor* editor, const size_t count) {
     return editor->cursor.row + count;
 }
 
-static size_t goToLine(size_t row) {
+static size_t motionLine(size_t row) {
     row--;
 
     if (row > getLineCount() - 1) {
@@ -87,23 +87,23 @@ static size_t goToLine(size_t row) {
     return row;
 }
 
-static size_t goToFirstLine(const size_t count) {
+static size_t motionFirstLine(const size_t count) {
     if (count > 1) {
-        return goToLine(count);
+        return motionLine(count);
     }
 
     return 0;
 }
 
-static size_t goToLastLine(const size_t count) {
+static size_t motionLastLine(const size_t count) {
     if (count > 1) {
-        return goToLine(count);
+        return motionLine(count);
     }
 
     return getLineCount() - 1;
 }
 
-static size_t jumpToNextParagraph(Editor* editor, const size_t count) {
+static size_t motionNextParagraph(Editor* editor, const size_t count) {
     // TODO: implement
     (void)editor;
     (void)count;
@@ -111,7 +111,7 @@ static size_t jumpToNextParagraph(Editor* editor, const size_t count) {
     return 0;
 }
 
-static size_t jumpToPreviousParagraph(Editor* editor, const size_t count) {
+static size_t motionPreviousParagraph(Editor* editor, const size_t count) {
     // TODO: implement
     (void)editor;
     (void)count;
@@ -119,7 +119,7 @@ static size_t jumpToPreviousParagraph(Editor* editor, const size_t count) {
     return 0;
 }
 
-static size_t moveLeft(Editor* editor, const size_t count) {
+static size_t motionLeft(Editor* editor, const size_t count) {
     if (editor->cursor.col == 0) {
         editor->successful_motion = false;
         return 0;
@@ -132,7 +132,52 @@ static size_t moveLeft(Editor* editor, const size_t count) {
     return editor->cursor.col - count;
 }
 
-static size_t moveRight(Editor* editor, const size_t count) {
+static size_t motionBackwardWord(Editor* editor, const size_t count) {
+    // TODO: implement
+    (void)editor;
+    (void)count;
+
+    return 0;
+}
+
+static size_t motionBackwardBigWord(Editor* editor, const size_t count) {
+    // TODO: implement
+    (void)editor;
+    (void)count;
+
+    return 0;
+}
+
+static size_t motionStartOfLine() {
+    return 0;
+}
+
+static size_t motionFirstNonBlankCharOfLine(Editor* editor) {
+    // TODO: implement
+    (void)editor;
+
+    return 0;
+}
+
+static size_t motionPreviousOccurrenceOfChar(Editor* editor, const size_t count, const char c) {
+    // TODO: implement
+    (void)editor;
+    (void)count;
+    (void)c;
+
+    return 0;
+}
+
+static size_t motionAfterPreviousOccurrenceOfChar(Editor* editor, const size_t count, const char c) {
+    // TODO: implement
+    (void)editor;
+    (void)count;
+    (void)c;
+
+    return 0;
+}
+
+static size_t motionRight(Editor* editor, const size_t count) {
     if (getLine(editor->cursor.row)->length == 0) {
         editor->successful_motion = false;
         return 0;
@@ -145,7 +190,7 @@ static size_t moveRight(Editor* editor, const size_t count) {
     return editor->cursor.col + count;
 }
 
-static size_t jumpForwardsToStartOfWord(Editor* editor, const size_t count) {
+static size_t motionWord(Editor* editor, const size_t count) {
     // TODO: implement
     (void)editor;
     (void)count;
@@ -153,7 +198,7 @@ static size_t jumpForwardsToStartOfWord(Editor* editor, const size_t count) {
     return 0;
 }
 
-static size_t jumpForwardsToStartOfBigWord(Editor* editor, const size_t count) {
+static size_t motionBigWord(Editor* editor, const size_t count) {
     // TODO: implement
     (void)editor;
     (void)count;
@@ -161,7 +206,7 @@ static size_t jumpForwardsToStartOfBigWord(Editor* editor, const size_t count) {
     return 0;
 }
 
-static size_t jumpForwardToEndOfWord(Editor* editor, const size_t count) {
+static size_t motionEndWord(Editor* editor, const size_t count) {
     // TODO: implement
     (void)editor;
     (void)count;
@@ -169,7 +214,7 @@ static size_t jumpForwardToEndOfWord(Editor* editor, const size_t count) {
     return 0;
 }
 
-static size_t jumpForwardsToEndOfBigWord(Editor* editor, const size_t count) {
+static size_t motionEndBigWord(Editor* editor, const size_t count) {
     // TODO: implement
     (void)editor;
     (void)count;
@@ -177,38 +222,11 @@ static size_t jumpForwardsToEndOfBigWord(Editor* editor, const size_t count) {
     return 0;
 }
 
-static size_t jumpBackwardsToStartOfWord(Editor* editor, const size_t count) {
-    // TODO: implement
-    (void)editor;
-    (void)count;
-
-    return 0;
-}
-
-static size_t jumpBackwardsToStartOfBigWord(Editor* editor, const size_t count) {
-    // TODO: implement
-    (void)editor;
-    (void)count;
-
-    return 0;
-}
-
-static size_t jumpToStartOfLine() {
-    return 0;
-}
-
-static size_t jumpToFirstNonBlankCharOfLine(Editor* editor) {
-    // TODO: implement
-    (void)editor;
-
-    return 0;
-}
-
-static size_t jumpToEndOfLine(Editor* editor) {
+static size_t motionEndOfLine(Editor* editor) {
     return getLine(editor->cursor.row)->length - 1;
 }
 
-static size_t jumpToNextOccurrenceOfChar(Editor* editor, const size_t count, const char c) {
+static size_t motionNextOccurrenceOfChar(Editor* editor, const size_t count, const char c) {
     // TODO: implement
     (void)editor;
     (void)count;
@@ -217,7 +235,7 @@ static size_t jumpToNextOccurrenceOfChar(Editor* editor, const size_t count, con
     return 0;
 }
 
-static size_t jumpBeforeNextOccurrenceOfChar(Editor* editor, const size_t count, const char c) {
+static size_t motionBeforeNextOccurrenceOfChar(Editor* editor, const size_t count, const char c) {
     // TODO: implement
     (void)editor;
     (void)count;
@@ -226,25 +244,7 @@ static size_t jumpBeforeNextOccurrenceOfChar(Editor* editor, const size_t count,
     return 0;
 }
 
-static size_t jumpToPreviousOccurrenceOfChar(Editor* editor, const size_t count, const char c) {
-    // TODO: implement
-    (void)editor;
-    (void)count;
-    (void)c;
-
-    return 0;
-}
-
-static size_t jumpAfterPreviousOccurrenceOfChar(Editor* editor, const size_t count, const char c) {
-    // TODO: implement
-    (void)editor;
-    (void)count;
-    (void)c;
-
-    return 0;
-}
-
-static Position jumpToMatchingChar(Editor* editor) {
+static Position motionMatchingChar(Editor* editor) {
     // TODO: implement
     (void)editor;
 
@@ -254,19 +254,19 @@ static Position jumpToMatchingChar(Editor* editor) {
 size_t getMotionRow(Editor* editor, Motion motion, const size_t count) {
     switch (motion) {
         case MOT_UP:
-            return moveUp(editor, count);
+            return motionUp(editor, count);
         case MOT_DOWN:
-            return moveDown(editor, count);
+            return motionDown(editor, count);
         case MOT_LINE:
-            return goToLine(editor->cursor.row + count);
+            return motionLine(editor->cursor.row + count);
         case MOT_FIRST_LINE:
-            return goToFirstLine(count);
+            return motionFirstLine(count);
         case MOT_LAST_LINE:
-            return goToLastLine(count);
+            return motionLastLine(count);
         case MOT_NEXT_PARAGRAPH:
-            return jumpToNextParagraph(editor, count);
+            return motionNextParagraph(editor, count);
         case MOT_PREVIOUS_PARAGRAPH:
-            return jumpToPreviousParagraph(editor, count);
+            return motionPreviousParagraph(editor, count);
         default:
             ERROR("Wrong motion");
             return 0;
@@ -276,11 +276,11 @@ size_t getMotionRow(Editor* editor, Motion motion, const size_t count) {
 size_t getMotionCol(Editor* editor, Motion motion) {
     switch (motion) {
         case MOT_START_OF_LINE:
-            return jumpToStartOfLine();
+            return motionStartOfLine();
         case MOT_FIRST_NON_BLANK_CHAR_OF_LINE:
-            return jumpToFirstNonBlankCharOfLine(editor);
+            return motionFirstNonBlankCharOfLine(editor);
         case MOT_END_OF_LINE:
-            return jumpToEndOfLine(editor);
+            return motionEndOfLine(editor);
         default:
             ERROR("Wrong motion");
             return 0;
@@ -290,19 +290,19 @@ size_t getMotionCol(Editor* editor, Motion motion) {
 size_t getMotionColLeft(Editor* editor, Motion motion, const size_t count, const char c) {
     switch (motion) {
         case MOT_LEFT:
-            return moveLeft(editor, count);
+            return motionLeft(editor, count);
         case MOT_BACKWARD_WORD:
-            return jumpBackwardsToStartOfWord(editor, count);
+            return motionBackwardWord(editor, count);
         case MOT_BACKWARD_BIG_WORD:
-            return jumpBackwardsToStartOfBigWord(editor, count);
+            return motionBackwardBigWord(editor, count);
         case MOT_START_OF_LINE:
-            return jumpToStartOfLine();
+            return motionStartOfLine();
         case MOT_FIRST_NON_BLANK_CHAR_OF_LINE:
-            return jumpToFirstNonBlankCharOfLine(editor);
+            return motionFirstNonBlankCharOfLine(editor);
         case MOT_PREVIOUS_OCCURRENCE_OF_CHAR:
-            return jumpToPreviousOccurrenceOfChar(editor, count, c);
+            return motionPreviousOccurrenceOfChar(editor, count, c);
         case MOT_AFTER_PREVIOUS_OCCURRENCE_OF_CHAR:
-            return jumpAfterPreviousOccurrenceOfChar(editor, count, c);
+            return motionAfterPreviousOccurrenceOfChar(editor, count, c);
         default:
             ERROR("Wrong motion");
             return 0;
@@ -312,21 +312,21 @@ size_t getMotionColLeft(Editor* editor, Motion motion, const size_t count, const
 size_t getMotionColRight(Editor* editor, Motion motion, const size_t count, const char c) {
     switch (motion) {
         case MOT_RIGHT:
-            return moveRight(editor, count);
+            return motionRight(editor, count);
         case MOT_WORD:
-            return jumpForwardsToStartOfWord(editor, count);
+            return motionWord(editor, count);
         case MOT_BIG_WORD:
-            return jumpForwardsToStartOfBigWord(editor, count);
+            return motionBigWord(editor, count);
         case MOT_END_WORD:
-            return jumpForwardToEndOfWord(editor, count);
+            return motionEndWord(editor, count);
         case MOT_END_BIG_WORD:
-            return jumpForwardsToEndOfBigWord(editor, count);
+            return motionEndBigWord(editor, count);
         case MOT_END_OF_LINE:
-            return jumpToEndOfLine(editor);
+            return motionEndOfLine(editor);
         case MOT_NEXT_OCCURRENCE_OF_CHAR:
-            return jumpToNextOccurrenceOfChar(editor, count, c);
+            return motionNextOccurrenceOfChar(editor, count, c);
         case MOT_BEFORE_NEXT_OCCURRENCE_OF_CHAR:
-            return jumpBeforeNextOccurrenceOfChar(editor, count, c);
+            return motionBeforeNextOccurrenceOfChar(editor, count, c);
         default:
             ERROR("Wrong motion");
             return 0;
@@ -338,7 +338,7 @@ Position getMotionPosition(Editor* editor, Motion motion, const size_t count) {
 
     switch (motion) {
         case MOT_MATCHING_CHAR:
-            return jumpToMatchingChar(editor);
+            return motionMatchingChar(editor);
         default:
             ERROR("Wrong motion");
             return (Position){0, 0};
