@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 #include "error.h"
-#include "input.h"
+#include "keys.h"
 #include "motion.h"
 #include "movement.h"
 
@@ -205,7 +205,7 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
     }
 
     if (parser->cmd.operator == OP_REPLACE) {
-        if (!isPrintable(key)) {
+        if (!(IS_PRINTABLE(key))) {
             wrongInput(parser, editor);
             return;
         }
@@ -256,7 +256,7 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
                 return;
 
             default:
-                if (!isPrintable(key)) {
+                if (!(IS_PRINTABLE(key))) {
                     wrongInput(parser, editor);
                     return;
                 }

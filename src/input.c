@@ -42,10 +42,6 @@ int readKey(void) {
     return -1;
 }
 
-int isPrintable(int c) {
-    return c >= FIRST_PRINTABLE && c <= LAST_PRINTABLE;
-}
-
 void handleResize(int sig) {
     (void)sig;
     updateWindowSize();

@@ -1,6 +1,5 @@
 #include "insert.h"
 
-#include "input.h"
 #include "keys.h"
 #include "movement.h"
 
@@ -34,7 +33,7 @@ void parseInsertMode(Editor* editor, int key) {
             insertArrowRight(editor);
             break;
         default:
-            if (isPrintable(key)) {
+            if (IS_PRINTABLE(key)) {
                 insertChar(&editor->buffer, &editor->cursor, key);
             }
             break;
