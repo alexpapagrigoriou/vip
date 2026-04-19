@@ -55,6 +55,11 @@ static void movementDown(Editor* editor, Motion motion, const size_t count) {
 }
 
 static void movementRight(Editor* editor, Motion motion, const size_t count) {
+    if (getLine(editor->cursor.row)->length == 0) {
+        editor->save_curosr_col = false;
+        return;
+    }
+
     if (editor->mode == INSERT) {
         if (editor->cursor.col == getLine(editor->cursor.row)->length) {
             editor->save_curosr_col = false;
@@ -93,6 +98,10 @@ static void movementLastLine(Editor* editor, Motion motion, const size_t count) 
 static void movementEndOfLine(Editor* editor, Motion motion) {
     editor->save_curosr_col = false;
     editor->prev_cursor_col = SIZE_MAX;
+
+    if (getLine(editor->cursor.row)->length == 0) {
+        return;
+    }
 
     editor->cursor.col = getMotionColRight(editor, motion, 1, '\0');
 }
