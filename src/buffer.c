@@ -87,76 +87,6 @@ void insertString(Buffer* buffer, Position* cursor, const char* text) {
     cursor->col += text_length;
 }
 
-void deleteCharLeft(Buffer* buffer, Position* cursor, const size_t count) {
-    if (cursor->col == 0) {
-        return;
-    }
-
-    if (count >= cursor->col) {
-        deleteStartOfLine(buffer, cursor);
-        return;
-    }
-
-    Line* line = &buffer->lines[cursor->row];
-
-    memmove(&line->chars[cursor->col - count], &line->chars[cursor->col], line->length - cursor->col + 1);
-
-    line->length -= count;
-
-    cursor->col -= count;
-}
-
-void deleteCharRight(Buffer* buffer, Position* cursor, const size_t count) {
-    Line* line = &buffer->lines[cursor->row];
-
-    if (cursor->col == line->length) {
-        return;
-    }
-
-    if (cursor->col + count >= line->length) {
-        deleteEndOfLine(buffer, cursor);
-        return;
-    }
-
-    memmove(&line->chars[cursor->col], &line->chars[cursor->col + count], line->length - cursor->col - count + 1);
-
-    line->length -= count;
-
-    if (cursor->col == line->length && cursor->col > 0) {
-        cursor->col--;
-    }
-}
-
-void deleteStartOfLine(Buffer* buffer, Position* cursor) {
-    if (cursor->col == 0) {
-        return;
-    }
-
-    Line* line = &buffer->lines[cursor->row];
-
-    memmove(&line->chars[0], &line->chars[cursor->col], line->length - cursor->col + 1);
-
-    line->chars = realloc(line->chars, line->length - cursor->col + 1);
-    line->length -= cursor->col;
-
-    cursor->col = 0;
-}
-
-void deleteEndOfLine(Buffer* buffer, Position* cursor) {
-    Line* line = &buffer->lines[cursor->row];
-
-    if (line->length > 0) {
-        line->chars[cursor->col] = '\0';
-        line->length = cursor->col;
-
-        line->chars = realloc(line->chars, line->length + 1);
-
-        if (cursor->col > 0) {
-            cursor->col--;
-        }
-    }
-}
-
 void replaceChar(Buffer* buffer, Position* cursor, const size_t count, const char c) {
     Line* line = &buffer->lines[cursor->row];
 
@@ -199,15 +129,6 @@ void prependLine(Buffer* buffer, Position* cursor) {
     cursor->col = 0;
 }
 
-void clearLine(Buffer* buffer, Position* cursor) {
-    Line* line = &buffer->lines[cursor->row];
-
-    line->chars[0] = '\0';
-    line->length = 0;
-
-    lineCompact(line);
-}
-
 void deleteRow(Buffer* buffer, Position* cursor, size_t row) {
     cursor->col = 0;
 
@@ -241,25 +162,46 @@ void deleteRow(Buffer* buffer, Position* cursor, size_t row) {
     bufferCompact(buffer);
 }
 
-void deleteColLeft(Buffer* buffer, Position* cursor, size_t col) {
-    // TODO: merge all buffer col based functions into this one
-    //       delete [col, cursor.col - 1]
-    //       move cursor.col to col
-    //       use existing deleteCharLeft
+static void deleteCol(Buffer* buffer, Position* cursor, size_t col) {
     Line* line = &buffer->lines[cursor->row];
-    (void)col;
 
+    size_t count = col - cursor->col + 1;
+
+    if (count > line->length) {
+        ERROR("Column out of bounds");
+    }
+
+    if (count == line->length) {
+        cursor->col = 0;
+
+        freeLine(line);
+        lineInit(line);
+        return;
+    }
+
+    if (col == line->length - 1) {
+        line->chars[cursor->col] = '\0';
+        cursor->col--;
+    } else {
+        memmove(&line->chars[cursor->col], &line->chars[cursor->col + count], line->length - cursor->col - count + 1);
+    }
+
+    line->length -= count;
     lineCompact(line);
 }
 
-void deleteColRight(Buffer* buffer, Position* cursor, size_t col) {
-    // TODO: merge all buffer col based functions into this one
-    //       delete [cursor.col, col]
-    //       use existing deleteCharRight
-    Line* line = &buffer->lines[cursor->row];
-    (void)col;
+void deleteColLeft(Buffer* buffer, Position* cursor, size_t col) {
+    cursor->col--;
 
-    lineCompact(line);
+    size_t tmp = cursor->col;
+    cursor->col = col;
+    col = tmp;
+
+    deleteCol(buffer, cursor, col);
+}
+
+void deleteColRight(Buffer* buffer, Position* cursor, size_t col) {
+    deleteCol(buffer, cursor, col);
 }
 
 void joinLines(Buffer* buffer, Position* cursor, size_t row) {

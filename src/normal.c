@@ -102,15 +102,16 @@ static void executeColLeftMotion(Parser* parser, Editor* editor) {
         return;
     }
 
-    // TODO: handle the motion based on the operator
-    (void)col;
-
     switch (parser->cmd.operator) {
         case OP_DELETE:
+            deleteColLeft(&editor->buffer, &editor->cursor, col);
             break;
         case OP_CHANGE:
+            deleteColLeft(&editor->buffer, &editor->cursor, col);
+            editor->mode = INSERT;
             break;
         case OP_YANK:
+            // TODO: implement yank col left motion
             break;
         default:
             ERROR("Wrong operator");
@@ -138,10 +139,14 @@ static void executeColRightMotion(Parser* parser, Editor* editor) {
 
     switch (parser->cmd.operator) {
         case OP_DELETE:
+            deleteColRight(&editor->buffer, &editor->cursor, col);
             break;
         case OP_CHANGE:
+            deleteColRight(&editor->buffer, &editor->cursor, col);
+            editor->mode = INSERT;
             break;
         case OP_YANK:
+            // TODO: implement yank col left motion
             break;
         default:
             ERROR("Wrong operator");

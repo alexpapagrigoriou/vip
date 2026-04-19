@@ -14,19 +14,16 @@ typedef struct {
 void bufferInit(Buffer* buffer);
 void freeBuffer(Buffer* buffer);
 
-// TODO: remove these functions after merging them into deleteRow, deleteColLeft and deleteColRight functions
 void insertChar(Buffer* buffer, Position* cursor, const char c);
 void insertString(Buffer* buffer, Position* cursor, const char* text);
-void clearLine(Buffer* buffer, Position* cursor);
-void deleteCharLeft(Buffer* buffer, Position* cursor, const size_t count);
-void deleteCharRight(Buffer* buffer, Position* cursor, const size_t count);
-void deleteStartOfLine(Buffer* buffer, Position* cursor);
-void deleteEndOfLine(Buffer* buffer, Position* cursor);
+
 void replaceChar(Buffer* buffer, Position* cursor, const size_t count, const char c);
+
 void appendLine(Buffer* buffer, Position* cursor);
 void prependLine(Buffer* buffer, Position* cursor);
 
 void deleteRow(Buffer* buffer, Position* cursor, size_t row);
 void deleteColLeft(Buffer* buffer, Position* cursor, size_t col);
 void deleteColRight(Buffer* buffer, Position* cursor, size_t col);
+
 void joinLines(Buffer* buffer, Position* cursor, size_t row);
