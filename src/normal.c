@@ -86,10 +86,6 @@ static void executeRowMotion(Parser* parser, Editor* editor) {
 }
 
 static void executeColLeftMotion(Parser* parser, Editor* editor) {
-    if (editor->buffer.lines[editor->cursor.row].length == 0) {
-        return;
-    }
-
     size_t col = getMotionColLeft(editor, parser->cmd.motion, parser->cmd.count, parser->cmd.argument);
 
     if (!editor->successful_motion) {
@@ -119,10 +115,6 @@ static void executeColLeftMotion(Parser* parser, Editor* editor) {
 }
 
 static void executeColRightMotion(Parser* parser, Editor* editor) {
-    if (editor->buffer.lines[editor->cursor.row].length == 0) {
-        return;
-    }
-
     size_t col = getMotionColRight(editor, parser->cmd.motion, parser->cmd.count, parser->cmd.argument);
 
     if (!editor->successful_motion) {

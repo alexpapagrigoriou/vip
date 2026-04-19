@@ -382,6 +382,11 @@ size_t getMotionCol(Editor* editor, Motion motion) {
 }
 
 size_t getMotionColLeft(Editor* editor, Motion motion, const size_t count, const char c) {
+    if (editor->buffer.lines[editor->cursor.row].length == 0) {
+        editor->successful_motion = false;
+        return 0;
+    }
+
     switch (motion) {
         case MOT_LEFT:
             return motionLeft(editor, count);
@@ -404,6 +409,11 @@ size_t getMotionColLeft(Editor* editor, Motion motion, const size_t count, const
 }
 
 size_t getMotionColRight(Editor* editor, Motion motion, const size_t count, const char c) {
+    if (editor->buffer.lines[editor->cursor.row].length == 0) {
+        editor->successful_motion = false;
+        return 0;
+    }
+
     switch (motion) {
         case MOT_RIGHT:
             return motionRight(editor, count);
