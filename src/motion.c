@@ -48,9 +48,6 @@ bool isBigWordSplit(char c) {
     return c == SPACE;
 }
 
-// TODO: set editor->successful_motion to false when the motion can't be executed
-//       ex. find next a. (fa) -> there is not a in this line
-
 static size_t motionUp(Editor* editor, const size_t count) {
     if (editor->cursor.row == 0) {
         editor->successful_motion = false;
@@ -188,6 +185,10 @@ static size_t motionBackwardWord(Editor* editor, const size_t count) {
         bool foundWord = false;
         for (size_t i = prev_col - 1; i > 0; i--) {
             if (isWordSplit(line->chars[i])) {
+                if (line->chars[i] == SPACE && line->chars[i + 1] == SPACE) {
+                    continue;
+                }
+
                 foundWord = true;
                 prev_col = i + 1;
                 found++;
@@ -222,6 +223,10 @@ static size_t motionBackwardBigWord(Editor* editor, const size_t count) {
         bool foundWord = false;
         for (size_t i = prev_col - 1; i > 0; i--) {
             if (isBigWordSplit(line->chars[i])) {
+                if (line->chars[i] == SPACE && line->chars[i + 1] == SPACE) {
+                    continue;
+                }
+
                 foundWord = true;
                 prev_col = i + 1;
                 found++;
@@ -327,19 +332,106 @@ static size_t motionRight(Editor* editor, const size_t count) {
 }
 
 static size_t motionWord(Editor* editor, const size_t count) {
-    // TODO: implement
-    (void)editor;
-    (void)count;
+    Line* line = getLine(editor->cursor.row);
 
-    return 0;
+    if (editor->cursor.col == line->length - 1) {
+        editor->successful_motion = false;
+        return editor->cursor.col;
+    }
+
+    size_t found = 0;
+
+    size_t next_col = editor->cursor.col;
+    while (found < count) {
+        next_col++;
+        if (next_col == line->length) {
+            return line->length - 1;
+        }
+
+        if (isWordSplit(line->chars[next_col]) && line->chars[next_col] != SPACE) {
+            found++;
+            continue;
+        }
+
+        if (line->chars[next_col - 1] == SPACE) {
+            next_col--;
+        } else if (isWordSplit(line->chars[next_col - 1])) {
+            bool foundNotSpace = false;
+            for (size_t i = next_col; i < line->length - 1; i++) {
+                if (line->chars[i] != SPACE) {
+                    foundNotSpace = true;
+                    next_col = i;
+                    found++;
+                    break;
+                }
+            }
+
+            if (!foundNotSpace) {
+                return line->length - 1;
+            }
+
+            continue;
+        }
+
+        bool foundWord = false;
+        for (size_t i = next_col; i < line->length - 1; i++) {
+            if (isWordSplit(line->chars[i])) {
+                if (line->chars[i] == SPACE && line->chars[i + 1] == SPACE) {
+                    continue;
+                }
+
+                foundWord = true;
+                next_col = line->chars[i] == SPACE ? i + 1 : i;
+                found++;
+                break;
+            }
+        }
+
+        if (!foundWord) {
+            return line->length - 1;
+        }
+    }
+
+    return next_col;
 }
 
 static size_t motionBigWord(Editor* editor, const size_t count) {
-    // TODO: implement
-    (void)editor;
-    (void)count;
+    Line* line = getLine(editor->cursor.row);
 
-    return 0;
+    if (editor->cursor.col == line->length - 1) {
+        editor->successful_motion = false;
+        return editor->cursor.col;
+    }
+
+    size_t found = 0;
+
+    size_t next_col = editor->cursor.col;
+    while (found < count) {
+        bool foundWord = false;
+        for (size_t i = next_col; i < line->length - 1; i++) {
+            if (isBigWordSplit(line->chars[i])) {
+                if (line->chars[i] == SPACE && line->chars[i + 1] == SPACE) {
+                    continue;
+                }
+
+                foundWord = true;
+                next_col = i;
+                found++;
+                break;
+            }
+        }
+
+        if (!foundWord) {
+            return line->length - 1;
+        }
+
+        next_col++;
+        if (next_col == line->length) {
+            return next_col - 1;
+        }
+    }
+
+    return next_col;
 }
 
 static size_t motionEndWord(Editor* editor, const size_t count) {
