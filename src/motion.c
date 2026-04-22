@@ -277,7 +277,7 @@ static size_t motionPreviousOccurrenceOfChar(Editor* editor, const size_t count,
 
         if (prev_col == 0) {
             if (found == count) {
-                return 0;
+                break;
             }
 
             editor->successful_motion = false;
@@ -289,12 +289,33 @@ static size_t motionPreviousOccurrenceOfChar(Editor* editor, const size_t count,
 }
 
 static size_t motionAfterPreviousOccurrenceOfChar(Editor* editor, const size_t count, const char c) {
-    // TODO: implement
-    (void)editor;
-    (void)count;
-    (void)c;
+    if (editor->cursor.col == 0) {
+        editor->successful_motion = false;
+        return 0;
+    }
 
-    return 0;
+    Line* line = getLine(editor->cursor.row);
+    size_t found = 0;
+
+    size_t prev_col = editor->cursor.col;
+    while (found < count) {
+        prev_col--;
+
+        if (line->chars[prev_col] == c) {
+            found++;
+        }
+
+        if (prev_col == 0) {
+            if (found == count) {
+                break;
+            }
+
+            editor->successful_motion = false;
+            return 0;
+        }
+    }
+
+    return prev_col + 1;
 }
 
 static size_t motionRight(Editor* editor, const size_t count) {
