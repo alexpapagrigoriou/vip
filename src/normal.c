@@ -215,6 +215,27 @@ static void wrongInput(Parser* parser, Editor* editor) {
 }
 
 void parseNormalMode(Parser* parser, Editor* editor, int key) {
+    if (parser->cmd.motion != MOT_NONE) {
+        if (parser->cmd.motion == MOT_FIRST_LINE) {
+            if (key != 'g') {
+                wrongInput(parser, editor);
+                return;
+            }
+
+            executeAndInit(parser, editor);
+            return;
+        }
+
+        if (!(IS_PRINTABLE(key))) {
+            wrongInput(parser, editor);
+            return;
+        }
+
+        parser->cmd.argument = key;
+        executeAndInit(parser, editor);
+        return;
+    }
+
     // TODO: remove exiting with 'q' after handling commmand mode
     if (key == 'q' && parser->state == STATE_NORMAL) {
         editor->mode = EXIT;
@@ -260,29 +281,6 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
 
     parser->cmd.key_cache.chars[parser->cmd.key_cache.length++] = key;
     parser->cmd.key_cache.chars[parser->cmd.key_cache.length] = '\0';
-
-    if (parser->cmd.motion != MOT_NONE) {
-        switch (key) {
-            case 'g':
-                if (parser->cmd.motion != MOT_FIRST_LINE) {
-                    wrongInput(parser, editor);
-                    return;
-                }
-
-                executeAndInit(parser, editor);
-                return;
-
-            default:
-                if (!(IS_PRINTABLE(key))) {
-                    wrongInput(parser, editor);
-                    return;
-                }
-
-                parser->cmd.argument = key;
-                executeAndInit(parser, editor);
-                return;
-        }
-    }
 
     bool ready_to_execute = true;
     switch (key) {
