@@ -363,21 +363,55 @@ static size_t motionEndOfLine(Editor* editor) {
 }
 
 static size_t motionNextOccurrenceOfChar(Editor* editor, const size_t count, const char c) {
-    // TODO: implement
-    (void)editor;
-    (void)count;
-    (void)c;
+    Line* line = getLine(editor->cursor.row);
 
-    return 0;
+    if (editor->cursor.col == line->length - 1) {
+        editor->successful_motion = false;
+        return editor->cursor.col;
+    }
+
+    size_t found = 0;
+
+    size_t next_col = editor->cursor.col;
+    while (found < count) {
+        next_col++;
+        if (next_col == line->length) {
+            editor->successful_motion = false;
+            return editor->cursor.col;
+        }
+
+        if (line->chars[next_col] == c) {
+            found++;
+        }
+    }
+
+    return next_col;
 }
 
 static size_t motionBeforeNextOccurrenceOfChar(Editor* editor, const size_t count, const char c) {
-    // TODO: implement
-    (void)editor;
-    (void)count;
-    (void)c;
+    Line* line = getLine(editor->cursor.row);
 
-    return 0;
+    if (editor->cursor.col == line->length - 1) {
+        editor->successful_motion = false;
+        return editor->cursor.col;
+    }
+
+    size_t found = 0;
+
+    size_t next_col = editor->cursor.col;
+    while (found < count) {
+        next_col++;
+        if (next_col == line->length) {
+            editor->successful_motion = false;
+            return editor->cursor.col;
+        }
+
+        if (line->chars[next_col] == c) {
+            found++;
+        }
+    }
+
+    return next_col - 1;
 }
 
 static Position motionMatchingChar(Editor* editor) {
