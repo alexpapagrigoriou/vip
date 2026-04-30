@@ -483,11 +483,42 @@ static size_t motionEndWord(Editor* editor, const size_t count) {
 }
 
 static size_t motionEndBigWord(Editor* editor, const size_t count) {
-    // TODO: implement
-    (void)editor;
-    (void)count;
+    Line* line = getLine(editor->cursor.row);
 
-    return 0;
+    if (editor->cursor.col == line->length - 1) {
+        editor->successful_motion = false;
+        return editor->cursor.col;
+    }
+
+    size_t found = 0;
+
+    size_t next_col = editor->cursor.col;
+    while (found < count) {
+        next_col++;
+        if (next_col == line->length) {
+            return line->length - 1;
+        }
+
+        bool foundWord = false;
+        for (size_t i = next_col + 1; i < line->length - 1; i++) {
+            if (isBigWordSplit(line->chars[i])) {
+                if (line->chars[i] == SPACE && line->chars[i - 1] == SPACE) {
+                    continue;
+                }
+
+                foundWord = true;
+                next_col = i - 1;
+                found++;
+                break;
+            }
+        }
+
+        if (!foundWord) {
+            return line->length - 1;
+        }
+    }
+
+    return next_col;
 }
 
 static size_t motionEndOfLine(Editor* editor) {
