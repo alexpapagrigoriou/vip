@@ -9,7 +9,7 @@ SRCS         := $(wildcard $(SRC_DIR)/*.c)
 DEBUG_OBJS   := $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/debug/%.o, $(SRCS))
 RELEASE_OBJS := $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/release/%.o, $(SRCS))
 
-CFLAGS_COMMON  := -Wall -Wextra -Werror -Wpedantic -MMD -MP -I$(INC_DIR)
+CFLAGS_COMMON  := -Wall -Wextra -Wpedantic -Werror -MMD -MP -I$(INC_DIR)
 CFLAGS_DEBUG   := $(CFLAGS_COMMON) -g3 -O0
 CFLAGS_RELEASE := $(CFLAGS_COMMON) -O2
 
