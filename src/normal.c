@@ -69,9 +69,14 @@ static void execute_row_motion(Parser* parser, Editor* editor) {
             break;
         case OP_CHANGE:
             bool is_last_line = editor->cursor.row == editor->buffer.line_count - 1 || row == editor->buffer.line_count - 1;
+            bool is_empty = is_last_line && (editor->cursor.row == 0 || row == 0);
             delete_row(&editor->buffer, &editor->cursor, row);
 
             editor->mode = INSERT;
+            if (is_empty) {
+                break;
+            }
+
             if (is_last_line) {
                 append_line(&editor->buffer, &editor->cursor);
             } else {

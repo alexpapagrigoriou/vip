@@ -6,7 +6,7 @@ BUILD_DIR := build
 BIN_DIR   := bin
 
 SRCS         := $(wildcard $(SRC_DIR)/*.c)
-DEBUG_OBJS   := $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/debug/%.o,   $(SRCS))
+DEBUG_OBJS   := $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/debug/%.o, $(SRCS))
 RELEASE_OBJS := $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/release/%.o, $(SRCS))
 
 CFLAGS_COMMON  := -Wall -Wextra -Werror -Wpedantic -MMD -MP -I$(INC_DIR)
