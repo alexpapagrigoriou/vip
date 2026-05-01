@@ -153,12 +153,12 @@ static void executePositionMotion(Parser* parser, Editor* editor) {
         return;
     }
 
-    // TODO: handle the motion based on the operator
-    (void)position;
+    if (parser->cmd.operator == OP_NONE) {
+        editor->cursor = position;
+        return;
+    }
 
     switch (parser->cmd.operator) {
-        case OP_NONE:
-            break;
         case OP_DELETE:
             break;
         case OP_CHANGE:

@@ -578,10 +578,68 @@ static size_t motionBeforeNextOccurrenceOfChar(Editor* editor, const size_t coun
 }
 
 static Position motionMatchingChar(Editor* editor) {
-    // TODO: implement
-    (void)editor;
+    Line* line = getLine(editor->cursor.row);
 
-    return (Position){0, 0};
+    char c = line->chars[editor->cursor.col];
+    if (IS_LEFT_PAIR(c)) {
+        size_t opened = 1;
+        size_t row = editor->cursor.row;
+        size_t col = editor->cursor.col;
+
+        char c_pair = GET_LEFT_PAIR(c);
+        while (opened > 0) {
+            col++;
+            if (col == line->length) {
+                if (row == editor->buffer.line_count - 1) {
+                    editor->successful_motion = false;
+                    return editor->cursor;
+                }
+
+                row++;
+                line = getLine(row);
+                col = 0;
+            }
+
+            if (line->chars[col] == c) {
+                opened++;
+            } else if (line->chars[col] == c_pair) {
+                opened--;
+            }
+        }
+
+        return (Position){row, col};
+    } else if (IS_RIGHT_PAIR(c)) {
+        size_t closed = 1;
+        size_t row = editor->cursor.row;
+        size_t col = editor->cursor.col;
+
+        char c_pair = GET_RIGHT_PAIR(c);
+        while (closed > 0) {
+            if (col > 0) {
+                col--;
+            } else {
+                if (row == 0) {
+                    editor->successful_motion = false;
+                    return editor->cursor;
+                }
+
+                row--;
+                line = getLine(row);
+                col = line->length == 0 ? 0 : line->length - 1;
+            }
+
+            if (line->chars[col] == c) {
+                closed++;
+            } else if (line->chars[col] == c_pair) {
+                closed--;
+            }
+        }
+
+        return (Position){row, col};
+    }
+
+    editor->successful_motion = false;
+    return editor->cursor;
 }
 
 size_t getMotionRow(Editor* editor, Motion motion, const size_t count) {
