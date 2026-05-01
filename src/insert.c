@@ -3,38 +3,38 @@
 #include "keys.h"
 #include "movement.h"
 
-void parseInsertMode(Editor* editor, int key) {
+void parse_insert_mode(Editor* editor, int key) {
     switch (key) {
         case ESC:
         case CTRL_F:
-            insertArrowLeft(editor);
+            insert_arrow_left(editor);
             editor->mode = NORMAL;
             break;
         case TAB:
-            insertString(&editor->buffer, &editor->cursor, "    ");
+            insert_string(&editor->buffer, &editor->cursor, "    ");
             break;
         case ENTER:
             // TODO: new buffer function that moves text after cursor to the new line
-            appendLine(&editor->buffer, &editor->cursor);
+            append_line(&editor->buffer, &editor->cursor);
             break;
         case BACKSPACE:
             // TODO: delete char and move text on this row in end of row - 1 if col == 0
             break;
         case LEFT:
-            insertArrowLeft(editor);
+            insert_arrow_left(editor);
             break;
         case UP:
-            insertArrowUp(editor);
+            insert_arrow_up(editor);
             break;
         case DOWN:
-            insertArrowDown(editor);
+            insert_arrow_down(editor);
             break;
         case RIGHT:
-            insertArrowRight(editor);
+            insert_arrow_right(editor);
             break;
         default:
             if (IS_PRINTABLE(key)) {
-                insertChar(&editor->buffer, &editor->cursor, key);
+                insert_char(&editor->buffer, &editor->cursor, key);
             }
             break;
     }

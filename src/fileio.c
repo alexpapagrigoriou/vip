@@ -1,4 +1,4 @@
 #include "fileio.h"
 
-void saveFile(void) {
+void save_file(void) {
 }

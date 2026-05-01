@@ -1,13 +1,13 @@
 #include "visual_line.h"
 
-static void fixCount(Parser* parser) {
+static void fix_count(Parser* parser) {
     if (parser->cmd.count == 0) {
         parser->cmd.count = 1;
     }
 }
 
-static void executeVisualLineMode(Parser* parser, Editor* editor) {
-    fixCount(parser);
+static void execute_visual_line_mode(Parser* parser, Editor* editor) {
+    fix_count(parser);
 
     editor->successful_motion = true;
 
@@ -15,15 +15,15 @@ static void executeVisualLineMode(Parser* parser, Editor* editor) {
     (void)editor;
 }
 
-static void executeAndInit(Parser* parser, Editor* editor) {
-    executeVisualLineMode(parser, editor);
-    parserInit(parser);
+static void execute_and_init(Parser* parser, Editor* editor) {
+    execute_visual_line_mode(parser, editor);
+    parser_init(parser);
 }
 
-void parseVisualLineMode(Parser* parser, Editor* editor, int key) {
+void parse_visual_line_mode(Parser* parser, Editor* editor, int key) {
     // TODO: implement visual line mode parser
     (void)parser;
     (void)editor;
     (void)key;
-    executeAndInit(parser, editor);
+    execute_and_init(parser, editor);
 }

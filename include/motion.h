@@ -45,13 +45,13 @@ typedef enum {
     MOT_TYPE_POSITION
 } MotionType;
 
-MotionType getMotionType(Motion motion);
+MotionType get_motion_type(Motion motion);
 
-bool isWordSplit(char c);
-bool isBigWordSplit(char c);
+bool is_word_split(char c);
+bool is_big_word_split(char c);
 
-size_t getMotionRow(Editor* editor, Motion motion, const size_t count);
-size_t getMotionCol(Editor* editor, Motion motion);
-size_t getMotionColLeft(Editor* editor, Motion motion, const size_t count, const char c);
-size_t getMotionColRight(Editor* editor, Motion motion, const size_t count, const char c);
-Position getMotionPosition(Editor* editor, Motion motion, const size_t count);
+size_t get_motion_row(Editor* editor, Motion motion, const size_t count);
+size_t get_motion_col(Editor* editor, Motion motion);
+size_t get_motion_col_left(Editor* editor, Motion motion, const size_t count, const char c);
+size_t get_motion_col_right(Editor* editor, Motion motion, const size_t count, const char c);
+Position get_motion_position(Editor* editor, Motion motion, const size_t count);

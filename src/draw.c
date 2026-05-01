@@ -8,11 +8,11 @@
 
 #define SCROLL_OFF 8
 
-void moveCursor(Position pos) {
+void move_cursor(Position pos) {
     printf("\033[%zu;%zuH", pos.row + 1, pos.col + 1);
 }
 
-static void fixTextRow(Position cursor, Position* text, const size_t line_count, const size_t max_row) {
+static void fix_text_row(Position cursor, Position* text, const size_t line_count, const size_t max_row) {
     if (cursor.row < text->row + SCROLL_OFF) {
         if (cursor.row < SCROLL_OFF) {
             text->row = 0;
@@ -36,7 +36,7 @@ static void fixTextRow(Position cursor, Position* text, const size_t line_count,
     }
 }
 
-static void fixTextCol(Position cursor, Position* text, const size_t max_col) {
+static void fix_text_col(Position cursor, Position* text, const size_t max_col) {
     if (cursor.col < text->col) {
         text->col = cursor.col;
     } else if (cursor.col - text->col >= max_col) {
@@ -44,40 +44,40 @@ static void fixTextCol(Position cursor, Position* text, const size_t max_col) {
     }
 }
 
-void fixTextPosition(Position cursor, Position* text, const size_t line_count) {
-    Position max_buffer = getMaxBuffer();
+void fix_text_position(Position cursor, Position* text, const size_t line_count) {
+    Position max_buffer = get_max_buffer();
 
-    fixTextRow(cursor, text, line_count, max_buffer.row);
-    fixTextCol(cursor, text, max_buffer.col);
+    fix_text_row(cursor, text, line_count, max_buffer.row);
+    fix_text_col(cursor, text, max_buffer.col);
 }
 
-void cleanScreen(void) {
+void clean_screen(void) {
     printf("\033[H\033[2J");
 }
 
-void cleanLine(void) {
+void clean_line(void) {
     printf("\r\033[2K");
 }
 
-static void printCenteredLines(const char* text[], size_t n_text) {
-    Position max_buffer = getMaxBuffer();
+static void print_centered_lines(const char* text[], size_t n_text) {
+    Position max_buffer = get_max_buffer();
 
     size_t start_row = (max_buffer.row - n_text) / 2;
     for (size_t i = 0; i < n_text; i++) {
         size_t col = (max_buffer.col - strlen(text[i])) / 2;
-        moveCursor((Position){start_row + i, col});
+        move_cursor((Position){start_row + i, col});
         printf("%s", text[i]);
     }
 }
 
-static void drawTildes(size_t start_row) {
-    for (size_t r = start_row; r < getMaxBuffer().row; r++) {
-        moveCursor((Position){r, 0});
+static void draw_tildes(size_t start_row) {
+    for (size_t r = start_row; r < get_max_buffer().row; r++) {
+        move_cursor((Position){r, 0});
         printf(BLUE "~" RESET);
     }
 }
 
-static void drawStart(void) {
+static void draw_start(void) {
     const char* text[] = {
         "VIP - Vi rIPoff",
         "",
@@ -88,67 +88,67 @@ static void drawStart(void) {
         "type  :q" BLUE "<Enter>" RESET "  to exit"};
     size_t n_text = sizeof(text) / sizeof(text[0]);
 
-    printCenteredLines(text, n_text);
-    drawTildes(1);
+    print_centered_lines(text, n_text);
+    draw_tildes(1);
 }
 
-static void drawBuffer(void) {
-    Position max_buffer = getMaxBuffer();
-    size_t line_count = getLineCount();
+static void draw_buffer(void) {
+    Position max_buffer = get_max_buffer();
+    size_t line_count = get_line_count();
 
     for (size_t r = 0; r < max_buffer.row; r++) {
-        size_t draw_row = r + getTextPosition().row;
+        size_t draw_row = r + get_text_position().row;
         if (draw_row >= line_count) {
             break;
         }
 
-        Line* line = getLine(draw_row);
-        if (line->length <= getTextPosition().col) {
+        Line* line = get_line(draw_row);
+        if (line->length <= get_text_position().col) {
             continue;
         }
 
-        moveCursor((Position){r, 0});
-        printf("%.*s", (int)max_buffer.col, line->chars + getTextPosition().col);
+        move_cursor((Position){r, 0});
+        printf("%.*s", (int)max_buffer.col, line->chars + get_text_position().col);
     }
 
-    drawTildes(line_count - getTextPosition().row);
+    draw_tildes(line_count - get_text_position().row);
 }
 
-static void drawStatusLine(void) {
-    size_t max_row = getMaxScreen().row - 1;
+static void draw_status_line(void) {
+    size_t max_row = get_max_screen().row - 1;
 
-    moveCursor((Position){max_row, 0});
-    cleanLine();
+    move_cursor((Position){max_row, 0});
+    clean_line();
 
-    int max_col = (int)getMaxScreen().col - (KEY_CACHE_STRING_SIZE + CURSOR_POSITION_STRING_SIZE + 3);
-    printf("%.*s", max_col, getStatusLine());
+    int max_col = (int)get_max_screen().col - (KEY_CACHE_STRING_SIZE + CURSOR_POSITION_STRING_SIZE + 3);
+    printf("%.*s", max_col, get_status_line());
 
     max_col++;
 
-    moveCursor((Position){max_row, max_col});
-    printf("%.*s", KEY_CACHE_STRING_SIZE, getKeyCacheString());
+    move_cursor((Position){max_row, max_col});
+    printf("%.*s", KEY_CACHE_STRING_SIZE, get_key_cache_string());
 
     max_col += KEY_CACHE_STRING_SIZE + 1;
 
-    moveCursor((Position){max_row, max_col});
-    printf("%.*s", CURSOR_POSITION_STRING_SIZE, getCursorPositionString());
+    move_cursor((Position){max_row, max_col});
+    printf("%.*s", CURSOR_POSITION_STRING_SIZE, get_cursor_position_string());
 }
 
-void drawWindow(void) {
-    cleanScreen();
+void draw_window(void) {
+    clean_screen();
 
-    if (isInStart()) {
-        drawStart();
+    if (is_in_start()) {
+        draw_start();
     } else {
-        drawBuffer();
+        draw_buffer();
     }
 
-    drawStatusLine();
+    draw_status_line();
 }
 
-void refreshWindow(void) {
-    Position buffer_pos = (Position){getCursorPosition().row - getTextPosition().row, getCursorPosition().col - getTextPosition().col};
-    moveCursor(buffer_pos);
+void refresh_window(void) {
+    Position buffer_pos = (Position){get_cursor_position().row - get_text_position().row, get_cursor_position().col - get_text_position().col};
+    move_cursor(buffer_pos);
 
     fflush(stdout);
 }

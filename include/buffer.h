@@ -11,19 +11,19 @@ typedef struct {
     size_t capacity;
 } Buffer;
 
-void bufferInit(Buffer* buffer);
-void freeBuffer(Buffer* buffer);
+void buffer_init(Buffer* buffer);
+void free_buffer(Buffer* buffer);
 
-void insertChar(Buffer* buffer, Position* cursor, const char c);
-void insertString(Buffer* buffer, Position* cursor, const char* text);
+void insert_char(Buffer* buffer, Position* cursor, const char c);
+void insert_string(Buffer* buffer, Position* cursor, const char* text);
 
-void replaceChar(Buffer* buffer, Position* cursor, const size_t count, const char c);
+void replace_char(Buffer* buffer, Position* cursor, const size_t count, const char c);
 
-void appendLine(Buffer* buffer, Position* cursor);
-void prependLine(Buffer* buffer, Position* cursor);
+void append_line(Buffer* buffer, Position* cursor);
+void prepend_line(Buffer* buffer, Position* cursor);
 
-void deleteRow(Buffer* buffer, Position* cursor, size_t row);
-void deleteColLeft(Buffer* buffer, Position* cursor, size_t col);
-void deleteColRight(Buffer* buffer, Position* cursor, size_t col);
+void delete_row(Buffer* buffer, Position* cursor, size_t row);
+void delete_col_left(Buffer* buffer, Position* cursor, size_t col);
+void delete_col_right(Buffer* buffer, Position* cursor, size_t col);
 
-void joinLines(Buffer* buffer, Position* cursor, size_t row);
+void join_lines(Buffer* buffer, Position* cursor, size_t row);

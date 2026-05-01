@@ -6,18 +6,18 @@
 
 #define LINE_INITIAL_CAPACITY 16
 
-void lineInit(Line* line) {
+void line_init(Line* line) {
     line->chars = malloc(LINE_INITIAL_CAPACITY);
     line->chars[0] = '\0';
     line->length = 0;
     line->capacity = LINE_INITIAL_CAPACITY;
 }
 
-void freeLine(Line* line) {
+void free_line(Line* line) {
     free(line->chars);
 }
 
-void lineEnsure(Line* line, size_t needed) {
+void line_ensure(Line* line, size_t needed) {
     if (needed <= line->capacity) {
         return;
     }
@@ -36,7 +36,7 @@ void lineEnsure(Line* line, size_t needed) {
     line->capacity = cap;
 }
 
-void lineCompact(Line* line) {
+void line_compact(Line* line) {
     if (line->capacity <= LINE_INITIAL_CAPACITY) {
         return;
     }

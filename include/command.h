@@ -2,4 +2,4 @@
 
 #include "editor.h"
 
-void parseCommandMode(Editor* editor, int key);
+void parse_command_mode(Editor* editor, int key);

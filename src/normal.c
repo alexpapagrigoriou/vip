@@ -8,7 +8,7 @@
 #include "motion.h"
 #include "movement.h"
 
-static void fixCount(Parser* parser) {
+static void fix_count(Parser* parser) {
     if (parser->cmd.count == 0) {
         parser->cmd.count = 1;
     }
@@ -20,7 +20,7 @@ static void fixCount(Parser* parser) {
     parser->cmd.count = parser->cmd.count * parser->cmd.count_after_operator;
 }
 
-static size_t fixColRightMotionCursor(size_t cursor_col, size_t col, Motion motion, size_t count, Line line) {
+static size_t fix_col_right_motion_cursor(size_t cursor_col, size_t col, Motion motion, size_t count, Line line) {
     if (cursor_col == col) {
         return col;
     }
@@ -33,14 +33,14 @@ static size_t fixColRightMotionCursor(size_t cursor_col, size_t col, Motion moti
             return col;
         case MOT_WORD:
             if (col == line.length - 1) {
-                if (!isWordSplit(line.chars[col - 1])) {
+                if (!is_word_split(line.chars[col - 1])) {
                     return col;
                 }
             }
             return col - 1;
         case MOT_BIG_WORD:
             if (col == line.length - 1) {
-                if (!isBigWordSplit(line.chars[col - 1])) {
+                if (!is_big_word_split(line.chars[col - 1])) {
                     return col;
                 }
             }
@@ -50,8 +50,8 @@ static size_t fixColRightMotionCursor(size_t cursor_col, size_t col, Motion moti
     }
 }
 
-static void executeRowMotion(Parser* parser, Editor* editor) {
-    size_t row = getMotionRow(editor, parser->cmd.motion, parser->cmd.count);
+static void execute_row_motion(Parser* parser, Editor* editor) {
+    size_t row = get_motion_row(editor, parser->cmd.motion, parser->cmd.count);
 
     if (!editor->successful_motion) {
         editor->save_curosr_col = false;
@@ -65,17 +65,17 @@ static void executeRowMotion(Parser* parser, Editor* editor) {
 
     switch (parser->cmd.operator) {
         case OP_DELETE:
-            deleteRow(&editor->buffer, &editor->cursor, row);
+            delete_row(&editor->buffer, &editor->cursor, row);
             break;
         case OP_CHANGE:
             bool is_last_line = editor->cursor.row == editor->buffer.line_count - 1 || row == editor->buffer.line_count - 1;
-            deleteRow(&editor->buffer, &editor->cursor, row);
+            delete_row(&editor->buffer, &editor->cursor, row);
 
             editor->mode = INSERT;
             if (is_last_line) {
-                appendLine(&editor->buffer, &editor->cursor);
+                append_line(&editor->buffer, &editor->cursor);
             } else {
-                prependLine(&editor->buffer, &editor->cursor);
+                prepend_line(&editor->buffer, &editor->cursor);
             }
             break;
         case OP_YANK:
@@ -86,8 +86,8 @@ static void executeRowMotion(Parser* parser, Editor* editor) {
     }
 }
 
-static void executeColLeftMotion(Parser* parser, Editor* editor) {
-    size_t col = getMotionColLeft(editor, parser->cmd.motion, parser->cmd.count, parser->cmd.argument);
+static void execute_col_left_motion(Parser* parser, Editor* editor) {
+    size_t col = get_motion_col_left(editor, parser->cmd.motion, parser->cmd.count, parser->cmd.argument);
 
     if (!editor->successful_motion) {
         editor->save_curosr_col = false;
@@ -101,10 +101,10 @@ static void executeColLeftMotion(Parser* parser, Editor* editor) {
 
     switch (parser->cmd.operator) {
         case OP_DELETE:
-            deleteColLeft(&editor->buffer, &editor->cursor, col);
+            delete_col_left(&editor->buffer, &editor->cursor, col);
             break;
         case OP_CHANGE:
-            deleteColLeft(&editor->buffer, &editor->cursor, col);
+            delete_col_left(&editor->buffer, &editor->cursor, col);
             editor->mode = INSERT;
             break;
         case OP_YANK:
@@ -115,8 +115,8 @@ static void executeColLeftMotion(Parser* parser, Editor* editor) {
     }
 }
 
-static void executeColRightMotion(Parser* parser, Editor* editor) {
-    size_t col = getMotionColRight(editor, parser->cmd.motion, parser->cmd.count, parser->cmd.argument);
+static void execute_col_right_motion(Parser* parser, Editor* editor) {
+    size_t col = get_motion_col_right(editor, parser->cmd.motion, parser->cmd.count, parser->cmd.argument);
 
     if (!editor->successful_motion) {
         editor->save_curosr_col = false;
@@ -128,14 +128,14 @@ static void executeColRightMotion(Parser* parser, Editor* editor) {
         return;
     }
 
-    col = fixColRightMotionCursor(editor->cursor.col, col, parser->cmd.motion, parser->cmd.count, editor->buffer.lines[editor->cursor.row]);
+    col = fix_col_right_motion_cursor(editor->cursor.col, col, parser->cmd.motion, parser->cmd.count, editor->buffer.lines[editor->cursor.row]);
 
     switch (parser->cmd.operator) {
         case OP_DELETE:
-            deleteColRight(&editor->buffer, &editor->cursor, col);
+            delete_col_right(&editor->buffer, &editor->cursor, col);
             break;
         case OP_CHANGE:
-            deleteColRight(&editor->buffer, &editor->cursor, col);
+            delete_col_right(&editor->buffer, &editor->cursor, col);
             editor->mode = INSERT;
             break;
         case OP_YANK:
@@ -146,8 +146,8 @@ static void executeColRightMotion(Parser* parser, Editor* editor) {
     }
 }
 
-static void executePositionMotion(Parser* parser, Editor* editor) {
-    Position position = getMotionPosition(editor, parser->cmd.motion, parser->cmd.count);
+static void execute_position_motion(Parser* parser, Editor* editor) {
+    Position position = get_motion_position(editor, parser->cmd.motion, parser->cmd.count);
 
     if (!editor->successful_motion) {
         editor->save_curosr_col = false;
@@ -171,48 +171,48 @@ static void executePositionMotion(Parser* parser, Editor* editor) {
     }
 }
 
-static void executeNormalMode(Parser* parser, Editor* editor) {
-    fixCount(parser);
+static void execute_normal_mode(Parser* parser, Editor* editor) {
+    fix_count(parser);
 
     editor->successful_motion = true;
 
     if (parser->cmd.operator == OP_REPLACE) {
-        replaceChar(&editor->buffer, &editor->cursor, parser->cmd.count, parser->cmd.argument);
+        replace_char(&editor->buffer, &editor->cursor, parser->cmd.count, parser->cmd.argument);
         return;
     }
 
     if (parser->cmd.operator == OP_NONE) {
-        if (isMovementToExecute(editor, parser->cmd.motion, parser->cmd.count)) {
+        if (is_movement_to_execute(editor, parser->cmd.motion, parser->cmd.count)) {
             return;
         }
     }
 
-    switch (getMotionType(parser->cmd.motion)) {
+    switch (get_motion_type(parser->cmd.motion)) {
         case MOT_TYPE_ROW:
-            executeRowMotion(parser, editor);
+            execute_row_motion(parser, editor);
             break;
         case MOT_TYPE_COL_LEFT:
-            executeColLeftMotion(parser, editor);
+            execute_col_left_motion(parser, editor);
             break;
         case MOT_TYPE_COL_RIGHT:
-            executeColRightMotion(parser, editor);
+            execute_col_right_motion(parser, editor);
             break;
         case MOT_TYPE_POSITION:
-            executePositionMotion(parser, editor);
+            execute_position_motion(parser, editor);
             break;
         default:
             ERROR("Wrong motion type");
     }
 }
 
-static void executeAndInit(Parser* parser, Editor* editor) {
-    executeNormalMode(parser, editor);
-    parserInit(parser);
+static void execute_and_init(Parser* parser, Editor* editor) {
+    execute_normal_mode(parser, editor);
+    parser_init(parser);
 }
 
-static void wrongInput(Parser* parser, Editor* editor) {
+static void wrong_input(Parser* parser, Editor* editor) {
     editor->save_curosr_col = false;
-    parserInit(parser);
+    parser_init(parser);
 }
 
 static inline void append_digit(size_t* count, char key) {
@@ -222,25 +222,25 @@ static inline void append_digit(size_t* count, char key) {
         *count = *count * 10 + digit;
 }
 
-void parseNormalMode(Parser* parser, Editor* editor, int key) {
+void parse_normal_mode(Parser* parser, Editor* editor, int key) {
     if (parser->cmd.motion != MOT_NONE) {
         if (parser->cmd.motion == MOT_FIRST_LINE) {
             if (key != 'g') {
-                wrongInput(parser, editor);
+                wrong_input(parser, editor);
                 return;
             }
 
-            executeAndInit(parser, editor);
+            execute_and_init(parser, editor);
             return;
         }
 
         if (!(IS_PRINTABLE(key))) {
-            wrongInput(parser, editor);
+            wrong_input(parser, editor);
             return;
         }
 
         parser->cmd.argument = key;
-        executeAndInit(parser, editor);
+        execute_and_init(parser, editor);
         return;
     }
 
@@ -252,12 +252,12 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
 
     if (parser->cmd.operator == OP_REPLACE) {
         if (!(IS_PRINTABLE(key))) {
-            wrongInput(parser, editor);
+            wrong_input(parser, editor);
             return;
         }
 
         parser->cmd.argument = key;
-        executeAndInit(parser, editor);
+        execute_and_init(parser, editor);
         return;
     }
 
@@ -265,7 +265,7 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
         if (parser->state == STATE_NORMAL) {
             if (!(key == '0' && parser->cmd.count == 0)) {
                 if (parser->cmd.motion != MOT_NONE) {
-                    wrongInput(parser, editor);
+                    wrong_input(parser, editor);
                     return;
                 }
 
@@ -276,7 +276,7 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
         } else {
             if (!(key == '0' && parser->cmd.count_after_operator == 0)) {
                 if (parser->cmd.motion != MOT_NONE) {
-                    wrongInput(parser, editor);
+                    wrong_input(parser, editor);
                     return;
                 }
 
@@ -363,7 +363,7 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
     }
 
     if (ready_to_execute) {
-        executeAndInit(parser, editor);
+        execute_and_init(parser, editor);
         return;
     }
 
@@ -397,29 +397,29 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
                 case 'd':
                     if (parser->cmd.operator == OP_DELETE) {
                         parser->cmd.motion = MOT_LINE;
-                        executeAndInit(parser, editor);
+                        execute_and_init(parser, editor);
                     } else {
-                        wrongInput(parser, editor);
+                        wrong_input(parser, editor);
                     }
                     return;
                 case 'c':
                     if (parser->cmd.operator == OP_CHANGE) {
                         parser->cmd.motion = MOT_LINE;
-                        executeAndInit(parser, editor);
+                        execute_and_init(parser, editor);
                     } else {
-                        wrongInput(parser, editor);
+                        wrong_input(parser, editor);
                     }
                     return;
                 case 'y':
                     if (parser->cmd.operator == OP_YANK) {
                         parser->cmd.motion = MOT_LINE;
-                        executeAndInit(parser, editor);
+                        execute_and_init(parser, editor);
                     } else {
-                        wrongInput(parser, editor);
+                        wrong_input(parser, editor);
                     }
                     return;
                 default:
-                    wrongInput(parser, editor);
+                    wrong_input(parser, editor);
                     return;
             }
             break;
@@ -428,53 +428,53 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
     switch (key) {
         case 'i':
             editor->mode = INSERT;
-            parserInit(parser);
+            parser_init(parser);
             return;
         case 'a':
             editor->mode = INSERT;
-            insertArrowRight(editor);
-            parserInit(parser);
+            insert_arrow_right(editor);
+            parser_init(parser);
             return;
         case 'I':
             editor->mode = INSERT;
-            editor->cursor.col = getMotionCol(editor, MOT_FIRST_NON_BLANK_CHAR_OF_LINE);
-            parserInit(parser);
+            editor->cursor.col = get_motion_col(editor, MOT_FIRST_NON_BLANK_CHAR_OF_LINE);
+            parser_init(parser);
             return;
         case 'A':
             editor->mode = INSERT;
-            editor->cursor.col = getMotionCol(editor, MOT_END_OF_LINE);
-            insertArrowRight(editor);
-            parserInit(parser);
+            editor->cursor.col = get_motion_col(editor, MOT_END_OF_LINE);
+            insert_arrow_right(editor);
+            parser_init(parser);
             return;
         case 'o':
             editor->mode = INSERT;
-            appendLine(&editor->buffer, &editor->cursor);
-            parserInit(parser);
+            append_line(&editor->buffer, &editor->cursor);
+            parser_init(parser);
             return;
         case 'O':
             editor->mode = INSERT;
-            prependLine(&editor->buffer, &editor->cursor);
-            parserInit(parser);
+            prepend_line(&editor->buffer, &editor->cursor);
+            parser_init(parser);
             return;
         case '^':
             parser->cmd.motion = MOT_FIRST_NON_BLANK_CHAR_OF_LINE;
-            executeAndInit(parser, editor);
+            execute_and_init(parser, editor);
             return;
         case 'x':
             parser->cmd.operator = OP_DELETE;
             parser->cmd.motion = MOT_RIGHT;
-            executeAndInit(parser, editor);
+            execute_and_init(parser, editor);
             return;
         case 'X':
             parser->cmd.operator = OP_DELETE;
             parser->cmd.motion = MOT_LEFT;
-            executeAndInit(parser, editor);
+            execute_and_init(parser, editor);
             return;
         case 'J':
-            joinLines(&editor->buffer, &editor->cursor, getMotionRow(editor, MOT_DOWN, parser->cmd.count ? parser->cmd.count : 1));
-            parserInit(parser);
+            join_lines(&editor->buffer, &editor->cursor, get_motion_row(editor, MOT_DOWN, parser->cmd.count ? parser->cmd.count : 1));
+            parser_init(parser);
             return;
     }
 
-    wrongInput(parser, editor);
+    wrong_input(parser, editor);
 }

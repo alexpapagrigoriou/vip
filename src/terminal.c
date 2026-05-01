@@ -10,11 +10,11 @@ static struct termios original;
 
 static Position max_screen;
 
-void disableRawMode(void) {
+void disable_raw_mode(void) {
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &original);
 }
 
-void enableRawMode(void) {
+void enable_raw_mode(void) {
     tcgetattr(STDIN_FILENO, &original);
 
     struct termios raw = original;
@@ -23,21 +23,21 @@ void enableRawMode(void) {
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
 
-void updateWindowSize(void) {
+void update_window_size(void) {
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     max_screen.row = w.ws_row;
     max_screen.col = w.ws_col;
 
-    drawWindow();
+    draw_window();
 
-    refreshWindow();
+    refresh_window();
 }
 
-Position getMaxScreen(void) {
+Position get_max_screen(void) {
     return max_screen;
 }
 
-Position getMaxBuffer(void) {
+Position get_max_buffer(void) {
     return (Position){max_screen.row - 1, max_screen.col};
 }

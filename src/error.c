@@ -6,7 +6,7 @@
 #include "draw.h"
 
 void error(const char* msg, const char* file, int line, const char* func) {
-    cleanScreen();
+    clean_screen();
     fflush(stdout);
 
     fprintf(stderr, "Error: %s (%s:%d, %s)\n", msg, file, line, func);

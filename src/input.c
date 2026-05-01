@@ -6,7 +6,7 @@
 #include "keys.h"
 #include "terminal.h"
 
-int readKey(void) {
+int read_key(void) {
     char c;
     if (read(STDIN_FILENO, &c, 1) == 1) {
         if (c == ESC) {
@@ -42,7 +42,7 @@ int readKey(void) {
     return -1;
 }
 
-void handleResize(int sig) {
+void handle_resize(int sig) {
     (void)sig;
-    updateWindowSize();
+    update_window_size();
 }

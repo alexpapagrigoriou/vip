@@ -3,4 +3,4 @@
 #include "editor.h"
 #include "parser.h"
 
-void parseNormalMode(Parser* parser, Editor* editor, int key);
+void parse_normal_mode(Parser* parser, Editor* editor, int key);

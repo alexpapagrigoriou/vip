@@ -1,13 +1,13 @@
 #include "visual.h"
 
-static void fixCount(Parser* parser) {
+static void fix_count(Parser* parser) {
     if (parser->cmd.count == 0) {
         parser->cmd.count = 1;
     }
 }
 
-static void executeVisualMode(Parser* parser, Editor* editor) {
-    fixCount(parser);
+static void execute_visual_mode(Parser* parser, Editor* editor) {
+    fix_count(parser);
 
     editor->successful_motion = true;
 
@@ -15,15 +15,15 @@ static void executeVisualMode(Parser* parser, Editor* editor) {
     (void)editor;
 }
 
-static void executeAndInit(Parser* parser, Editor* editor) {
-    executeVisualMode(parser, editor);
-    parserInit(parser);
+static void execute_and_init(Parser* parser, Editor* editor) {
+    execute_visual_mode(parser, editor);
+    parser_init(parser);
 }
 
-void parseVisualMode(Parser* parser, Editor* editor, int key) {
+void parse_visual_mode(Parser* parser, Editor* editor, int key) {
     // TODO: implement visual mode parser
     (void)parser;
     (void)editor;
     (void)key;
-    executeAndInit(parser, editor);
+    execute_and_init(parser, editor);
 }

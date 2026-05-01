@@ -32,5 +32,5 @@ typedef struct {
     Command cmd;
 } Parser;
 
-void parserInit(Parser* parser);
-void handleKey(Parser* parser, Editor* editor, int key);
+void parser_init(Parser* parser);
+void handle_key(Parser* parser, Editor* editor, int key);

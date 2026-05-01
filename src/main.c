@@ -9,7 +9,7 @@ int main(int argc, char* argv[]) {
     }
 
     char* filename = argc == 2 ? argv[1] : NULL;
-    runVip(filename);
+    run_vip(filename);
 
     return 0;
 }

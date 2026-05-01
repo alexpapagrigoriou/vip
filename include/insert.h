@@ -2,4 +2,4 @@
 
 #include "editor.h"
 
-void parseInsertMode(Editor* editor, int key);
+void parse_insert_mode(Editor* editor, int key);

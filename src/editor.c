@@ -1,7 +1,7 @@
 #include "editor.h"
 
-void editorInit(Editor* editor, char* filename) {
-    bufferInit(&editor->buffer);
+void editor_init(Editor* editor, char* filename) {
+    buffer_init(&editor->buffer);
     editor->cursor = (Position){0, 0};
     editor->save_curosr_col = true;
     editor->prev_cursor_col = 0;
@@ -13,6 +13,6 @@ void editorInit(Editor* editor, char* filename) {
     editor->filename = filename;
 }
 
-void freeEditor(Editor* editor) {
-    freeBuffer(&editor->buffer);
+void free_editor(Editor* editor) {
+    free_buffer(&editor->buffer);
 }

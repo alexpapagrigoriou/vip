@@ -1,3 +1,3 @@
 #pragma once
 
-void saveFile(void);
+void save_file(void);

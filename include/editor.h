@@ -33,5 +33,5 @@ typedef struct {
     char* filename;
 } Editor;
 
-void editorInit(Editor* editor, char* filename);
-void freeEditor(Editor* editor);
+void editor_init(Editor* editor, char* filename);
+void free_editor(Editor* editor);
