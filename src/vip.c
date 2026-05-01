@@ -62,12 +62,6 @@ char* getStatusLine(void) {
 
 char* getKeyCacheString(void) {
     if (parser.cmd.count == 0) {
-        snprintf(editor.key_cache_string, sizeof(editor.key_cache_string), "%s", parser.cmd.key_cache.chars);
-    } else {
-        snprintf(editor.key_cache_string, sizeof(editor.key_cache_string), "%zu%s", parser.cmd.count, parser.cmd.key_cache.chars);
-    }
-
-    if (parser.cmd.count == 0) {
         if (parser.cmd.count_after_operator == 0) {
             snprintf(editor.key_cache_string, sizeof(editor.key_cache_string), "%s", parser.cmd.key_cache.chars);
         } else {
