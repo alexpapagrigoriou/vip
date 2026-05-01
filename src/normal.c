@@ -1,6 +1,7 @@
 #include "normal.h"
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "error.h"
 #include "keys.h"
@@ -214,6 +215,13 @@ static void wrongInput(Parser* parser, Editor* editor) {
     parserInit(parser);
 }
 
+static inline void append_digit(size_t* count, char key) {
+    size_t digit = (size_t)(key - '0');
+
+    if (*count <= (SIZE_MAX - digit) / 10)
+        *count = *count * 10 + digit;
+}
+
 void parseNormalMode(Parser* parser, Editor* editor, int key) {
     if (parser->cmd.motion != MOT_NONE) {
         if (parser->cmd.motion == MOT_FIRST_LINE) {
@@ -261,7 +269,7 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
                     return;
                 }
 
-                parser->cmd.count = parser->cmd.count * 10 + (key - '0');
+                append_digit(&parser->cmd.count, key);
                 editor->save_curosr_col = false;
                 return;
             }
@@ -272,7 +280,7 @@ void parseNormalMode(Parser* parser, Editor* editor, int key) {
                     return;
                 }
 
-                parser->cmd.count_after_operator = parser->cmd.count_after_operator * 10 + (key - '0');
+                append_digit(&parser->cmd.count_after_operator, key);
                 editor->save_curosr_col = false;
                 return;
             }
