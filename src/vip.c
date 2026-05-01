@@ -2,6 +2,7 @@
 
 #include <signal.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "colors.h"
 #include "draw.h"
@@ -61,21 +62,23 @@ char* getStatusLine(void) {
 }
 
 char* getKeyCacheString(void) {
+    char tmp[64];
     if (parser.cmd.count == 0) {
         if (parser.cmd.count_after_operator == 0) {
-            snprintf(editor.key_cache_string, sizeof(editor.key_cache_string), "%s", parser.cmd.key_cache.chars);
+            snprintf(tmp, sizeof(tmp), "%s", parser.cmd.key_cache.chars);
         } else {
-            char* key_cache_after_operator = parser.cmd.key_cache.chars + 1;
-            snprintf(editor.key_cache_string, sizeof(editor.key_cache_string), "%c%zu%s", parser.cmd.key_cache.chars[0], parser.cmd.count_after_operator, key_cache_after_operator);
+            snprintf(tmp, sizeof(tmp), "%c%zu%s", parser.cmd.key_cache.chars[0], parser.cmd.count_after_operator, parser.cmd.key_cache.chars + 1);
         }
     } else {
         if (parser.cmd.count_after_operator == 0) {
-            snprintf(editor.key_cache_string, sizeof(editor.key_cache_string), "%zu%s", parser.cmd.count, parser.cmd.key_cache.chars);
+            snprintf(tmp, sizeof(tmp), "%zu%s", parser.cmd.count, parser.cmd.key_cache.chars);
         } else {
-            char* key_cache_after_operator = parser.cmd.key_cache.chars + 1;
-            snprintf(editor.key_cache_string, sizeof(editor.key_cache_string), "%zu%c%zu%s", parser.cmd.count, parser.cmd.key_cache.chars[0], parser.cmd.count_after_operator, key_cache_after_operator);
+            snprintf(tmp, sizeof(tmp), "%zu%c%zu%s", parser.cmd.count, parser.cmd.key_cache.chars[0], parser.cmd.count_after_operator, parser.cmd.key_cache.chars + 1);
         }
     }
+
+    memmove(editor.key_cache_string, tmp, KEY_CACHE_STRING_SIZE);
+    editor.key_cache_string[KEY_CACHE_STRING_SIZE] = '\0';
 
     return editor.key_cache_string;
 }
