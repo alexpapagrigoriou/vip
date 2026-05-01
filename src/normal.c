@@ -140,8 +140,13 @@ static void execute_col_right_motion(Parser* parser, Editor* editor) {
             delete_col_right(&editor->buffer, &editor->cursor, col);
             break;
         case OP_CHANGE:
+            bool is_end_of_line = col == editor->buffer.lines[editor->cursor.row].length - 1;
             delete_col_right(&editor->buffer, &editor->cursor, col);
+
             editor->mode = INSERT;
+            if (is_end_of_line && editor->buffer.lines[editor->cursor.row].length > 0) {
+                editor->cursor.col++;
+            }
             break;
         case OP_YANK:
             // TODO: implement yank col left motion
