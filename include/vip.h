@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "editor.h"
 #include "line.h"
 #include "terminal.h"
 
@@ -15,3 +16,4 @@ size_t get_line_count(void);
 Position get_cursor_position(void);
 Position get_text_position(void);
 bool is_in_start(void);
+Mode get_mode(void);

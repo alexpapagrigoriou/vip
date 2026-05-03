@@ -6,7 +6,6 @@
 
 #include "colors.h"
 #include "draw.h"
-#include "editor.h"
 #include "input.h"
 #include "parser.h"
 
@@ -107,4 +106,8 @@ Position get_text_position(void) {
 
 bool is_in_start(void) {
     return editor.in_start;
+}
+
+Mode get_mode(void) {
+    return editor.mode;
 }
