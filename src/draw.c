@@ -83,7 +83,9 @@ static void draw_start(void) {
         "",
         "version idk",
         "by Alexandros Papagrigoriou.",
+        "",
         "Vip is open source and freely distributable",
+        "https://github.com/AlexPapagre/vip",
         "",
         "type  :q" BLUE "<Enter>" RESET "  to exit"};
 
@@ -93,7 +95,7 @@ static void draw_start(void) {
     for (size_t i = 0; i < n_text; i++) {
         text_length[i] = strlen(text[i]);
     }
-    text_length[6] -= COLOR_SIZE + RESET_COLOR_SIZE;
+    text_length[8] -= COLOR_SIZE + RESET_COLOR_SIZE;
 
     print_centered_lines(text, text_length, n_text);
     draw_tildes(1);
