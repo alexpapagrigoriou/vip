@@ -59,12 +59,12 @@ void clean_line(void) {
     printf("\r\033[2K");
 }
 
-static void print_centered_lines(const char* text[], size_t n_text) {
+static void print_centered_lines(const char* text[], size_t text_length[], size_t n_text) {
     Position max_buffer = get_max_buffer();
 
     size_t start_row = (max_buffer.row - n_text) / 2;
     for (size_t i = 0; i < n_text; i++) {
-        size_t col = (max_buffer.col - strlen(text[i])) / 2;
+        size_t col = (max_buffer.col - text_length[i]) / 2;
         move_cursor((Position){start_row + i, col});
         printf("%s", text[i]);
     }
@@ -86,9 +86,16 @@ static void draw_start(void) {
         "Vip is open source and freely distributable",
         "",
         "type  :q" BLUE "<Enter>" RESET "  to exit"};
+
     size_t n_text = sizeof(text) / sizeof(text[0]);
 
-    print_centered_lines(text, n_text);
+    size_t text_length[n_text];
+    for (size_t i = 0; i < n_text; i++) {
+        text_length[i] = strlen(text[i]);
+    }
+    text_length[6] -= COLOR_SIZE + RESET_COLOR_SIZE;
+
+    print_centered_lines(text, text_length, n_text);
     draw_tildes(1);
 }
 

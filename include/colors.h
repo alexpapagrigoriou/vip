@@ -28,3 +28,8 @@
 #define BG_WHITE "\033[47m"
 
 #define RESET "\033[0m"
+
+#define COLOR_SIZE 5
+#define BOLD_COLOR_SIZE 7
+#define BACKGROUND_COLOR_SIZE 7
+#define RESET_COLOR_SIZE 4
