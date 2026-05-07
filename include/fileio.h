@@ -1,3 +1,6 @@
 #pragma once
 
-void save_file(void);
+#include "buffer.h"
+
+void save_file(Buffer* buffer, const char* filename);
+void load_file(Buffer* buffer, const char* filename);

@@ -1,5 +1,7 @@
 #include "editor.h"
 
+#include "fileio.h"
+
 void editor_init(Editor* editor, char* filename) {
     buffer_init(&editor->buffer);
     editor->cursor = (Position){0, 0};
@@ -11,6 +13,10 @@ void editor_init(Editor* editor, char* filename) {
     editor->in_start = filename == NULL;
     editor->mode = NORMAL;
     editor->filename = filename;
+
+    if (filename != NULL) {
+        load_file(&editor->buffer, filename);
+    }
 }
 
 void free_editor(Editor* editor) {
