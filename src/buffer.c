@@ -204,13 +204,38 @@ void delete_col_right(Buffer* buffer, Position* cursor, size_t col) {
     delete_col(buffer, cursor, col);
 }
 
-void join_lines(Buffer* buffer, Position* cursor, size_t row) {
-    if (cursor->row == row) {
+void join_lines(Buffer* buffer, Position* cursor, size_t next_row_first_col) {
+    if (cursor->row == buffer->line_count - 1) {
         return;
     }
 
-    // TODO: join lines from cursor.row to row
-    //       set the cursor.col between the last joined line and the previous line
+    size_t next_row = cursor->row + 1;
+    if (next_row_first_col > 0) {
+        delete_col_right(buffer, &(Position){next_row, 0}, next_row_first_col - 1);
+    }
 
-    delete_row(buffer, &(Position){cursor->row + 1, 0}, row);
+    Line* line = &buffer->lines[cursor->row];
+    if (line->length == 0) {
+        delete_row(buffer, &(Position){cursor->row, 0}, cursor->row);
+        return;
+    }
+
+    Line* next_line = &buffer->lines[next_row];
+    if (next_line->length == 0) {
+        delete_row(buffer, &(Position){next_row, 0}, next_row);
+        return;
+    }
+
+    line_ensure(line, line->length + next_line->length + 2);
+
+    if (line->chars[line->length - 1] != ' ') {
+        line->chars[line->length] = ' ';
+        line->length++;
+    }
+
+    memmove(&line->chars[line->length], next_line->chars, next_line->length + 1);
+    line->length += next_line->length;
+    line->chars[line->length] = '\0';
+
+    delete_row(buffer, &(Position){next_row, 0}, next_row);
 }

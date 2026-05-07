@@ -480,7 +480,15 @@ void parse_normal_mode(Parser* parser, Editor* editor, int key) {
             execute_and_init(parser, editor);
             return;
         case 'J':
-            join_lines(&editor->buffer, &editor->cursor, get_motion_row(editor, MOT_DOWN, parser->cmd.count ? parser->cmd.count : 1));
+            if (editor->cursor.row == editor->buffer.line_count - 1) {
+                editor->save_curosr_col = false;
+            } else {
+                editor->cursor.row++;
+                size_t next_row_first_col = get_motion_col_left(editor, MOT_FIRST_NON_BLANK_CHAR_OF_LINE, 1, SPACE);
+                editor->cursor.row--;
+
+                join_lines(&editor->buffer, &editor->cursor, next_row_first_col);
+            }
             parser_init(parser);
             return;
     }

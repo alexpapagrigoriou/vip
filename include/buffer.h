@@ -26,4 +26,4 @@ void delete_row(Buffer* buffer, Position* cursor, size_t row);
 void delete_col_left(Buffer* buffer, Position* cursor, size_t col);
 void delete_col_right(Buffer* buffer, Position* cursor, size_t col);
 
-void join_lines(Buffer* buffer, Position* cursor, size_t row);
+void join_lines(Buffer* buffer, Position* cursor, size_t next_row_first_col);
