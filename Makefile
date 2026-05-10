@@ -1,48 +1,64 @@
-TARGET    := vip
-CC        := gcc
-SRC_DIR   := src
-INC_DIR   := include
+TARGET := vip
+CC := gcc
+
+SRC_DIR := src
+INC_DIR := include
+
 BUILD_DIR := build
-BIN_DIR   := bin
+BIN_DIR := bin
 
-SRCS         := $(wildcard $(SRC_DIR)/*.c)
-DEBUG_OBJS   := $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/debug/%.o, $(SRCS))
-RELEASE_OBJS := $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/release/%.o, $(SRCS))
+DEBUG_BUILD_DIR := $(BUILD_DIR)/debug
+RELEASE_BUILD_DIR := $(BUILD_DIR)/release
 
-WARN_FLAGS    := -Wall -Wextra -Wpedantic -Werror
-DEP_FLAGS     := -MMD -MP
-INCLUDE_FLAGS := -I$(INC_DIR)
+DEBUG_BIN_DIR := $(BIN_DIR)/debug
+RELEASE_BIN_DIR := $(BIN_DIR)/release
 
-CFLAGS_COMMON  := $(WARN_FLAGS) $(DEP_FLAGS) $(INCLUDE_FLAGS)
-CFLAGS_DEBUG   := $(CFLAGS_COMMON) -g3 -O0
-CFLAGS_RELEASE := $(CFLAGS_COMMON) -O2
+SRCS := $(wildcard $(SRC_DIR)/*.c)
 
-LDFLAGS_DEBUG   :=
-LDFLAGS_RELEASE :=
+DEBUG_OBJS := $(SRCS:$(SRC_DIR)/%.c=$(DEBUG_BUILD_DIR)/%.o)
+RELEASE_OBJS := $(SRCS:$(SRC_DIR)/%.c=$(RELEASE_BUILD_DIR)/%.o)
+
+WARN_FLAGS := -Wall -Wextra -Wpedantic -Werror
+INC_FLAGS := -I$(INC_DIR)
+DEP_FLAGS := -MMD -MP
+
+COMMON_FLAGS := $(WARN_FLAGS) $(INC_FLAGS) $(DEP_FLAGS)
+
+CFLAGS_DEBUG := $(COMMON_FLAGS) -g3 -O0 -DDEBUG
+CFLAGS_RELEASE := $(COMMON_FLAGS) -O2 -flto -DNDEBUG
+
+LDFLAGS_DEBUG :=
+LDFLAGS_RELEASE := -flto
 
 .DEFAULT_GOAL := debug
 
-debug: $(BIN_DIR)/debug/$(TARGET)
+debug: $(DEBUG_BIN_DIR)/$(TARGET)
 
-$(BIN_DIR)/debug/$(TARGET): $(DEBUG_OBJS) | $(BIN_DIR)/debug
+run: debug
+	@./$(DEBUG_BIN_DIR)/$(TARGET) $(ARGS)
+
+gdb: debug
+	@gdb ./$(DEBUG_BIN_DIR)/$(TARGET)
+
+$(DEBUG_BIN_DIR)/$(TARGET): $(DEBUG_OBJS) | $(DEBUG_BIN_DIR)
 	$(CC) $(LDFLAGS_DEBUG) $^ -o $@
 
-$(BUILD_DIR)/debug/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)/debug
+$(DEBUG_BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(DEBUG_BUILD_DIR)
 	$(CC) $(CFLAGS_DEBUG) -c $< -o $@
 
-release: $(BIN_DIR)/release/$(TARGET)
+release: $(RELEASE_BIN_DIR)/$(TARGET)
 
-$(BIN_DIR)/release/$(TARGET): $(RELEASE_OBJS) | $(BIN_DIR)/release
+$(RELEASE_BIN_DIR)/$(TARGET): $(RELEASE_OBJS) | $(RELEASE_BIN_DIR)
 	$(CC) $(LDFLAGS_RELEASE) $^ -o $@
 	@strip $@
 
-$(BUILD_DIR)/release/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)/release
+$(RELEASE_BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(RELEASE_BUILD_DIR)
 	$(CC) $(CFLAGS_RELEASE) -c $< -o $@
 
-$(BUILD_DIR)/debug $(BUILD_DIR)/release $(BIN_DIR)/debug $(BIN_DIR)/release:
+$(DEBUG_BUILD_DIR) $(RELEASE_BUILD_DIR) $(DEBUG_BIN_DIR) $(RELEASE_BIN_DIR):
 	@mkdir -p $@
 
-DEPS := $(DEBUG_OBJS:.o=.d) $(RELEASE_OBJS:.o=.d)
+DEPS := $(wildcard $(DEBUG_BUILD_DIR)/*.d $(RELEASE_BUILD_DIR)/*.d)
 -include $(DEPS)
 
 clean:
@@ -51,4 +67,4 @@ clean:
 compile-db:
 	@bear -- make -B debug
 
-.PHONY: debug release clean compile-db
+.PHONY: debug run gdb release clean compile-db

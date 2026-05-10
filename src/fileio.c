@@ -1,5 +1,12 @@
 #include "fileio.h"
 
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+
+#include "error.h"
+#include "keys.h"
+
 void save_file(Buffer* buffer, const char* filename) {
     (void)buffer;
     (void)filename;
@@ -8,8 +15,40 @@ void save_file(Buffer* buffer, const char* filename) {
 }
 
 void load_file(Buffer* buffer, const char* filename) {
-    (void)buffer;
-    (void)filename;
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        if (errno == ENOENT) {
+            return;
+        }
 
-    // TODO: load file
+        ERROR("File cannot be opened");
+    }
+
+    char line[512];
+    char expanded[512];
+    while (fgets(line, sizeof(line), file)) {
+        int len = 0;
+        for (int i = 0; line[i] != '\n' && line[i] != '\0'; i++) {
+            if (line[i] == '\t') {
+                for (int k = 0; k < 4; k++) {
+                    expanded[len++] = ' ';
+                }
+            } else {
+                if (!(IS_PRINTABLE(line[i]))) {
+                    char msg[128];
+                    snprintf(msg, sizeof(msg), "Non-printable character in file '%s' (row:%zu, col:%d)", filename, buffer->line_count, i + 1);
+                    ERROR(msg);
+                }
+                expanded[len++] = line[i];
+            }
+        }
+        expanded[len] = '\0';
+
+        insert_string(buffer, &(Position){buffer->line_count - 1, 0}, expanded);
+        append_line(buffer, &(Position){buffer->line_count - 1, 0});
+    }
+
+    fclose(file);
+
+    delete_row(buffer, &(Position){buffer->line_count - 1, 0}, buffer->line_count - 1);
 }
