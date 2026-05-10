@@ -8,10 +8,21 @@
 #include "keys.h"
 
 void save_file(Buffer* buffer, const char* filename) {
-    (void)buffer;
-    (void)filename;
+    FILE* file = fopen(filename, "w");
+    if (file == NULL) {
+        ERROR("File cannot be saved");
+    }
 
-    // TODO: save file
+    for (size_t i = 0; i < buffer->line_count; i++) {
+        Line* line = &buffer->lines[i];
+        if (line->length > 0) {
+            fwrite(line->chars, sizeof(char), line->length, file);
+        }
+
+        fputc('\n', file);
+    }
+
+    fclose(file);
 }
 
 void load_file(Buffer* buffer, const char* filename) {
