@@ -12,15 +12,15 @@
 static Editor editor;
 static Parser parser;
 
-static void cleanup(Editor* editor) {
+void cleanup(void) {
+    free_editor(&editor);
+
     disable_raw_mode();
-
-    free_editor(editor);
-
-    clean_screen();
+    exit_alt_screen();
 }
 
 void run_vip(char* filename) {
+    enter_alt_screen();
     enable_raw_mode();
 
     editor_init(&editor, filename);
@@ -49,7 +49,7 @@ void run_vip(char* filename) {
         refresh_window();
     }
 
-    cleanup(&editor);
+    cleanup();
 }
 
 Line* get_line(size_t row) {

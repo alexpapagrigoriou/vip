@@ -8,6 +8,16 @@
 
 #define SCROLL_OFF 8
 
+void enter_alt_screen(void) {
+    printf("\033[?1049h");
+    fflush(stdout);
+}
+
+void exit_alt_screen(void) {
+    printf("\033[?1049l");
+    fflush(stdout);
+}
+
 void move_cursor(Position pos) {
     printf("\033[%zu;%zuH", pos.row + 1, pos.col + 1);
 }
@@ -143,7 +153,17 @@ static void draw_status_line(void) {
     printf("%.*s", CURSOR_POSITION_STRING_SIZE, get_cursor_position_string());
 }
 
+static void hide_cursor(void) {
+    printf("\033[?25l");
+}
+
+static void show_cursor(void) {
+    printf("\033[?25h");
+}
+
 void draw_window(void) {
+    hide_cursor();
+
     clean_screen();
 
     if (is_in_start()) {
@@ -158,6 +178,8 @@ void draw_window(void) {
 void refresh_window(void) {
     Position buffer_pos = (Position){get_cursor_position().row - get_text_position().row, get_cursor_position().col - get_text_position().col};
     move_cursor(buffer_pos);
+
+    show_cursor();
 
     fflush(stdout);
 }

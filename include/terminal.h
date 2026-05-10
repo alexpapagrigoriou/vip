@@ -7,8 +7,10 @@ typedef struct {
     size_t col;
 } Position;
 
-void disable_raw_mode(void);
 void enable_raw_mode(void);
+void disable_raw_mode(void);
+
 void update_window_size(void);
+
 Position get_max_screen(void);
 Position get_max_buffer(void);

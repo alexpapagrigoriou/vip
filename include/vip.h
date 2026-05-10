@@ -7,7 +7,9 @@
 #include "line.h"
 #include "terminal.h"
 
+void cleanup(void);
 void run_vip(char* filename);
+
 Line* get_line(size_t row);
 char* get_status_line(void);
 char* get_key_cache_string(void);

@@ -10,10 +10,6 @@ static struct termios original;
 
 static Position max_screen;
 
-void disable_raw_mode(void) {
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &original);
-}
-
 void enable_raw_mode(void) {
     tcgetattr(STDIN_FILENO, &original);
 
@@ -21,6 +17,10 @@ void enable_raw_mode(void) {
     raw.c_lflag &= ~(ECHO | ICANON | ISIG);
     raw.c_iflag &= ~(IXON | ICRNL);
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+}
+
+void disable_raw_mode(void) {
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &original);
 }
 
 void update_window_size(void) {
