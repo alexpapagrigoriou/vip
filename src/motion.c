@@ -665,6 +665,11 @@ size_t get_motion_row(Editor* editor, Motion motion, const size_t count) {
 }
 
 size_t get_motion_col(Editor* editor, Motion motion) {
+    if (editor->buffer.lines[editor->cursor.row].length == 0) {
+        editor->successful_motion = false;
+        return 0;
+    }
+
     switch (motion) {
         case MOT_START_OF_LINE:
             return motion_start_of_line(editor);
