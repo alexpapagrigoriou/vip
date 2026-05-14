@@ -88,9 +88,18 @@ void insert_string(Buffer* buffer, Position* cursor, const char* text) {
 }
 
 void insert_enter(Buffer* buffer, Position* cursor) {
-    // TODO: implement
-    (void)buffer;
-    (void)cursor;
+    Line* line = &buffer->lines[cursor->row];
+
+    if (cursor->col == line->length) {
+        append_line(buffer, cursor);
+        return;
+    }
+
+    append_line(buffer, &(Position){cursor->row, 0});
+    insert_string(buffer, &(Position){cursor->row + 1, 0}, line->chars + cursor->col);
+    delete_col_right(buffer, cursor, line->length - 1);
+    cursor->row++;
+    cursor->col = 0;
 }
 
 void insert_backspace(Buffer* buffer, Position* cursor) {
