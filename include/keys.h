@@ -23,9 +23,9 @@
 #define GET_LEFT_PAIR(c) c == '('   ? ')' \
                          : c == '{' ? '}' \
                          : c == '[' ? ']' \
-                                    : SPACE
+                                    : '\0'
 
 #define GET_RIGHT_PAIR(c) c == ')'   ? '(' \
                           : c == '}' ? '{' \
                           : c == ']' ? '[' \
-                                     : SPACE
+                                     : '\0'
