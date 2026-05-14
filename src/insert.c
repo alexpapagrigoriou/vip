@@ -14,11 +14,10 @@ void parse_insert_mode(Editor* editor, int key) {
             insert_string(&editor->buffer, &editor->cursor, "    ");
             break;
         case ENTER:
-            // TODO: new buffer function that moves text after cursor to the new line
-            append_line(&editor->buffer, &editor->cursor);
+            insert_enter(&editor->buffer, &editor->cursor);
             break;
         case BACKSPACE:
-            // TODO: delete char and move text on this row in end of row - 1 if col == 0
+            insert_backspace(&editor->buffer, &editor->cursor);
             break;
         case LEFT:
             insert_arrow_left(editor);

@@ -87,6 +87,54 @@ void insert_string(Buffer* buffer, Position* cursor, const char* text) {
     cursor->col += text_length;
 }
 
+void insert_enter(Buffer* buffer, Position* cursor) {
+    // TODO: implement
+    (void)buffer;
+    (void)cursor;
+}
+
+void insert_backspace(Buffer* buffer, Position* cursor) {
+    if (cursor->col == 0) {
+        if (cursor->row == 0) {
+            return;
+        }
+
+        size_t prev_row = cursor->row - 1;
+        Line* prev_line = &buffer->lines[prev_row];
+        if (prev_line->length == 0) {
+            delete_row(buffer, &(Position){prev_row, 0}, prev_row);
+            cursor->row--;
+            return;
+        }
+
+        cursor->col = prev_line->length;
+        Line* line = &buffer->lines[cursor->row];
+        insert_string(buffer, &(Position){prev_row, prev_line->length}, line->chars);
+        delete_row(buffer, &(Position){cursor->row, 0}, cursor->row);
+        cursor->row--;
+        return;
+    }
+
+    Line* line = &buffer->lines[cursor->row];
+
+    if (line->length == 0) {
+        delete_row(buffer, cursor, cursor->row);
+
+        cursor->row--;
+        cursor->col = buffer->lines[cursor->row].length;
+        return;
+    }
+
+    if (cursor->col == line->length) {
+        cursor->col--;
+        line->length--;
+        line->chars[line->length] = '\0';
+        return;
+    }
+
+    delete_col_left(buffer, cursor, cursor->col - 1);
+}
+
 void replace_char(Buffer* buffer, Position* cursor, const size_t count, const char c) {
     Line* line = &buffer->lines[cursor->row];
 

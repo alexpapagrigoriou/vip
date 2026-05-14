@@ -16,6 +16,8 @@ void free_buffer(Buffer* buffer);
 
 void insert_char(Buffer* buffer, Position* cursor, const char c);
 void insert_string(Buffer* buffer, Position* cursor, const char* text);
+void insert_enter(Buffer* buffer, Position* cursor);
+void insert_backspace(Buffer* buffer, Position* cursor);
 
 void replace_char(Buffer* buffer, Position* cursor, const size_t count, const char c);
 
