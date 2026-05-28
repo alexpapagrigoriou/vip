@@ -6,7 +6,11 @@
 #include "buffer.h"
 #include "draw.h"
 
-#define STATUS_LINE_SIZE 256
+#define COMMAND_LINE_SIZE 256
+
+#define INSERT_STATUS_LINE "-- INSERT --"
+#define VISUAL_STATUS_LINE "-- VISUAL --"
+#define VISUAL_LINE_STATUS_LINE "-- VISUAL LINE --"
 
 typedef enum {
     NORMAL,
@@ -18,6 +22,12 @@ typedef enum {
 } Mode;
 
 typedef struct {
+    char line[COMMAND_LINE_SIZE];
+    size_t cursor_col;
+    size_t length;
+} CommandLine;
+
+typedef struct {
     Buffer buffer;
     Position cursor;
     bool successful_motion;
@@ -26,8 +36,7 @@ typedef struct {
     Position text;
     char key_cache_string[KEY_CACHE_STRING_SIZE + 1];
     char cursor_position_string[CURSOR_POSITION_STRING_SIZE + 1];
-    char status_line[STATUS_LINE_SIZE];
-    size_t status_cursor_col;
+    CommandLine command_line;
     bool in_start;
     Mode mode;
     char* filename;

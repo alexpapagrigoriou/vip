@@ -1,5 +1,7 @@
 #include "visual_line.h"
 
+#include "keys.h"
+
 static void fix_count(Parser* parser) {
     if (parser->cmd.count == 0) {
         parser->cmd.count = 1;
@@ -22,8 +24,15 @@ static void execute_and_init(Parser* parser, Editor* editor) {
 
 void parse_visual_line_mode(Parser* parser, Editor* editor, int key) {
     // TODO: implement visual line mode parser
-    (void)parser;
-    (void)editor;
-    (void)key;
-    execute_and_init(parser, editor);
+
+    switch (key) {
+        case ESC:
+        case CTRL_F:
+            editor->mode = NORMAL;
+            editor->command_line.line[0] = '\0';
+            break;
+        default:
+            execute_and_init(parser, editor);
+            break;
+    }
 }

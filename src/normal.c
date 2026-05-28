@@ -469,6 +469,16 @@ void parse_normal_mode(Parser* parser, Editor* editor, int key) {
             prepend_line(&editor->buffer, &editor->cursor);
             parser_init(parser);
             return;
+        case 'v':
+            editor->mode = VISUAL;
+            // TODO: prepare for visual mode
+            parser_init(parser);
+            return;
+        case 'V':
+            editor->mode = VISUAL_LINE;
+            // TODO: prepare for visual line mode
+            parser_init(parser);
+            return;
         case 'x':
             parser->cmd.operator = OP_DELETE;
             parser->cmd.motion = MOT_RIGHT;
@@ -489,6 +499,15 @@ void parse_normal_mode(Parser* parser, Editor* editor, int key) {
 
                 join_lines(&editor->buffer, &editor->cursor, next_row_first_col);
             }
+            parser_init(parser);
+            return;
+        case ':':
+        case '/':
+            editor->mode = COMMAND;
+            editor->command_line.line[0] = key;
+            editor->command_line.line[1] = '\0';
+            editor->command_line.cursor_col = 1;
+            editor->command_line.length = 1;
             parser_init(parser);
             return;
     }

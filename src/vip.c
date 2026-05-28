@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "colors.h"
 #include "draw.h"
 #include "input.h"
 #include "parser.h"
@@ -42,7 +41,13 @@ void run_vip(char* filename) {
             editor.prev_cursor_col = editor.cursor.col;
         }
 
-        snprintf(editor.status_line, sizeof(editor.status_line), BGREEN "Key code: %d" RESET "\trow: %zu, col: %zu, prev_col: %zu, Mode: %d, l_c: %zu, l_cap: %zu, t_row: %zu, t_col: %zu", key, editor.cursor.row, editor.cursor.col, editor.prev_cursor_col, editor.mode, editor.buffer.line_count, editor.buffer.capacity, editor.text.row, editor.text.col);
+        if (editor.mode == INSERT) {
+            snprintf(editor.command_line.line, sizeof(editor.command_line.line), INSERT_STATUS_LINE);
+        } else if (editor.mode == VISUAL) {
+            snprintf(editor.command_line.line, sizeof(editor.command_line.line), VISUAL_STATUS_LINE);
+        } else if (editor.mode == VISUAL_LINE) {
+            snprintf(editor.command_line.line, sizeof(editor.command_line.line), VISUAL_LINE_STATUS_LINE);
+        }
 
         draw_window();
 
@@ -56,8 +61,12 @@ Line* get_line(size_t row) {
     return &editor.buffer.lines[row];
 }
 
-char* get_status_line(void) {
-    return editor.status_line;
+void set_command_line(char* text) {
+    memmove(editor.command_line.line, text, strlen(text) + 1);
+}
+
+char* get_command_line(void) {
+    return editor.command_line.line;
 }
 
 char* get_key_cache_string(void) {

@@ -9,6 +9,7 @@ void parse_insert_mode(Editor* editor, int key) {
         case CTRL_F:
             insert_arrow_left(editor);
             editor->mode = NORMAL;
+            editor->command_line.line[0] = '\0';
             break;
         case TAB:
             insert_string(&editor->buffer, &editor->cursor, "    ");

@@ -133,6 +133,13 @@ static void draw_buffer(void) {
     draw_tildes(line_count - get_text_position().row);
 }
 
+static void draw_command(void) {
+    move_cursor((Position){get_max_screen().row - 1, 0});
+    clean_line();
+
+    printf("%.*s", (int)get_max_screen().col, get_command_line());
+}
+
 static void draw_status_line(void) {
     size_t max_row = get_max_screen().row - 1;
 
@@ -140,7 +147,7 @@ static void draw_status_line(void) {
     clean_line();
 
     int max_col = (int)get_max_screen().col - (KEY_CACHE_STRING_SIZE + CURSOR_POSITION_STRING_SIZE + 3);
-    printf("%.*s", max_col, get_status_line());
+    printf("%.*s", max_col, get_command_line());
 
     max_col++;
 
@@ -172,7 +179,11 @@ void draw_window(void) {
         draw_buffer();
     }
 
-    draw_status_line();
+    if (get_mode() == COMMAND) {
+        draw_command();
+    } else {
+        draw_status_line();
+    }
 }
 
 void refresh_window(void) {
