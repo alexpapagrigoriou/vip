@@ -139,7 +139,8 @@ bool is_movement_to_execute(Editor* editor, Motion motion, const size_t count) {
 void movement_line(Editor* editor, size_t row) {
     editor->save_curosr_col = false;
 
-    editor->cursor.row = get_motion_row(editor, MOT_LINE, row);
+    row--;
+    editor->cursor.row = row > get_line_count() - 1 ? get_line_count() - 1 : row;
 
     fix_cursor_col(editor);
 }

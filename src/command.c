@@ -1,13 +1,67 @@
 #include "command.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 #include "keys.h"
+#include "movement.h"
 
-// TODO: implement command mode parser
-//       for "go_to_line" use movement_line ex. (:4) -> movement_line(editor, 4);
-static void execute_command_mode(Editor* editor) {
+static void strip(char* str) {
+    char* start = str;
+
+    while (*start && (char)*start == SPACE) {
+        start++;
+    }
+
+    if (start != str) {
+        memmove(str, start, strlen(start) + 1);
+    }
+
+    char* end = str + strlen(str);
+
+    while (end > str && (char)*(end - 1) == SPACE) {
+        end--;
+    }
+    *end = '\0';
+}
+
+static bool is_all_digits(char* str) {
+    while (*str) {
+        if (!(IS_DIGIT((char)*str))) {
+            return false;
+        }
+        str++;
+    }
+
+    return true;
+}
+
+static void execute_command(Editor* editor) {
+    char* command = editor->command_line.line + 1;
+
+    strip(command);
+
+    if (is_all_digits(command)) {
+        size_t row = (size_t)strtoull(command, NULL, 10);
+        movement_line(editor, row);
+        return;
+    }
+}
+
+static void execute_search(Editor* editor) {
     (void)editor;
+}
+
+static void execute_command_mode(Editor* editor) {
+    if (editor->command_line.length == 1) {
+        return;
+    }
+
+    if (editor->command_line.line[0] == ':') {
+        execute_command(editor);
+    } else if (editor->command_line.line[0] == '/') {
+        execute_search(editor);
+    }
 }
 
 static void command_init(Editor* editor) {
