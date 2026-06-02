@@ -69,6 +69,10 @@ char* get_command_line(void) {
     return editor.command_line.line;
 }
 
+size_t get_command_line_cursor_col(void) {
+    return editor.command_line.cursor_col;
+}
+
 char* get_key_cache_string(void) {
     char tmp[64];
     if (parser.cmd.count == 0) {

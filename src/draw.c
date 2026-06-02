@@ -187,8 +187,13 @@ void draw_window(void) {
 }
 
 void refresh_window(void) {
-    Position buffer_pos = (Position){get_cursor_position().row - get_text_position().row, get_cursor_position().col - get_text_position().col};
-    move_cursor(buffer_pos);
+    if (get_mode() == COMMAND) {
+        Position command_line_pos = (Position){get_max_screen().row - 1, get_command_line_cursor_col()};
+        move_cursor(command_line_pos);
+    } else {
+        Position buffer_pos = (Position){get_cursor_position().row - get_text_position().row, get_cursor_position().col - get_text_position().col};
+        move_cursor(buffer_pos);
+    }
 
     show_cursor();
 
