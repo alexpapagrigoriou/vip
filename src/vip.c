@@ -61,10 +61,6 @@ Line* get_line(size_t row) {
     return &editor.buffer.lines[row];
 }
 
-void set_command_line(char* text) {
-    memmove(editor.command_line.line, text, strlen(text) + 1);
-}
-
 char* get_command_line(void) {
     return editor.command_line.line;
 }

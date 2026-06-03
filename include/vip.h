@@ -11,7 +11,6 @@ void cleanup(void);
 void run_vip(char* filename);
 
 Line* get_line(size_t row);
-void set_command_line(char* text);
 char* get_command_line(void);
 size_t get_command_line_cursor_col(void);
 char* get_key_cache_string(void);
