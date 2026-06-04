@@ -232,6 +232,7 @@ void parse_command_mode(Editor* editor, int key) {
     switch (key) {
         case ESC:
         case CTRL_F:
+            editor->command_line.line[0] = '\0';
             command_init(editor);
             break;
         case ENTER:
