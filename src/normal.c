@@ -188,6 +188,7 @@ static void execute_normal_mode(Parser* parser, Editor* editor) {
 
     if (parser->cmd.operator == OP_REPLACE) {
         replace_char(&editor->buffer, &editor->cursor, parser->cmd.count, parser->cmd.argument);
+        editor->saved = false;
         return;
     }
 
@@ -197,6 +198,7 @@ static void execute_normal_mode(Parser* parser, Editor* editor) {
         }
     }
 
+    editor->saved = false;
     switch (get_motion_type(parser->cmd.motion)) {
         case MOT_TYPE_ROW:
             execute_row_motion(parser, editor);
@@ -251,12 +253,6 @@ void parse_normal_mode(Parser* parser, Editor* editor, int key) {
 
         parser->cmd.argument = key;
         execute_and_init(parser, editor);
-        return;
-    }
-
-    // TODO: remove exiting with 'q' after handling commmand mode
-    if (key == 'q' && parser->state == STATE_NORMAL) {
-        editor->mode = EXIT;
         return;
     }
 

@@ -5,14 +5,15 @@
 #include <string.h>
 
 #include "colors.h"
+#include "fileio.h"
 #include "keys.h"
 #include "movement.h"
 
 typedef enum {
     CMD_WRITE,
     CMD_QUIT,
-    CMD_WRITE_AND_QUIT,
     CMD_QUIT_FORCE,
+    CMD_WRITE_AND_QUIT,
     CMD_SET,
     CMD_UNKNOWN
 } CommandType;
@@ -26,12 +27,12 @@ static CommandType parse_command(char* command) {
         return CMD_QUIT;
     }
 
-    if (strcmp(command, "wq") == 0 || strcmp(command, "x") == 0 || strcmp(command, "xit") == 0) {
-        return CMD_WRITE_AND_QUIT;
-    }
-
     if (strcmp(command, "q!") == 0) {
         return CMD_QUIT_FORCE;
+    }
+
+    if (strcmp(command, "wq") == 0 || strcmp(command, "x") == 0 || strcmp(command, "xit") == 0) {
+        return CMD_WRITE_AND_QUIT;
     }
 
     if (strcmp(command, "set") == 0) {
@@ -79,6 +80,31 @@ static size_t string_to_digit(char* str) {
     return digit;
 }
 
+static bool handle_command_set(Editor* editor, char* argument) {
+    if (strcmp(argument, "nu") == 0 || strcmp(argument, "number") == 0) {
+        editor->number = true;
+        return true;
+    }
+
+    if (strcmp(argument, "nonu") == 0 || strcmp(argument, "nonumber") == 0) {
+        editor->number = false;
+        return true;
+    }
+
+    if (strcmp(argument, "rnu") == 0 || strcmp(argument, "relativenumber") == 0) {
+        editor->relative_number = true;
+        return true;
+    }
+
+    if (strcmp(argument, "nornu") == 0 || strcmp(argument, "norelativenumber") == 0) {
+        editor->relative_number = false;
+        return true;
+    }
+
+    snprintf(editor->command_line.line, sizeof(editor->command_line.line), BRED "Unknown option: %s" RESET, argument);
+    return false;
+}
+
 static void execute_command(Editor* editor) {
     char command[COMMAND_LINE_SIZE];
     strncpy(command, editor->command_line.line + 1, sizeof(command));
@@ -102,13 +128,74 @@ static void execute_command(Editor* editor) {
     }
 
     word = strtok(NULL, " ");
-    if (word != NULL) {
-        // TODO: handle arguments
-        // write or write_and_quit filename
-        // set number or set nu
-        // set nonumber or set nonu
-        // set relativenumber or set rnu
-        // set norelativenumber or set nornu
+
+    if (command_type == CMD_WRITE || command_type == CMD_WRITE_AND_QUIT) {
+        char* filename = word;
+
+        if (filename) {
+            word = strtok(NULL, " ");
+            if (word) {
+                snprintf(editor->command_line.line, sizeof(editor->command_line.line), BRED "Trailing characters: %s" RESET, word);
+                return;
+            }
+
+            editor->filename = strdup(filename);
+        } else {
+            if (!editor->filename) {
+                snprintf(editor->command_line.line, sizeof(editor->command_line.line), BRED "No file name" RESET);
+                return;
+            }
+        }
+
+        size_t lines_saved, bytes_saved;
+        save_file(&editor->buffer, editor->filename, &lines_saved, &bytes_saved);
+
+        if (command_type == CMD_WRITE_AND_QUIT) {
+            editor->mode = EXIT;
+            return;
+        }
+
+        editor->saved = true;
+        snprintf(editor->command_line.line, sizeof(editor->command_line.line), "\"%s\" %zuL, %zuB written", editor->filename, lines_saved, bytes_saved);
+
+        return;
+    }
+
+    if (command_type == CMD_QUIT || command_type == CMD_QUIT_FORCE) {
+        if (word) {
+            snprintf(editor->command_line.line, sizeof(editor->command_line.line), BRED "Trailing characters: %s" RESET, word);
+            return;
+        }
+
+        if (command_type == CMD_QUIT) {
+            if (!editor->saved) {
+                snprintf(editor->command_line.line, sizeof(editor->command_line.line), BRED "No write since last change" RESET);
+                return;
+            }
+        }
+
+        editor->mode = EXIT;
+        return;
+    }
+
+    if (command_type == CMD_SET) {
+        if (!word) {
+            snprintf(editor->command_line.line, sizeof(editor->command_line.line),
+                     BCYAN "Options:" RESET " number=%s, relativenumber=%s",
+                     editor->number ? "yes" : "no",
+                     editor->relative_number ? "yes" : "no");
+            return;
+        }
+
+        do {
+            if (!handle_command_set(editor, word)) {
+                return;
+            }
+
+            word = strtok(NULL, " ");
+        } while (word);
+
+        return;
     }
 }
 
@@ -129,10 +216,11 @@ static void execute_command_mode(Editor* editor) {
 }
 
 static void command_init(Editor* editor) {
-    editor->mode = NORMAL;
-    if (editor->command_line.line[0] == ':' || editor->command_line.line[0] == '/') {
-        editor->command_line.line[0] = '\0';
+    if (editor->mode == EXIT) {
+        return;
     }
+
+    editor->mode = NORMAL;
 }
 
 static void execute_and_init(Editor* editor) {

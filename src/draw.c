@@ -126,6 +126,7 @@ static void draw_buffer(void) {
             continue;
         }
 
+        // TODO: draw numbers
         move_cursor((Position){r, 0});
         printf("%.*s", (int)max_buffer.col, line->chars + get_text_position().col);
     }

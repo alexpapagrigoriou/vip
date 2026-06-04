@@ -7,19 +7,25 @@
 #include "error.h"
 #include "keys.h"
 
-void save_file(Buffer* buffer, const char* filename) {
+void save_file(Buffer* buffer, const char* filename, size_t* lines_saved, size_t* bytes_saved) {
     FILE* file = fopen(filename, "w");
     if (file == NULL) {
         ERROR("File cannot be saved");
     }
 
+    *lines_saved = 0;
+    *bytes_saved = 0;
+
     for (size_t i = 0; i < buffer->line_count; i++) {
         Line* line = &buffer->lines[i];
         if (line->length > 0) {
-            fwrite(line->chars, sizeof(char), line->length, file);
+            *bytes_saved += fwrite(line->chars, sizeof(char), line->length, file);
         }
 
         fputc('\n', file);
+        (*bytes_saved)++;
+
+        (*lines_saved)++;
     }
 
     fclose(file);

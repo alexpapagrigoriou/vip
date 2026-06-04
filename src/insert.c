@@ -35,6 +35,7 @@ void parse_insert_mode(Editor* editor, int key) {
         default:
             if (IS_PRINTABLE(key)) {
                 insert_char(&editor->buffer, &editor->cursor, key);
+                editor->saved = false;
             }
             break;
     }

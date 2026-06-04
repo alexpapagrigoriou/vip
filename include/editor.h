@@ -34,9 +34,12 @@ typedef struct {
     bool save_curosr_col;
     size_t prev_cursor_col;
     Position text;
+    bool number;
+    bool relative_number;
     char key_cache_string[KEY_CACHE_STRING_SIZE + 1];
     char cursor_position_string[CURSOR_POSITION_STRING_SIZE + 1];
     CommandLine command_line;
+    bool saved;
     bool in_start;
     Mode mode;
     char* filename;
