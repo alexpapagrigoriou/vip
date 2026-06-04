@@ -240,6 +240,7 @@ void parse_command_mode(Editor* editor, int key) {
         case BACKSPACE:
             if (editor->command_line.cursor_col <= 1) {
                 if (editor->command_line.length == 1) {
+                    editor->command_line.line[0] = '\0';
                     command_init(editor);
                 }
                 break;
