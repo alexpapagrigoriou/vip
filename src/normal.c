@@ -299,15 +299,19 @@ void parse_normal_mode(Parser* parser, Editor* editor, int key) {
     bool ready_to_execute = true;
     switch (key) {
         case 'h':
+        case LEFT:
             parser->cmd.motion = MOT_LEFT;
             break;
         case 'j':
+        case DOWN:
             parser->cmd.motion = MOT_DOWN;
             break;
         case 'k':
+        case UP:
             parser->cmd.motion = MOT_UP;
             break;
         case 'l':
+        case RIGHT:
             parser->cmd.motion = MOT_RIGHT;
             break;
         case 'w':
