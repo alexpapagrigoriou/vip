@@ -101,7 +101,6 @@ static bool handle_command_set(Editor* editor, char* argument) {
         return true;
     }
 
-    snprintf(editor->command_line.line, sizeof(editor->command_line.line), BRED "Unknown option: %s" RESET, argument);
     return false;
 }
 
@@ -189,6 +188,7 @@ static void execute_command(Editor* editor) {
 
         do {
             if (!handle_command_set(editor, word)) {
+                snprintf(editor->command_line.line, sizeof(editor->command_line.line), BRED "Unknown option: %s" RESET, word);
                 return;
             }
 
