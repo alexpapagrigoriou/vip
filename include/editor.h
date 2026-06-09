@@ -4,13 +4,14 @@
 #include <stddef.h>
 
 #include "buffer.h"
+#include "colors.h"
 #include "draw.h"
 
 #define COMMAND_LINE_SIZE 256
 
-#define INSERT_STATUS_LINE "-- INSERT --"
-#define VISUAL_STATUS_LINE "-- VISUAL --"
-#define VISUAL_LINE_STATUS_LINE "-- VISUAL LINE --"
+#define INSERT_STATUS_LINE BWHITE "-- INSERT --" RESET
+#define VISUAL_STATUS_LINE BWHITE "-- VISUAL --" RESET
+#define VISUAL_LINE_STATUS_LINE BWHITE "-- VISUAL LINE --" RESET
 
 typedef enum {
     NORMAL,

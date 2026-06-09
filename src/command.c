@@ -122,7 +122,7 @@ static void execute_command(Editor* editor) {
     CommandType command_type = parse_command(word);
 
     if (command_type == CMD_UNKNOWN) {
-        snprintf(editor->command_line.line, sizeof(editor->command_line.line), BRED "Not an editor command: %s" RESET, word);
+        snprintf(editor->command_line.line, sizeof(editor->command_line.line), BG_RED "Not an editor command: %s" RESET, word);
         return;
     }
 
@@ -134,14 +134,14 @@ static void execute_command(Editor* editor) {
         if (filename) {
             word = strtok(NULL, " ");
             if (word) {
-                snprintf(editor->command_line.line, sizeof(editor->command_line.line), BRED "Trailing characters: %s" RESET, word);
+                snprintf(editor->command_line.line, sizeof(editor->command_line.line), BG_RED "Trailing characters: %s" RESET, word);
                 return;
             }
 
             editor->filename = strdup(filename);
         } else {
             if (!editor->filename) {
-                snprintf(editor->command_line.line, sizeof(editor->command_line.line), BRED "No file name" RESET);
+                snprintf(editor->command_line.line, sizeof(editor->command_line.line), BG_RED "No file name" RESET);
                 return;
             }
         }
@@ -162,13 +162,13 @@ static void execute_command(Editor* editor) {
 
     if (command_type == CMD_QUIT || command_type == CMD_QUIT_FORCE) {
         if (word) {
-            snprintf(editor->command_line.line, sizeof(editor->command_line.line), BRED "Trailing characters: %s" RESET, word);
+            snprintf(editor->command_line.line, sizeof(editor->command_line.line), BG_RED "Trailing characters: %s" RESET, word);
             return;
         }
 
         if (command_type == CMD_QUIT) {
             if (!editor->saved) {
-                snprintf(editor->command_line.line, sizeof(editor->command_line.line), BRED "No write since last change" RESET);
+                snprintf(editor->command_line.line, sizeof(editor->command_line.line), BG_RED "No write since last change" RESET);
                 return;
             }
         }
@@ -188,7 +188,7 @@ static void execute_command(Editor* editor) {
 
         do {
             if (!handle_command_set(editor, word)) {
-                snprintf(editor->command_line.line, sizeof(editor->command_line.line), BRED "Unknown option: %s" RESET, word);
+                snprintf(editor->command_line.line, sizeof(editor->command_line.line), BG_RED "Unknown option: %s" RESET, word);
                 return;
             }
 
