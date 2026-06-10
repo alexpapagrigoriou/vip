@@ -113,6 +113,14 @@ Position get_text_position(void) {
     return editor.text;
 }
 
+bool has_number(void) {
+    return editor.number;
+}
+
+bool has_relative_number(void) {
+    return editor.relative_number;
+}
+
 bool is_in_start(void) {
     return editor.in_start;
 }

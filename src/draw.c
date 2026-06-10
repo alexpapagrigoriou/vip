@@ -22,7 +22,29 @@ void move_cursor(Position pos) {
     printf("\033[%zu;%zuH", pos.row + 1, pos.col + 1);
 }
 
-static void fix_text_row(Position cursor, Position* text, const size_t line_count, const size_t max_row) {
+static size_t digit_count(size_t n) {
+    size_t count = 0;
+    while (n > 0) {
+        n /= 10;
+        count++;
+    }
+
+    return count;
+}
+
+static size_t get_number_width(size_t line_count) {
+    size_t number_width = has_number() || has_relative_number() ? 3 : 0;
+
+    if (has_number()) {
+        if (line_count >= 1000) {
+            number_width = digit_count(line_count);
+        }
+    }
+
+    return number_width;
+}
+
+static void fix_text_row(Position cursor, Position* text, const size_t line_count, size_t max_row) {
     if (cursor.row < text->row + SCROLL_OFF) {
         if (cursor.row < SCROLL_OFF) {
             text->row = 0;
@@ -46,7 +68,12 @@ static void fix_text_row(Position cursor, Position* text, const size_t line_coun
     }
 }
 
-static void fix_text_col(Position cursor, Position* text, const size_t max_col) {
+static void fix_text_col(Position cursor, Position* text, size_t max_col) {
+    size_t number_width = get_number_width(get_line_count());
+    if (number_width > 0) {
+        max_col -= number_width + 1;
+    }
+
     if (cursor.col < text->col) {
         text->col = cursor.col;
     } else if (cursor.col - text->col >= max_col) {
@@ -114,6 +141,9 @@ static void draw_start(void) {
 static void draw_buffer(void) {
     Position max_buffer = get_max_buffer();
     size_t line_count = get_line_count();
+    size_t cursor_row = get_cursor_position().row;
+
+    size_t number_width = get_number_width(line_count);
 
     for (size_t r = 0; r < max_buffer.row; r++) {
         size_t draw_row = r + get_text_position().row;
@@ -121,14 +151,24 @@ static void draw_buffer(void) {
             break;
         }
 
+        move_cursor((Position){r, 0});
+        if (has_relative_number()) {
+            if (draw_row == cursor_row && has_number()) {
+                printf(YELLOW "%*zu" RESET " ", -(int)number_width, draw_row + 1);
+            } else {
+                size_t relative_row = draw_row > cursor_row ? draw_row - cursor_row : cursor_row - draw_row;
+                printf(YELLOW "%*zu" RESET " ", (int)number_width, relative_row);
+            }
+        } else if (has_number()) {
+            printf(YELLOW "%*zu" RESET " ", (int)number_width, draw_row + 1);
+        }
+
         Line* line = get_line(draw_row);
         if (line->length <= get_text_position().col) {
             continue;
         }
 
-        // TODO: draw numbers
-        move_cursor((Position){r, 0});
-        printf("%.*s", (int)max_buffer.col, line->chars + get_text_position().col);
+        printf("%.*s", (int)max_buffer.col - (int)number_width, line->chars + get_text_position().col);
     }
 
     draw_tildes(line_count - get_text_position().row);
@@ -193,6 +233,10 @@ void refresh_window(void) {
         move_cursor(command_line_pos);
     } else {
         Position buffer_pos = (Position){get_cursor_position().row - get_text_position().row, get_cursor_position().col - get_text_position().col};
+        size_t number_width = get_number_width(get_line_count());
+        if (number_width > 0) {
+            buffer_pos.col += number_width + 1;
+        }
         move_cursor(buffer_pos);
     }
 
