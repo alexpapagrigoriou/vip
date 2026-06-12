@@ -122,7 +122,7 @@ static void draw_start(void) {
         "by Alexandros Papagrigoriou.",
         "",
         "Vip is open source and freely distributable",
-        "https://github.com/AlexPapagre/vip",
+        "https://github.com/alexpapagrigoriou/vip",
         "",
         "type  :q" BLUE "<Enter>" RESET "  to exit"};
 
