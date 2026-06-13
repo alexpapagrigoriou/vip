@@ -1,8 +1,14 @@
-# VIP - A Modal Terminal-Based Text Editor in C
+<p align="center">
+    <img src="assets/logo.png" alt="VIP Logo" width="200">
+</p>
 
-VIP ("Vi rIPoff") is a modal, terminal-based text editor written in C. It is inspired by Vim and implements a subset of its modal editing model, including normal, insert, visual, and command modes.
+<p align="center">Vi rIPoff — A modal terminal-based text editor in C</p>
 
-The project was built from scratch using POSIX terminal APIs without external UI libraries. It demonstrates systems programming concepts such as raw terminal handling, dynamic memory management, state machines, and command parsing.
+---
+
+VIP is a modal, terminal-based text editor written in C. It is inspired by Vim and implements a subset of its modal editing model, including normal, insert, visual, and command modes.
+
+It is built from scratch using POSIX terminal APIs without external UI libraries. The project demonstrates systems programming concepts such as raw terminal handling, dynamic memory management, state machines, and command parsing.
 
 ---
 
