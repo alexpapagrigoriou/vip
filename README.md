@@ -43,7 +43,6 @@ A full technical description of the system architecture, data structures, and co
 
 ### Build (Debug - default)
 
-
 ```bash
 make
 ```
