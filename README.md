@@ -132,3 +132,9 @@ make gdb
 ```bash
 make clean
 ```
+
+---
+
+## License
+
+MIT. See [LICENSE](LICENSE).
