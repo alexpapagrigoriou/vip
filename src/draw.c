@@ -44,7 +44,7 @@ static size_t get_number_width(size_t line_count) {
     return number_width;
 }
 
-static void fix_text_row(Position cursor, Position* text, const size_t line_count, size_t max_row) {
+static void fix_text_row(Position cursor, Position *text, const size_t line_count, size_t max_row) {
     if (cursor.row < text->row + SCROLL_OFF) {
         if (cursor.row < SCROLL_OFF) {
             text->row = 0;
@@ -68,7 +68,7 @@ static void fix_text_row(Position cursor, Position* text, const size_t line_coun
     }
 }
 
-static void fix_text_col(Position cursor, Position* text, size_t max_col) {
+static void fix_text_col(Position cursor, Position *text, size_t max_col) {
     size_t number_width = get_number_width(get_line_count());
     if (number_width > 0) {
         max_col -= number_width + 1;
@@ -81,7 +81,7 @@ static void fix_text_col(Position cursor, Position* text, size_t max_col) {
     }
 }
 
-void fix_text_position(Position cursor, Position* text, const size_t line_count) {
+void fix_text_position(Position cursor, Position *text, const size_t line_count) {
     Position max_buffer = get_max_buffer();
 
     fix_text_row(cursor, text, line_count, max_buffer.row);
@@ -96,7 +96,7 @@ void clean_line(void) {
     printf("\r\033[2K");
 }
 
-static void print_centered_lines(const char* text[], size_t text_length[], size_t n_text) {
+static void print_centered_lines(const char *text[], size_t text_length[], size_t n_text) {
     Position max_buffer = get_max_buffer();
 
     size_t start_row = (max_buffer.row - n_text) / 2;
@@ -115,7 +115,7 @@ static void draw_tildes(size_t start_row) {
 }
 
 static void draw_start(void) {
-    const char* text[] = {
+    const char *text[] = {
         "VIP - Vi rIPoff",
         "",
         "version idk",
@@ -163,7 +163,7 @@ static void draw_buffer(void) {
             printf(YELLOW "%*zu" RESET " ", (int)number_width, draw_row + 1);
         }
 
-        Line* line = get_line(draw_row);
+        Line *line = get_line(draw_row);
         if (line->length <= get_text_position().col) {
             continue;
         }

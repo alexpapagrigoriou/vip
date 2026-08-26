@@ -2,7 +2,7 @@
 
 #include "fileio.h"
 
-void editor_init(Editor* editor, char* filename) {
+void editor_init(Editor *editor, char *filename) {
     buffer_init(&editor->buffer);
     editor->cursor = (Position){0, 0};
     editor->save_curosr_col = true;
@@ -23,6 +23,6 @@ void editor_init(Editor* editor, char* filename) {
     }
 }
 
-void free_editor(Editor* editor) {
+void free_editor(Editor *editor) {
     free_buffer(&editor->buffer);
 }

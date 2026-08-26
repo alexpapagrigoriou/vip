@@ -5,7 +5,7 @@
 
 #include "vip.h"
 
-void error(const char* msg, const char* file, int line, const char* func) {
+void error(const char *msg, const char *file, int line, const char *func) {
     cleanup();
 
 #ifdef NDEBUG

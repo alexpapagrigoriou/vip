@@ -9,7 +9,7 @@
 #include "visual.h"
 #include "visual_line.h"
 
-void parser_init(Parser* parser) {
+void parser_init(Parser *parser) {
     parser->state = STATE_NORMAL;
     parser->cmd.count = 0;
     parser->cmd.count_after_operator = 0;
@@ -20,24 +20,24 @@ void parser_init(Parser* parser) {
     parser->cmd.key_cache.length = 0;
 }
 
-void handle_key(Parser* parser, Editor* editor, int key) {
+void handle_key(Parser *parser, Editor *editor, int key) {
     switch (editor->mode) {
-        case NORMAL:
-            parse_normal_mode(parser, editor, key);
-            break;
-        case INSERT:
-            parse_insert_mode(editor, key);
-            break;
-        case VISUAL:
-            parse_visual_mode(parser, editor, key);
-            break;
-        case VISUAL_LINE:
-            parse_visual_line_mode(parser, editor, key);
-            break;
-        case COMMAND:
-            parse_command_mode(editor, key);
-            break;
-        case EXIT:
-            break;
+    case NORMAL:
+        parse_normal_mode(parser, editor, key);
+        break;
+    case INSERT:
+        parse_insert_mode(editor, key);
+        break;
+    case VISUAL:
+        parse_visual_mode(parser, editor, key);
+        break;
+    case VISUAL_LINE:
+        parse_visual_line_mode(parser, editor, key);
+        break;
+    case COMMAND:
+        parse_command_mode(editor, key);
+        break;
+    case EXIT:
+        break;
     }
 }

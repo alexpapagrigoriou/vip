@@ -7,21 +7,21 @@
 
 #define BUFFER_INITIAL_CAPACITY 8
 
-void buffer_init(Buffer* buffer) {
+void buffer_init(Buffer *buffer) {
     buffer->lines = malloc(sizeof(Line) * BUFFER_INITIAL_CAPACITY);
     line_init(&buffer->lines[0]);
     buffer->line_count = 1;
     buffer->capacity = BUFFER_INITIAL_CAPACITY;
 }
 
-void free_buffer(Buffer* buffer) {
+void free_buffer(Buffer *buffer) {
     for (size_t i = 0; i < buffer->line_count; i++) {
         free_line(&buffer->lines[i]);
     }
     free(buffer->lines);
 }
 
-static void buffer_ensure(Buffer* buffer, size_t needed) {
+static void buffer_ensure(Buffer *buffer, size_t needed) {
     if (needed <= buffer->capacity) {
         return;
     }
@@ -31,7 +31,7 @@ static void buffer_ensure(Buffer* buffer, size_t needed) {
         cap += cap / 2;
     }
 
-    Line* tmp = realloc(buffer->lines, sizeof(Line) * cap);
+    Line *tmp = realloc(buffer->lines, sizeof(Line) * cap);
     if (!tmp) {
         ERROR("Out of memory");
     }
@@ -40,7 +40,7 @@ static void buffer_ensure(Buffer* buffer, size_t needed) {
     buffer->capacity = cap;
 }
 
-static void buffer_compact(Buffer* buffer) {
+static void buffer_compact(Buffer *buffer) {
     if (buffer->capacity <= BUFFER_INITIAL_CAPACITY) {
         return;
     }
@@ -50,7 +50,7 @@ static void buffer_compact(Buffer* buffer) {
     }
 
     size_t new_cap = buffer->line_count < BUFFER_INITIAL_CAPACITY ? BUFFER_INITIAL_CAPACITY : buffer->line_count;
-    Line* tmp = realloc(buffer->lines, sizeof(Line) * new_cap);
+    Line *tmp = realloc(buffer->lines, sizeof(Line) * new_cap);
     if (!tmp) {
         return;
     }
@@ -59,8 +59,8 @@ static void buffer_compact(Buffer* buffer) {
     buffer->capacity = new_cap;
 }
 
-void insert_char(Buffer* buffer, Position* cursor, const char c) {
-    Line* line = &buffer->lines[cursor->row];
+void insert_char(Buffer *buffer, Position *cursor, const char c) {
+    Line *line = &buffer->lines[cursor->row];
 
     line_ensure(line, line->length + 2);
 
@@ -72,10 +72,10 @@ void insert_char(Buffer* buffer, Position* cursor, const char c) {
     cursor->col++;
 }
 
-void insert_string(Buffer* buffer, Position* cursor, const char* text) {
+void insert_string(Buffer *buffer, Position *cursor, const char *text) {
     size_t text_length = strlen(text);
 
-    Line* line = &buffer->lines[cursor->row];
+    Line *line = &buffer->lines[cursor->row];
 
     line_ensure(line, line->length + text_length + 1);
 
@@ -87,8 +87,8 @@ void insert_string(Buffer* buffer, Position* cursor, const char* text) {
     cursor->col += text_length;
 }
 
-void insert_enter(Buffer* buffer, Position* cursor) {
-    Line* line = &buffer->lines[cursor->row];
+void insert_enter(Buffer *buffer, Position *cursor) {
+    Line *line = &buffer->lines[cursor->row];
 
     if (cursor->col == line->length) {
         append_line(buffer, cursor);
@@ -102,14 +102,14 @@ void insert_enter(Buffer* buffer, Position* cursor) {
     cursor->col = 0;
 }
 
-void insert_backspace(Buffer* buffer, Position* cursor) {
+void insert_backspace(Buffer *buffer, Position *cursor) {
     if (cursor->col == 0) {
         if (cursor->row == 0) {
             return;
         }
 
         size_t prev_row = cursor->row - 1;
-        Line* prev_line = &buffer->lines[prev_row];
+        Line *prev_line = &buffer->lines[prev_row];
         if (prev_line->length == 0) {
             delete_row(buffer, &(Position){prev_row, 0}, prev_row);
             cursor->row--;
@@ -117,14 +117,14 @@ void insert_backspace(Buffer* buffer, Position* cursor) {
         }
 
         cursor->col = prev_line->length;
-        Line* line = &buffer->lines[cursor->row];
+        Line *line = &buffer->lines[cursor->row];
         insert_string(buffer, &(Position){prev_row, prev_line->length}, line->chars);
         delete_row(buffer, &(Position){cursor->row, 0}, cursor->row);
         cursor->row--;
         return;
     }
 
-    Line* line = &buffer->lines[cursor->row];
+    Line *line = &buffer->lines[cursor->row];
 
     if (line->length == 0) {
         delete_row(buffer, cursor, cursor->row);
@@ -144,8 +144,8 @@ void insert_backspace(Buffer* buffer, Position* cursor) {
     delete_col_left(buffer, cursor, cursor->col - 1);
 }
 
-void replace_char(Buffer* buffer, Position* cursor, const size_t count, const char c) {
-    Line* line = &buffer->lines[cursor->row];
+void replace_char(Buffer *buffer, Position *cursor, const size_t count, const char c) {
+    Line *line = &buffer->lines[cursor->row];
 
     if (cursor->col == line->length) {
         return;
@@ -163,7 +163,7 @@ void replace_char(Buffer* buffer, Position* cursor, const size_t count, const ch
     cursor->col--;
 }
 
-void append_line(Buffer* buffer, Position* cursor) {
+void append_line(Buffer *buffer, Position *cursor) {
     buffer_ensure(buffer, buffer->line_count + 1);
 
     memmove(&buffer->lines[cursor->row + 2], &buffer->lines[cursor->row + 1], sizeof(Line) * (buffer->line_count - cursor->row - 1));
@@ -175,7 +175,7 @@ void append_line(Buffer* buffer, Position* cursor) {
     cursor->col = 0;
 }
 
-void prepend_line(Buffer* buffer, Position* cursor) {
+void prepend_line(Buffer *buffer, Position *cursor) {
     buffer_ensure(buffer, buffer->line_count + 1);
 
     memmove(&buffer->lines[cursor->row + 1], &buffer->lines[cursor->row], sizeof(Line) * (buffer->line_count - cursor->row));
@@ -186,7 +186,7 @@ void prepend_line(Buffer* buffer, Position* cursor) {
     cursor->col = 0;
 }
 
-void delete_row(Buffer* buffer, Position* cursor, size_t row) {
+void delete_row(Buffer *buffer, Position *cursor, size_t row) {
     cursor->col = 0;
 
     if (cursor->row > row) {
@@ -219,8 +219,8 @@ void delete_row(Buffer* buffer, Position* cursor, size_t row) {
     buffer_compact(buffer);
 }
 
-static void delete_col(Buffer* buffer, Position* cursor, size_t col) {
-    Line* line = &buffer->lines[cursor->row];
+static void delete_col(Buffer *buffer, Position *cursor, size_t col) {
+    Line *line = &buffer->lines[cursor->row];
 
     size_t count = col - cursor->col + 1;
 
@@ -247,7 +247,7 @@ static void delete_col(Buffer* buffer, Position* cursor, size_t col) {
     line_compact(line);
 }
 
-void delete_col_left(Buffer* buffer, Position* cursor, size_t col) {
+void delete_col_left(Buffer *buffer, Position *cursor, size_t col) {
     cursor->col--;
 
     size_t tmp = cursor->col;
@@ -257,11 +257,11 @@ void delete_col_left(Buffer* buffer, Position* cursor, size_t col) {
     delete_col(buffer, cursor, col);
 }
 
-void delete_col_right(Buffer* buffer, Position* cursor, size_t col) {
+void delete_col_right(Buffer *buffer, Position *cursor, size_t col) {
     delete_col(buffer, cursor, col);
 }
 
-void join_lines(Buffer* buffer, Position* cursor, size_t next_row_first_col) {
+void join_lines(Buffer *buffer, Position *cursor, size_t next_row_first_col) {
     if (cursor->row == buffer->line_count - 1) {
         return;
     }
@@ -271,13 +271,13 @@ void join_lines(Buffer* buffer, Position* cursor, size_t next_row_first_col) {
         delete_col_right(buffer, &(Position){next_row, 0}, next_row_first_col - 1);
     }
 
-    Line* line = &buffer->lines[cursor->row];
+    Line *line = &buffer->lines[cursor->row];
     if (line->length == 0) {
         delete_row(buffer, &(Position){cursor->row, 0}, cursor->row);
         return;
     }
 
-    Line* next_line = &buffer->lines[next_row];
+    Line *next_line = &buffer->lines[next_row];
     if (next_line->length == 0) {
         delete_row(buffer, &(Position){next_row, 0}, next_row);
         return;

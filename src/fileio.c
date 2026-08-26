@@ -7,8 +7,8 @@
 #include "error.h"
 #include "keys.h"
 
-void save_file(Buffer* buffer, const char* filename, size_t* lines_saved, size_t* bytes_saved) {
-    FILE* file = fopen(filename, "w");
+void save_file(Buffer *buffer, const char *filename, size_t *lines_saved, size_t *bytes_saved) {
+    FILE *file = fopen(filename, "w");
     if (file == NULL) {
         ERROR("File cannot be saved");
     }
@@ -17,7 +17,7 @@ void save_file(Buffer* buffer, const char* filename, size_t* lines_saved, size_t
     *bytes_saved = 0;
 
     for (size_t i = 0; i < buffer->line_count; i++) {
-        Line* line = &buffer->lines[i];
+        Line *line = &buffer->lines[i];
         if (line->length > 0) {
             *bytes_saved += fwrite(line->chars, sizeof(char), line->length, file);
         }
@@ -31,8 +31,8 @@ void save_file(Buffer* buffer, const char* filename, size_t* lines_saved, size_t
     fclose(file);
 }
 
-void load_file(Buffer* buffer, const char* filename) {
-    FILE* file = fopen(filename, "r");
+void load_file(Buffer *buffer, const char *filename) {
+    FILE *file = fopen(filename, "r");
     if (file == NULL) {
         if (errno == ENOENT) {
             return;

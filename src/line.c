@@ -6,18 +6,18 @@
 
 #define LINE_INITIAL_CAPACITY 16
 
-void line_init(Line* line) {
+void line_init(Line *line) {
     line->chars = malloc(LINE_INITIAL_CAPACITY);
     line->chars[0] = '\0';
     line->length = 0;
     line->capacity = LINE_INITIAL_CAPACITY;
 }
 
-void free_line(Line* line) {
+void free_line(Line *line) {
     free(line->chars);
 }
 
-void line_ensure(Line* line, size_t needed) {
+void line_ensure(Line *line, size_t needed) {
     if (needed <= line->capacity) {
         return;
     }
@@ -27,7 +27,7 @@ void line_ensure(Line* line, size_t needed) {
         cap += cap / 2;
     }
 
-    char* tmp = realloc(line->chars, cap);
+    char *tmp = realloc(line->chars, cap);
     if (!tmp) {
         ERROR("Out of memory");
     }
@@ -36,7 +36,7 @@ void line_ensure(Line* line, size_t needed) {
     line->capacity = cap;
 }
 
-void line_compact(Line* line) {
+void line_compact(Line *line) {
     if (line->capacity <= LINE_INITIAL_CAPACITY) {
         return;
     }
@@ -47,7 +47,7 @@ void line_compact(Line* line) {
     }
 
     size_t new_cap = needed < LINE_INITIAL_CAPACITY ? LINE_INITIAL_CAPACITY : needed;
-    char* tmp = realloc(line->chars, new_cap);
+    char *tmp = realloc(line->chars, new_cap);
     if (!tmp) {
         return;
     }

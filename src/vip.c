@@ -18,7 +18,7 @@ void cleanup(void) {
     exit_alt_screen();
 }
 
-void run_vip(char* filename) {
+void run_vip(char *filename) {
     enter_alt_screen();
     enable_raw_mode();
 
@@ -57,11 +57,11 @@ void run_vip(char* filename) {
     cleanup();
 }
 
-Line* get_line(size_t row) {
+Line *get_line(size_t row) {
     return &editor.buffer.lines[row];
 }
 
-char* get_command_line(void) {
+char *get_command_line(void) {
     return editor.command_line.line;
 }
 
@@ -69,7 +69,7 @@ size_t get_command_line_cursor_col(void) {
     return editor.command_line.cursor_col;
 }
 
-char* get_key_cache_string(void) {
+char *get_key_cache_string(void) {
     char tmp[64];
     if (parser.cmd.count == 0) {
         if (parser.cmd.count_after_operator == 0) {
@@ -91,7 +91,7 @@ char* get_key_cache_string(void) {
     return editor.key_cache_string;
 }
 
-char* get_cursor_position_string(void) {
+char *get_cursor_position_string(void) {
     if (editor.cursor.col == 0 && get_line(editor.cursor.row)->chars[0] == '\0') {
         snprintf(editor.cursor_position_string, sizeof(editor.cursor_position_string), "%zu,0-1", editor.cursor.row + 1);
     } else {

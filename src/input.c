@@ -25,14 +25,14 @@ int read_key(void) {
 
             if (seq[0] == '[') {
                 switch (seq[1]) {
-                    case 'A':
-                        return UP;
-                    case 'B':
-                        return DOWN;
-                    case 'C':
-                        return RIGHT;
-                    case 'D':
-                        return LEFT;
+                case 'A':
+                    return UP;
+                case 'B':
+                    return DOWN;
+                case 'C':
+                    return RIGHT;
+                case 'D':
+                    return LEFT;
                 }
             }
             return ESC;

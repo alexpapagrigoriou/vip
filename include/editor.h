@@ -43,8 +43,8 @@ typedef struct {
     bool saved;
     bool in_start;
     Mode mode;
-    char* filename;
+    char *filename;
 } Editor;
 
-void editor_init(Editor* editor, char* filename);
-void free_editor(Editor* editor);
+void editor_init(Editor *editor, char *filename);
+void free_editor(Editor *editor);
